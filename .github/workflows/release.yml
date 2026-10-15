@@ -28,6 +28,8 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
+          # Pin the event commit without rewriting the annotated tag ref to its peeled SHA.
+          ref: ${{ github.sha }}
           fetch-depth: 0
           lfs: false
           persist-credentials: false
@@ -54,6 +56,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
+          ref: ${{ github.sha }}
           fetch-depth: 0
           lfs: false
           persist-credentials: false
@@ -77,6 +80,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
+          ref: ${{ github.sha }}
           lfs: false
           persist-credentials: false
           sparse-checkout: scripts
