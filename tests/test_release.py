@@ -6,10 +6,12 @@ import sys
 import tempfile
 import unittest
 from unittest.mock import patch
+import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from commit_policy import check_title, load_yaml, parse_message
 import release
+from validate_release_event import main as validate_event
 
 
 def message(kind="fix", en="Fix the image assembly.", zh="修复镜像制作流程。"):
@@ -17,6 +19,15 @@ def message(kind="fix", en="Fix the image assembly.", zh="修复镜像制作流�
 
 
 class CommitPolicyTests(unittest.TestCase):
+    def test_release_checkout_pins_commit_and_preserves_tags(self):
+        workflow = yaml.safe_load((release.ROOT / '.github/workflows/release.yml').read_text())
+        for name in ('validate', 'build', 'publish'):
+            checkout = next(s for s in workflow['jobs'][name]['steps']
+                            if s.get('uses', '').startswith('actions/checkout@'))
+            self.assertEqual(checkout['with']['ref'], '${{ github.sha }}')
+            if name != 'publish':
+                self.assertEqual(checkout['with']['fetch-depth'], 0)
+
     def test_valid_bilingual_and_breaking(self):
         self.assertEqual(parse_message(message())["messages"]["zh"], "修复镜像制作流程。")
         self.assertTrue(parse_message(message().replace("): ", ")!: "))["breaking"])
@@ -64,6 +75,18 @@ class ReleaseTests(unittest.TestCase):
         rows = release.history("V1.1.0", "HEAD")
         self.assertEqual(len(rows), 1)
         self.assertIn("Initial release", rows[0]["notes"]["en"])
+
+    def test_tag_gate_accepts_annotation_and_rejects_flattened_checkout(self):
+        self.git('update-ref', 'refs/remotes/origin/master', 'HEAD')
+        config = release.settings()
+        env = dict(VERSION='V1.1.0', GITHUB_REPOSITORY=config['repository'],
+                   ACTOR_ID=str(config['publisher_id']), TRIGGERING_ACTOR=config['publisher_login'],
+                   EVENT='push', GITHUB_REF='refs/tags/V1.1.0')
+        with patch.dict(os.environ, env):
+            validate_event()
+            self.git('update-ref', 'refs/tags/V1.1.0', 'HEAD')
+            with self.assertRaisesRegex(ValueError, 'annotated tag'):
+                validate_event()
 
     def test_cumulative_history_contains_all_commits_once(self):
         self.commit(message())

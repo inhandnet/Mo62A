@@ -29,7 +29,11 @@ fi
 # Retrying an incomplete draft is safe; published releases are never overwritten.
 gh release upload "$version" --clobber "mo62a-trixie-xfce-$version.img.xz" \
   SHA256SUMS CHANGELOG.en.md CHANGELOG.zh.md release.json
-gh api "repos/$GH_REPO/releases/tags/$version" > "$RUNNER_TEMP/mo62a-release-assets.json"
+# The tag endpoint is for published releases. Resolve a draft through gh, then
+# inspect it by numeric release ID before making it public.
+release_id=$(gh release view "$version" --json databaseId --jq .databaseId)
+[[ "$release_id" =~ ^[1-9][0-9]*$ ]] || { echo 'Invalid release ID' >&2; exit 1; }
+gh api "repos/$GH_REPO/releases/$release_id" > "$RUNNER_TEMP/mo62a-release-assets.json"
 python3 - "$RUNNER_TEMP/mo62a-release-assets.json" <<'PY'
 import hashlib, json, sys
 from pathlib import Path
