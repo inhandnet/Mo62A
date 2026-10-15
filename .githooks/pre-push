@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# core.hooksPath must not disable LFS uploads.
+command -v git-lfs >/dev/null || { echo 'Git LFS is required.' >&2; exit 1; }
+git lfs pre-push "$@"

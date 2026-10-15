@@ -1,0 +1,91 @@
+name: Release image
+
+on:
+  push:
+    tags: ['V*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Candidate version (build and validate only; does not publish)'
+        required: true
+        default: V1.1.0
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.event_name == 'push' && github.ref_name || inputs.version }}
+  cancel-in-progress: false
+
+env:
+  VERSION: ${{ github.event_name == 'push' && github.ref_name || inputs.version }}
+
+jobs:
+  validate:
+    if: github.repository == 'inhandnet/Mo62A' && github.actor_id == '49704703'
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          lfs: false
+          persist-credentials: false
+          sparse-checkout: |
+            .github
+            scripts
+            tests
+            bin
+            release-notes
+      - run: sudo apt-get update -q && sudo apt-get install -y python3-yaml
+      - name: Validate version, source branch and release notes
+        env:
+          EVENT: ${{ github.event_name }}
+          ACTOR_ID: ${{ github.actor_id }}
+          TRIGGERING_ACTOR: ${{ github.triggering_actor }}
+        run: |
+          python3 scripts/validate_release_event.py
+          python3 -B -m unittest discover -s tests -v
+          python3 scripts/release.py --version "$VERSION" --output "$RUNNER_TEMP/notes"
+  build:
+    needs: validate
+    runs-on: ubuntu-22.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          lfs: false
+          persist-credentials: false
+      - name: Prepare isolated build host
+        run: bash scripts/ci-prepare-host.sh
+      - name: Compile, assemble and verify image
+        run: bash scripts/ci-build-release.sh "$VERSION"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-${{ env.VERSION }}
+          path: dist/
+          compression-level: 0
+          retention-days: 7
+          if-no-files-found: error
+  publish:
+    if: github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          lfs: false
+          persist-credentials: false
+          sparse-checkout: scripts
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: release-${{ env.VERSION }}
+          path: dist/
+      - name: Publish verified assets, then make release visible
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: bash scripts/publish-release.sh "$VERSION"

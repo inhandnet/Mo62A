@@ -3,7 +3,7 @@ set -euo pipefail
 
 # mo-62a-flash.sh — unified SD card / offline image creation tool
 #
-# Interactive only. On launch, prompts to choose:
+# Without arguments, prompts to choose:
 #   [1] Write directly to an SD card
 #   [2] Create an offline .img for Armbian Imager
 #
@@ -13,9 +13,8 @@ set -euo pipefail
 #   boot      - copy BOOT partition content only (strict layout check)
 #   rootfs    - copy rootfs partition content only (strict layout check)
 #
-# See also:
-#   bin/create-mo-62a.sh            (legacy SD card script)
-#   bin/create-mo-62a-image.sh       (legacy image script)
+# Use --image with explicit inputs for non-interactive offline image creation.
+# Direct SD card writes remain interactive only.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 SDK_ROOT="$(cd "$SCRIPT_DIR/.." && pwd -P)"
@@ -50,6 +49,9 @@ IMG_SIZE_GIB=12
 COMPRESS="xz"
 IMG_PATH=""
 LOOPDEV=""
+NON_INTERACTIVE=0
+DRY_RUN=0
+OUTPUT_LOCK=""
 
 # ── Cleanup / error helpers ────────────────────────────────────────────────────
 cleanup() {
@@ -59,17 +61,19 @@ cleanup() {
   if [[ -n "${BOOT_MNT:-}"   && -d "${BOOT_MNT:-}"   ]]; then rmdir "${BOOT_MNT}"   2>/dev/null || true; fi
   if [[ -n "${ROOTFS_MNT:-}" && -d "${ROOTFS_MNT:-}" ]]; then rmdir "${ROOTFS_MNT}" 2>/dev/null || true; fi
   if [[ -n "${LOOPDEV:-}" ]]; then losetup -d "${LOOPDEV}" 2>/dev/null || true; fi
+  if [[ -n "${OUTPUT_LOCK:-}" ]]; then rmdir "$OUTPUT_LOCK" 2>/dev/null || true; fi
 }
-trap cleanup EXIT
 
 die()  { echo "ERROR: $*" >&2; exit 1; }
 have() { command -v "$1" >/dev/null 2>&1; }
 
 usage() {
   cat >&2 <<'USAGE'
-Usage: mo-62a-flash.sh [--help]
+Usage: mo-62a-flash.sh
+       mo-62a-flash.sh --image --rootfs FILE --version Vx.y.z --output-dir DIR [OPTIONS]
+       mo-62a-flash.sh --help
 
-Interactive tool — run without arguments.
+Run without arguments for the interactive menu (requires root).
 
 On launch you will be asked to choose:
   [1] Write directly to an SD card
@@ -84,10 +88,100 @@ SD card sub-modes (chosen interactively after device selection):
 Image options (prompted interactively):
   output dir / name / image size (GiB) / compression (zip|xz|none)
 
-See also:
-  bin/create-mo-62a.sh               (legacy SD card script, non-interactive support)
-  bin/create-mo-62a-image.sh       (legacy image script)
+Non-interactive mode (offline image only):
+  --image                 Create an offline image; never select a physical SD card
+  --rootfs FILE           Explicit .tar.xz, .tar.gz or .tar rootfs archive
+  --version Vx.y.z         Required release version; lowercase v is normalized to V
+  --output-dir DIR        Required output directory; existing outputs are refused
+  --image-size-gib N      Whole image size in GiB (default: 12; range: 5..2047)
+  --compression FORMAT    xz (default), zip or none
+  --date YYYY-MM-DD       Date stamped into external apps (default: today's date)
+  --dry-run               Validate inputs and print the plan; no root or writes
+
+Compile and stage the kernel, modules and boot files before creating an image.
+Image creation requires root, loop devices and the app build dependencies.
+--dry-run does not verify archive contents, build dependencies or bootability.
+No --force or unattended physical-device write mode is provided.
 USAGE
+}
+
+parse_image_args() {
+  local option
+  local -A seen=()
+  IMAGE_VERSION=""
+  while (( $# )); do
+    option="$1"
+    [[ -n "$option" ]] || die "Empty option (use --help)"
+    [[ -z "${seen[$option]:-}" ]] || die "Duplicate option: $option"
+    seen[$option]=1
+    case "$option" in
+      --image) NON_INTERACTIVE=1; shift ;;
+      --dry-run) DRY_RUN=1; shift ;;
+      --rootfs|--version|--output-dir|--image-size-gib|--compression|--date)
+        [[ $# -ge 2 && -n "$2" && "$2" != --* ]] || die "Missing value for $option"
+        case "$option" in
+          --rootfs) ROOTFS_TARBALL="$2" ;;
+          --version) IMAGE_VERSION="$2" ;;
+          --output-dir) OUT_DIR="$2" ;;
+          --image-size-gib) IMG_SIZE_GIB="$2" ;;
+          --compression) COMPRESS="$2" ;;
+          --date) IMAGE_DATE="$2" ;;
+        esac
+        shift 2
+        ;;
+      *) die "Unknown option: $option (use --help)" ;;
+    esac
+  done
+  [[ "$NON_INTERACTIVE" == 1 ]] || die "Non-interactive options require --image"
+  [[ -n "$ROOTFS_TARBALL" ]] || die "--rootfs is required"
+  [[ -n "$IMAGE_VERSION" ]] || die "--version is required"
+  [[ -n "$OUT_DIR" ]] || die "--output-dir is required"
+}
+
+check_image_outputs() {
+  local candidate
+  for candidate in "$OUT_DIR/$NAME".img* "$OUT_DIR/$NAME.sha256" \
+      "$OUT_DIR/mo62a-factory-${IMAGE_VERSION}.deb"; do
+    [[ ! -e "$candidate" && ! -L "$candidate" ]] || die "Refusing to overwrite existing output: $candidate"
+  done
+}
+
+validate_image_args() {
+  [[ "$IMAGE_VERSION" =~ ^[Vv](0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] \
+    || die "Version must be Vx.y.z (for example V1.1.0)"
+  IMAGE_VERSION="V${IMAGE_VERSION:1}"
+  NAME="${IMAGE_PREFIX}-${IMAGE_VERSION}"
+  [[ "$IMG_SIZE_GIB" =~ ^[1-9][0-9]{0,3}$ ]] || die "Image size must be an integer GiB in 5..2047"
+  (( IMG_SIZE_GIB >= 5 && IMG_SIZE_GIB <= 2047 )) || die "Image size must be in 5..2047 GiB (MBR layout)"
+  case "$COMPRESS" in xz|zip|none) ;; *) die "Invalid compression: $COMPRESS (expected zip|xz|none)" ;; esac
+  [[ "$IMAGE_DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || die "Date must be YYYY-MM-DD"
+  local checked_date
+  checked_date="$(date -d "$IMAGE_DATE" +%F 2>/dev/null)" || die "Invalid date: $IMAGE_DATE"
+  [[ "$checked_date" == "$IMAGE_DATE" ]] || die "Invalid date: $IMAGE_DATE"
+  [[ -f "$ROOTFS_TARBALL" && -r "$ROOTFS_TARBALL" && -s "$ROOTFS_TARBALL" ]] \
+    || die "Rootfs must be a non-empty readable regular file: $ROOTFS_TARBALL"
+  ROOTFS_TARBALL="$(realpath -e -- "$ROOTFS_TARBALL")"
+  case "$ROOTFS_TARBALL" in *.tar.xz|*.tar.gz|*.tar) ;; *) die "Unsupported rootfs tarball: $ROOTFS_TARBALL" ;; esac
+  if head -c 42 -- "$ROOTFS_TARBALL" | LC_ALL=C grep -aq '^version https://git-lfs.github.com/spec/v1'; then
+    die "Rootfs is a Git LFS pointer; download LFS objects first"
+  fi
+  OUT_DIR="$(realpath -m -- "$OUT_DIR")"
+  case "$OUT_DIR" in /dev|/dev/*|/proc|/proc/*|/sys|/sys/*) die "Unsafe output directory: $OUT_DIR" ;; esac
+  [[ ! -e "$OUT_DIR" || -d "$OUT_DIR" ]] || die "Output path is not a directory: $OUT_DIR"
+  check_image_outputs
+}
+
+print_image_plan() {
+  echo "Offline image plan:"
+  echo "  rootfs:      $ROOTFS_TARBALL"
+  echo "  version:     $IMAGE_VERSION"
+  echo "  build date:  $IMAGE_DATE"
+  echo "  size (GiB):  $IMG_SIZE_GIB"
+  echo "  compression: $COMPRESS"
+  echo "  raw image:   $OUT_DIR/$NAME.img"
+  if [[ "$COMPRESS" != none ]]; then echo "  compressed:  $OUT_DIR/$NAME.img.$COMPRESS"; fi
+  echo "  checksums:   $OUT_DIR/$NAME.sha256"
+  echo "  factory deb: $OUT_DIR/mo62a-factory-${IMAGE_VERSION}.deb (if factory bundle is present)"
 }
 
 require_root() {
@@ -797,19 +891,25 @@ run_image_flow() {
   [[ -d "$BUILT_IMAGES_DIR" ]] || die "Missing built-images: $BUILT_IMAGES_DIR (run build first)"
   [[ -d "$EXTLINUX_SRC_DIR" ]] || die "Missing extlinux dir: $EXTLINUX_SRC_DIR"
 
-  ROOTFS_TARBALL="$(pick_rootfs_tarball_interactive)"
-
-  OUT_DIR="$(prompt_with_default "Output directory" "$SCRIPT_DIR/out")"
-  IMAGE_VERSION="$(prompt_with_default "Version (e.g. V1.0.0)" "$IMAGE_VERSION")"
-  IMAGE_DATE="$(prompt_with_default "Date (YYYY-MM-DD)" "$IMAGE_DATE")"
-  NAME="${IMAGE_PREFIX}-${IMAGE_VERSION}"
-  IMG_SIZE_GIB="$(prompt_with_default "Image size (GiB, integer)" "$IMG_SIZE_GIB")"
-  COMPRESS="$(prompt_with_default "Compression (zip|xz|none)" "$COMPRESS")"
+  if [[ "$NON_INTERACTIVE" == 0 ]]; then
+    ROOTFS_TARBALL="$(pick_rootfs_tarball_interactive)"
+    OUT_DIR="$(prompt_with_default "Output directory" "$SCRIPT_DIR/out")"
+    IMAGE_VERSION="$(prompt_with_default "Version (e.g. V1.0.0)" "$IMAGE_VERSION")"
+    IMAGE_DATE="$(prompt_with_default "Date (YYYY-MM-DD)" "$IMAGE_DATE")"
+    NAME="${IMAGE_PREFIX}-${IMAGE_VERSION}"
+    IMG_SIZE_GIB="$(prompt_with_default "Image size (GiB, integer)" "$IMG_SIZE_GIB")"
+    COMPRESS="$(prompt_with_default "Compression (zip|xz|none)" "$COMPRESS")"
+  fi
 
   [[ "$IMG_SIZE_GIB" =~ ^[0-9]+$ ]] || die "Image size must be an integer GiB"
   mkdir -p "$OUT_DIR"
 
-  build_factory_deb "$IMAGE_VERSION" "$OUT_DIR"
+  if [[ "$NON_INTERACTIVE" == 1 ]]; then
+    # Hold a per-version lock and recheck after locking, before any output writes.
+    mkdir "$OUT_DIR/.${NAME}.lock" 2>/dev/null || die "Output is locked: $OUT_DIR/.${NAME}.lock"
+    OUTPUT_LOCK="$OUT_DIR/.${NAME}.lock"
+    check_image_outputs
+  fi
 
   echo >&2
   echo "Summary:" >&2
@@ -820,7 +920,10 @@ run_image_flow() {
   echo "  compress:        $COMPRESS" >&2
   echo "  factory deb:     $OUT_DIR/mo62a-factory-${IMAGE_VERSION}.deb" >&2
 
-  confirm_or_die "This will create/overwrite: $OUT_DIR/${NAME}.img (and compressed output)."
+  if [[ "$NON_INTERACTIVE" == 0 ]]; then
+    confirm_or_die "This will create/overwrite: $OUT_DIR/${NAME}.img (and compressed output)."
+  fi
+  build_factory_deb "$IMAGE_VERSION" "$OUT_DIR"
 
   IMG_PATH="$OUT_DIR/${NAME}.img"
   local img_bytes=$(( IMG_SIZE_GIB * 1024 * 1024 * 1024 ))
@@ -833,6 +936,7 @@ run_image_flow() {
   img_extract_rootfs_tarball "$ROOTFS_TARBALL"
   install_kernel_modules_into_rootfs
   install_external_apps_into_rootfs
+  install_external_drivers_into_rootfs
   install_rootfs_overlay
 
   sync
@@ -875,14 +979,23 @@ pick_flash_mode() {
 }
 
 main() {
+  if [[ $# == 1 && ( "$1" == -h || "$1" == --help ) ]]; then usage; return 0; fi
   if [[ $# -gt 0 ]]; then
-    case "${1:-}" in
-      -h|--help) usage; exit 0 ;;
-      *) die "This script is interactive only. Run without arguments (use --help for info)." ;;
-    esac
+    parse_image_args "$@"
+    validate_image_args
+    print_image_plan
+    if [[ "$DRY_RUN" == 1 ]]; then
+      echo "Dry run only: no files written, builds started or devices accessed."
+      return 0
+    fi
+    require_root
+    trap cleanup EXIT
+    run_image_flow
+    return 0
   fi
 
   require_root
+  trap cleanup EXIT
 
   echo >&2
   echo "=== Mo 62A Flash Tool ===" >&2
@@ -896,4 +1009,4 @@ main() {
   esac
 }
 
-main "$@"
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then main "$@"; fi

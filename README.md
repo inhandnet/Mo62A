@@ -2,6 +2,8 @@
 
 MO-62A single-board computer SDK, powered by the TI AM62A7 platform, offering up to 2 TOPS AI performance.
 
+[中文](README_ZH.md) · [Downloads and changelog](RELEASES.md) · [Contributing and release policy](CONTRIBUTING.md)
+
 ---
 
 ## Table of Contents
@@ -502,7 +504,7 @@ Ensure the following are ready before running the flash tool:
 
 ### 5.2 Launch the Flash Tool
 
-The flash tool is interactive and must be run as root:
+Without arguments, the flash tool opens an interactive menu and must be run as root. For unattended offline images, see Section 5.4.1.
 
 ```bash
 sudo bash bin/mo-62a-flash.sh
@@ -601,42 +603,71 @@ Select `[2]` for image mode. The tool prompts for image parameters:
 
 ```
 Available rootfs tarballs:
-  [1] debian-13.2-xfce-v6.12-arm64-2026-01-13-12gb.tar.xz
+  [1] debian-13.5-edgeai-base-arm64.tar.xz
 
 Select rootfs tarball number (or 'q' to abort): 1
 
-Output directory (default: bin/out): /path/to/output
-Output image base name (default: mo-62a): mo-62a
-Image size (GiB, integer) (default: 8): 8
-Compression (zip|xz|none) (default: zip): zip
+Output directory (default: <repository>/bin/out): /path/to/output
+Version (e.g. V1.0.0) (default: V1.0.0): V1.1.0
+Date (YYYY-MM-DD) (default: <today>): 2026-10-15
+Image size (GiB, integer) (default: 12): 12
+Compression (zip|xz|none) (default: xz): xz
 ```
 
 | Parameter | Description |
 |-----------|-------------|
 | Output directory | Where to write the `.img` and checksum files |
-| Image base name | Filename prefix; output will be `<name>.img` (and `<name>.img.zip` etc.) |
-| Image size (GiB) | Total image size. Must be large enough to hold the rootfs; 8 GiB is sufficient for the default rootfs |
-| Compression | `zip` (recommended for balenaEtcher), `xz` (smaller file, slower), `none` (no compression) |
+| Version | Forms the name `mo62a-trixie-xfce-<version>` and the external application version |
+| Date | Build date stamped into external applications |
+| Image size (GiB) | Whole image size, including BOOT, 4 GiB swap, rootfs and filesystem overhead; default 12 GiB |
+| Compression | `xz` (default), `zip`, or `none` (no compression) |
 
-The tool creates a sparse `.img` file, partitions and formats it via a loopback device, fills it with the same content as online mode, detaches the loop device, then compresses the result.
+The tool creates a sparse `.img`, partitions and formats it via a loop device, installs the boot files and rootfs, then detaches and compresses it. It shares the kernel-module, external-application, external-driver and overlay installation functions with direct SD card writing. This does not imply byte-identical filesystem images.
 
 Output files:
 
 ```
 /path/to/output/
-├── mo-62a.img         # Raw disk image (8 GiB sparse file)
-├── mo-62a.img.zip     # Compressed image for balenaEtcher (if compression=zip)
-└── mo-62a.sha256      # SHA-256 checksums of all image files
+├── mo62a-trixie-xfce-V1.1.0.img       # Raw disk image
+├── mo62a-trixie-xfce-V1.1.0.img.xz    # Compressed image (default)
+├── mo62a-trixie-xfce-V1.1.0.sha256    # SHA-256 checksums of the image files
+└── mo62a-factory-V1.1.0.deb          # Separate factory-test package, if available
 ```
 
 To flash the image with balenaEtcher:
 
 1. Open [balenaEtcher](https://etcher.balena.io/)
-2. Click **Flash from file** and select `mo-62a.img.zip` (balenaEtcher accepts compressed images directly)
+2. Decompress the `.img.xz` file and select the resulting `.img` using **Flash from file**
 3. Select the target SD card
 4. Click **Flash**
 
-> **Note:** Image size must be at least as large as the expanded rootfs. The default `8` GiB is sufficient for the provided Debian rootfs (~6.9 GiB extracted). When using a custom rootfs, adjust the size accordingly.
+> **Note:** Allow space for the expanded rootfs, installed modules and applications, BOOT, swap and filesystem overhead. The default image size is not a guarantee that every custom rootfs will fit. Compressed download size is not the required SD card capacity.
+
+#### 5.4.1 Non-interactive offline images
+
+First compile and stage the kernel, modules, DTBs and U-Boot using the build instructions above. Download Git LFS objects, prepare the toolchain paths, and install the application build dependencies (including `qemu-user-static` and working AArch64 binfmt support for the EdgeAI C++ chroot build).
+
+Validate the arguments and inspect the output plan without root, file writes, mounts or compilation:
+
+```bash
+bash bin/mo-62a-flash.sh --image \
+  --rootfs filesystem/debian-13.5-edgeai-base-arm64.tar.xz \
+  --version V1.1.0 \
+  --output-dir /path/to/new-output \
+  --dry-run
+```
+
+To generate the image, remove `--dry-run` and run the same command with `sudo`. Optional arguments are `--image-size-gib 12`, `--compression xz` and `--date YYYY-MM-DD`; the date defaults to the host's current date. Lowercase `v1.1.0` is normalized to `V1.1.0`; this initial interface accepts stable `Vx.y.z` versions only.
+
+Non-interactive mode never selects a physical SD card. It refuses existing image, checksum or factory-package outputs, including symlinks; use a fresh directory for retries. A per-output-version directory lock prevents concurrent batch jobs from writing the same outputs. Use a separate source checkout for each concurrent build, since compilation modifies the kernel and application trees. After a forcibly terminated job, inspect its processes and mounts before removing any stale lock.
+
+`--dry-run` validates arguments, rootfs file presence and output collisions, **not** archive contents, build dependencies, free space or bootability. This command assembles an offline image; it does not rebuild U-Boot/the kernel, publish a GitHub Release, or update a website. The factory package is separate from the OS image and is not included in its `.sha256` file.
+
+Non-destructive CLI regression tests (Python 3; privileged and build operations are mocked):
+
+```bash
+python3 -B -m unittest discover -s tests -p 'test_flash_cli.py' -v
+```
 
 ### 5.5 Customising the Rootfs Tarball (Adding apt Packages)
 

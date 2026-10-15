@@ -1,0 +1,162 @@
+#!/usr/bin/env python3
+"""Generate deterministic bilingual history and a downloadable release manifest."""
+import argparse
+from datetime import datetime, timezone
+import hashlib
+import json
+from pathlib import Path
+import re
+import subprocess
+import sys
+
+from commit_policy import ROOT, check_range, git, load_yaml, parse_message
+
+VERSION = re.compile(r"^V(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
+GROUPS = {
+    "feat": ("Added", "新增"), "fix": ("Fixed", "修复"),
+    "perf": ("Performance", "性能"), "docs": ("Documentation", "文档"),
+    "refactor": ("Refactoring", "重构"), "test": ("Tests", "测试"),
+    "build": ("Build", "构建"), "ci": ("Automation", "自动化"),
+    "chore": ("Maintenance", "维护"), "revert": ("Reverted", "回退"),
+    "sync": ("Synchronization", "同步"),
+}
+
+
+def settings():
+    return load_yaml((ROOT / ".github/release-policy.yml").read_text())
+
+
+def version_key(tag):
+    match = VERSION.fullmatch(tag)
+    if not match:
+        raise ValueError(f"Invalid stable release tag: {tag}")
+    return tuple(map(int, match.groups()))
+
+
+def plain_markdown(value):
+    return re.sub(r"([\\`*_{}\[\]()#+.!|<>])", r"\\\1", value)
+
+
+def history(version, ref):
+    config = settings()
+    version_key(version)
+    target = git("rev-parse", f"{ref}^{{commit}}")
+    reachable = [t for t in git("tag", "--merged", target).splitlines() if VERSION.fullmatch(t)]
+    if any(version_key(t) > version_key(version) for t in reachable):
+        raise ValueError("A newer version already exists in this history")
+    versions = sorted(set(reachable + [version]), key=version_key)
+    versions = [t for t in versions if version_key(t) >= version_key(config["bootstrap_version"])]
+    if not versions or versions[0] != config["bootstrap_version"]:
+        raise ValueError("Missing bootstrap release V1.1.0 in the tag ancestry")
+    result, previous = [], None
+    for tag in versions:
+        commit = target if tag == version else git("rev-parse", f"refs/tags/{tag}^{{commit}}")
+        if tag in reachable and git("rev-parse", f"refs/tags/{tag}^{{commit}}") != commit:
+            raise ValueError("Version tag does not point to the requested source commit")
+        date = git("show", "-s", "--format=%cs", commit)
+        notes = {}
+        if previous is None:
+            for lang in ("en", "zh"):
+                notes[lang] = git("show", f"{commit}:release-notes/{tag}.{lang}.md")
+        else:
+            if subprocess.run(["git", "merge-base", "--is-ancestor", previous[1], commit]).returncode:
+                raise ValueError("Release tags must follow a single ancestry")
+            commits = check_range(previous[1], commit)
+            if not commits:
+                raise ValueError(f"No changes between {previous[0]} and {tag}")
+            parsed = [(sha, parse_message(git("show", "-s", "--format=%B", sha))) for sha in commits]
+            for lang, index in (("en", 0), ("zh", 1)):
+                sections = []
+                for kind, headings in GROUPS.items():
+                    lines = []
+                    for sha, item in parsed:
+                        if item["type"] != kind:
+                            continue
+                        scope = f'**{item["scope"]}**: ' if item["scope"] else ""
+                        breaking = ("**BREAKING:** " if lang == "en" else "**不兼容变更：** ") if item["breaking"] else ""
+                        lines.append(f'- {breaking}{scope}{plain_markdown(item["messages"][lang])} '
+                                     f'([{sha[:8]}](https://github.com/{config["repository"]}/commit/{sha}))')
+                    if lines:
+                        sections.append(f"### {headings[index]}\n\n" + "\n".join(lines))
+                compare = f'https://github.com/{config["repository"]}/compare/{previous[0]}...{tag}'
+                notes[lang] = "\n\n".join(sections) + f"\n\n[{'Full comparison' if lang == 'en' else '完整比较'}]({compare})"
+        result.append({"version": tag, "date": date, "commit": commit,
+                       "url": f'https://github.com/{config["repository"]}/releases/tag/{tag}', "notes": notes})
+        previous = (tag, commit)
+    return list(reversed(result))
+
+
+def checksum(path):
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def generate(version, ref, output, image=None, raw_size=None, kernel=None):
+    config = settings()
+    entries = history(version, ref)
+    output.mkdir(parents=True, exist_ok=True)
+    base = f'https://github.com/{config["repository"]}/releases/download/{version}'
+    for lang in ("en", "zh"):
+        title = "Changelog" if lang == "en" else "更新日志"
+        text = f"# {title}\n\n" + "\n\n".join(
+            f'## {e["version"]} — {e["date"]}\n\n{e["notes"][lang]}' for e in entries)
+        (output / f"CHANGELOG.{lang}.md").write_text(text + "\n")
+    body = (f'## Mo62A {version}\n\n{entries[0]["notes"]["en"]}\n\n'
+            f'<details>\n<summary>中文</summary>\n\n{entries[0]["notes"]["zh"]}\n\n</details>\n\n'
+            f'[Full changelog — English]({base}/CHANGELOG.en.md) · '
+            f'[完整更新日志 — 中文]({base}/CHANGELOG.zh.md)\n')
+    (output / "release-body.md").write_text(body)
+    if image is not None:
+        expected_name = f'{config["image_prefix"]}-{version}.img.xz'
+        if image.name != expected_name or image.is_symlink() or not image.is_file():
+            raise ValueError("Image must be a regular file with the expected versioned .img.xz name")
+        if not 0 < image.stat().st_size < config["asset_limit_bytes"]:
+            raise ValueError("Compressed image exceeds the GitHub Release asset size limit")
+        if not raw_size or raw_size != config["image_size_gib"] * 1024**3:
+            raise ValueError("Unexpected raw image size")
+        if not kernel:
+            raise ValueError("Built kernel release is required")
+        manifest = {
+            "schemaVersion": 1, "board": "mo-62a", "version": version,
+            "source": {"repository": config["repository"], "commit": entries[0]["commit"], "tag": version},
+            "os": {"name": "Debian", "codename": "trixie", "desktop": "xfce", "kernel": kernel},
+            "image": {"name": image.name, "url": f"{base}/{image.name}", "bytes": image.stat().st_size,
+                      "uncompressedBytes": raw_size, "sha256": checksum(image), "compression": "xz",
+                      "minimumCardBytes": max(config["minimum_card_bytes"], raw_size)},
+            "rootfs": {"file": config["rootfs"], "sha256": config["rootfs_sha256"]},
+            "checksums": f"{base}/SHA256SUMS",
+            "changelog": {lang: f"{base}/CHANGELOG.{lang}.md" for lang in ("en", "zh")},
+            "history": entries,
+            "validation": {"build": True, "imageStructure": True, "hardwareBootTest": False},
+        }
+        (output / "release.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+        assets = [image, output / "CHANGELOG.en.md", output / "CHANGELOG.zh.md", output / "release.json"]
+        for asset in assets:
+            if asset.stat().st_size >= config["asset_limit_bytes"]:
+                raise ValueError(f"Asset too large: {asset.name}")
+        (output / "SHA256SUMS").write_text("".join(f"{checksum(asset)}  {asset.name}\n" for asset in assets))
+    return entries
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--version", required=True)
+    parser.add_argument("--ref", default="HEAD")
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--image", type=Path)
+    parser.add_argument("--raw-size", type=int)
+    parser.add_argument("--kernel")
+    args = parser.parse_args()
+    if args.ref.startswith("-"):
+        raise ValueError("Invalid source ref")
+    generate(args.version, args.ref, args.output, args.image, args.raw_size, args.kernel)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (ValueError, subprocess.CalledProcessError) as exc:
+        sys.exit(f"Release generation: {exc}")
