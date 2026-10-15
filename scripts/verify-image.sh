@@ -33,7 +33,7 @@ for file in tiboot3.bin tispl.bin u-boot.img Image extlinux/extlinux.conf syscon
 done
 [[ -s "$inspect_dir/boot/ti/k3-am62a7-mo-62a.dtb" ]]
 root="$inspect_dir/rootfs"
-[[ -s "$root/etc/os-release" && -x "$root/usr/bin/app_edgeai" ]]
+[[ -s "$root/etc/os-release" && -x "$root/usr/local/bin/app_edgeai" ]]
 [[ -s "$root/usr/lib/modules/$kernel/modules.dep" ]]
 [[ -n "$(find "$root/usr/lib/modules/$kernel" -name 'cryptodev.ko*' -print -quit)" ]]
 grep -q cryptodev "$root/usr/lib/modules/$kernel/modules.dep"
