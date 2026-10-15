@@ -21,7 +21,7 @@ sudo apt-get install -y --no-install-recommends \
   qemu-user-static binfmt-support git-lfs curl wget
 # TI's binman board configuration entry imports these modules during U-Boot packaging.
 # Check them before downloading the SDK's large LFS objects or starting compilation.
-/usr/bin/python3 -c 'import yaml, yamllint, jsonschema, elftools, cryptography, Crypto'
+/usr/bin/python3 scripts/check-build-python.py
 sudo update-binfmts --enable qemu-aarch64
 [[ -r /proc/sys/fs/binfmt_misc/qemu-aarch64 ]] || { echo 'AArch64 binfmt is missing' >&2; exit 1; }
 grep -q '^enabled' /proc/sys/fs/binfmt_misc/qemu-aarch64

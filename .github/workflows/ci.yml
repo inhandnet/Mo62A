@@ -55,7 +55,11 @@ jobs:
             tests
             bin
             release-notes
-      - run: sudo apt-get update -q && sudo apt-get install -y python3-yaml
+      - name: Check build Python dependencies on Ubuntu 22.04
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y python3-yaml yamllint python3-jsonschema python3-pyelftools python3-cryptography python3-pycryptodome
+          /usr/bin/python3 scripts/check-build-python.py
       - run: |
           bash -n bin/mo-62a-flash.sh
           for file in scripts/*.sh; do bash -n "$file"; done
