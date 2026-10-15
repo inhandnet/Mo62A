@@ -15,10 +15,13 @@ sudo apt-get install -y --no-install-recommends \
   build-essential bc bison flex swig libssl-dev libgnutls28-dev \
   libncurses-dev libelf-dev uuid-dev autoconf automake libtool pkg-config \
   python3 python3-dev python3-setuptools python3-yaml python3-pyelftools \
-  python3-cryptography python3-pycryptodome python3-pytest \
+  python3-cryptography python3-pycryptodome python3-pytest python3-jsonschema yamllint \
   u-boot-tools device-tree-compiler parted fdisk dosfstools e2fsprogs \
   kmod cpio rsync lzop lz4 xz-utils zip zstd file \
   qemu-user-static binfmt-support git-lfs curl wget
+# TI's binman board configuration entry imports these modules during U-Boot packaging.
+# Check them before downloading the SDK's large LFS objects or starting compilation.
+/usr/bin/python3 -c 'import yaml, yamllint, jsonschema, elftools, cryptography, Crypto'
 sudo update-binfmts --enable qemu-aarch64
 [[ -r /proc/sys/fs/binfmt_misc/qemu-aarch64 ]] || { echo 'AArch64 binfmt is missing' >&2; exit 1; }
 grep -q '^enabled' /proc/sys/fs/binfmt_misc/qemu-aarch64
