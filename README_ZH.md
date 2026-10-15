@@ -2,6 +2,8 @@
 
 MO-62A 单板计算机 SDK，基于 TI AM62A7 平台，提供高达 2 TOPS AI 推理性能。
 
+[English](README.md) · [下载与更新日志](RELEASES.md) · [贡献与发布规范](CONTRIBUTING.zh-CN.md)
+
 ---
 
 ## 目录
@@ -424,7 +426,7 @@ parted  dosfstools  e2fsprogs  pv  xz-utils  zip  wget  curl
 
 ### 5.2 启动烧录工具
 
-烧录工具为交互式，须以 root 权限运行：
+不带参数时，烧录工具打开交互菜单，须以 root 权限运行。无人值守的离线镜像制作见 5.4.1 节。
 
 ```bash
 sudo bash bin/mo-62a-flash.sh
@@ -523,42 +525,71 @@ Done. BOOT and rootfs written successfully.
 
 ```
 Available rootfs tarballs:
-  [1] debian-13.2-xfce-v6.12-arm64-2026-01-13-12gb.tar.xz
+  [1] debian-13.5-edgeai-base-arm64.tar.xz
 
 Select rootfs tarball number (or 'q' to abort): 1
 
-Output directory (default: bin/out): /path/to/output
-Output image base name (default: mo-62a): mo-62a
-Image size (GiB, integer) (default: 8): 8
-Compression (zip|xz|none) (default: zip): zip
+Output directory (default: <repository>/bin/out): /path/to/output
+Version (e.g. V1.0.0) (default: V1.0.0): V1.1.0
+Date (YYYY-MM-DD) (default: <today>): 2026-10-15
+Image size (GiB, integer) (default: 12): 12
+Compression (zip|xz|none) (default: xz): xz
 ```
 
 | 参数 | 描述 |
 |------|------|
 | 输出目录 | `.img` 及校验文件的写入路径 |
-| 镜像基础名称 | 文件名前缀；输出为 `<name>.img`（及 `<name>.img.zip` 等） |
-| 镜像大小（GiB） | 总镜像大小，须足以容纳 rootfs；默认 8 GiB 足够当前默认 rootfs |
-| 压缩格式 | `zip`（推荐，balenaEtcher 支持）、`xz`（更小、更慢）、`none`（不压缩） |
+| 版本 | 用于 `mo62a-trixie-xfce-<version>` 文件名和外部应用版本 |
+| 日期 | 写入外部应用的构建日期 |
+| 镜像大小（GiB） | 包含 BOOT、4 GiB swap、rootfs 和文件系统开销的总大小，默认 12 GiB |
+| 压缩格式 | `xz`（默认）、`zip` 或 `none`（不压缩） |
 
-工具将创建一个稀疏 `.img` 文件，通过 loopback 设备分区和格式化，填入与在线模式完全相同的内容，卸载 loop 设备后压缩输出。
+工具创建稀疏 `.img` 文件，通过 loop 设备分区、格式化并安装启动文件和 rootfs，卸载后压缩输出。内核模块、外部应用、外置驱动及 overlay 与直接写卡复用相同的安装函数；这不表示两种文件系统镜像逐字节一致。
 
 输出文件：
 
 ```
 /path/to/output/
-├── mo-62a.img         # 原始磁盘镜像（8 GiB 稀疏文件）
-├── mo-62a.img.zip     # 压缩镜像（compression=zip 时生成），供 balenaEtcher 使用
-└── mo-62a.sha256      # 所有镜像文件的 SHA-256 校验值
+├── mo62a-trixie-xfce-V1.1.0.img       # 原始磁盘镜像
+├── mo62a-trixie-xfce-V1.1.0.img.xz    # 压缩镜像（默认）
+├── mo62a-trixie-xfce-V1.1.0.sha256    # 镜像文件的 SHA-256 校验值
+└── mo62a-factory-V1.1.0.deb          # 独立产测包（对应源文件存在时生成）
 ```
 
 使用 balenaEtcher 烧录镜像：
 
 1. 打开 [balenaEtcher](https://etcher.balena.io/)
-2. 点击 **Flash from file**，选择 `mo-62a.img.zip`（balenaEtcher 支持直接使用压缩镜像）
+2. 解压 `.img.xz`，点击 **Flash from file** 选择得到的 `.img`
 3. 选择目标 SD 卡
 4. 点击 **Flash**
 
-> **注意：** 镜像大小须至少与解压后的 rootfs 相同。默认 8 GiB 足够当前提供的 Debian rootfs（解压后约 6.9 GiB）。使用自定义 rootfs 时，请相应调整大小。
+> **注意：** 容量须覆盖解压后的 rootfs、安装的模块与应用、BOOT、swap 及文件系统开销。默认大小不保证能容纳所有自定义 rootfs；压缩下载文件大小不等于所需 SD 卡容量。
+
+#### 5.4.1 非交互离线镜像制作
+
+先按前文完成内核、模块、设备树及 U-Boot 的编译与归档。下载 Git LFS 对象，配置工具链路径，并准备应用构建依赖，包括 EdgeAI C++ chroot 构建所需的 `qemu-user-static` 和可用的 AArch64 binfmt 支持。
+
+先检查参数及输出计划，不需要 root，不写文件、不挂载、不编译：
+
+```bash
+bash bin/mo-62a-flash.sh --image \
+  --rootfs filesystem/debian-13.5-edgeai-base-arm64.tar.xz \
+  --version V1.1.0 \
+  --output-dir /path/to/new-output \
+  --dry-run
+```
+
+正式生成时去掉 `--dry-run`，使用 `sudo` 运行同一命令。可选参数为 `--image-size-gib 12`、`--compression xz` 和 `--date YYYY-MM-DD`；日期默认取构建主机当天日期。小写 `v1.1.0` 会规范为 `V1.1.0`，当前入口仅接受正式版 `Vx.y.z` 格式。
+
+非交互模式不会选择或写入物理 SD 卡。若同名镜像、校验文件或产测包已存在（包括符号链接），将拒绝覆盖；重试请使用新的输出目录。按输出版本创建目录锁，避免并发批处理写入同一批产物。并发构建须使用各自独立的源码检出目录，因为内核和应用编译会修改源码树。强制终止后如有遗留锁，须先检查相关进程与挂载状态，再清理锁。
+
+`--dry-run` 检查参数、rootfs 文件存在性和输出冲突，**不验证**归档内容、构建依赖、磁盘余量或能否启动。此命令负责组装离线镜像，不重新编译 U-Boot/内核，不发布 GitHub Release，也不更新网站。产测包独立于系统镜像，镜像 `.sha256` 不包含该产测包。
+
+非破坏性命令行回归测试（Python 3；权限操作及构建步骤均使用模拟实现）：
+
+```bash
+python3 -B -m unittest discover -s tests -p 'test_flash_cli.py' -v
+```
 
 ### 5.5 自定义 Rootfs 压缩包（添加 apt 软件包）
 

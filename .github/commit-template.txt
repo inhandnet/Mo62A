@@ -1,0 +1,5 @@
+feat(scope): describe the change
+
+Message:
+  en: Describe the user-visible change in English.
+  zh: 用中文说明本次变更。

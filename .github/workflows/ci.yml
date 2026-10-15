@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize, reopened, edited]
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  commit-message:
+    name: commit-message
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          lfs: false
+          persist-credentials: false
+          sparse-checkout: |
+            .github
+            scripts
+      - run: sudo apt-get update -q && sudo apt-get install -y python3-yaml
+      - name: Validate PR title and every commit
+        if: github.event_name == 'pull_request'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          python3 scripts/commit_policy.py --title "$PR_TITLE"
+          python3 scripts/commit_policy.py --range "$BASE" "$HEAD"
+      - name: Validate merged commits
+        if: github.event_name == 'push'
+        env:
+          BASE: ${{ github.event.before }}
+          HEAD: ${{ github.sha }}
+        run: |
+          if [[ "$BASE" =~ ^0+$ ]]; then BASE=$(git rev-parse "$HEAD^"); fi
+          python3 scripts/commit_policy.py --range "$BASE" "$HEAD"
+  validate-release:
+    name: validate-release
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          lfs: false
+          persist-credentials: false
+          sparse-checkout: |
+            .github
+            scripts
+            tests
+            bin
+            release-notes
+      - run: sudo apt-get update -q && sudo apt-get install -y python3-yaml
+      - run: |
+          bash -n bin/mo-62a-flash.sh
+          for file in scripts/*.sh; do bash -n "$file"; done
+          python3 -B -m unittest discover -s tests -v

@@ -1,0 +1,12 @@
+schema_version: 1
+repository: inhandnet/Mo62A
+branch: master
+publisher_login: weiyf1003
+publisher_id: 49704703
+bootstrap_version: V1.1.0
+rootfs: filesystem/debian-13.5-edgeai-base-arm64.tar.xz
+rootfs_sha256: 2ce7d6742d6863aa6f844ffc0feee890121ee0fb370a9670014963a4d541b74c
+image_size_gib: 12
+image_prefix: mo62a-trixie-xfce
+minimum_card_bytes: 16000000000
+asset_limit_bytes: 2147483648

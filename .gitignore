@@ -1,4 +1,5 @@
 bin/out/
+/dist/
 board-support/built-images/
 board-support/u-boot-build/
 board-support/extra-applications/mo-version/mo-version
