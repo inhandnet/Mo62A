@@ -7,13 +7,13 @@ linux-dtbs:
 	@echo     Building the Linux Kernel DTBs
 	@echo =====================================
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) am62ax_mo_62a_defconfig ti_arm64_prune.config $(RT_FRAGMENT)
-	@for DTB in $(KERNEL_DEVICETREE); do \
+	@set -e; for DTB in $(KERNEL_DEVICETREE); do \
 		$(MAKE) -j $(MAKE_JOBS) -C $(LINUXKERNEL_INSTALL_DIR) DTC_FLAGS=-@ ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) $$DTB; \
 	done
 
 linux-dtbs_stage:
 	mkdir -p $(TI_SDK_PATH)/board-support/built-images/dtb/ti
-	@for DTB in $(KERNEL_DEVICETREE); do \
+	@set -e; for DTB in $(KERNEL_DEVICETREE); do \
 		cp $(LINUXKERNEL_INSTALL_DIR)/arch/arm64/boot/dts/$$DTB $(TI_SDK_PATH)/board-support/built-images/dtb/ti; \
 	done
 
@@ -27,7 +27,7 @@ linux-dtbs_install: linux-dtbs_stage
 		exit 1; \
 	fi
 	install -d $(DESTDIR)/boot/dtb/ti
-	@for DTB in $(KERNEL_DEVICETREE); do \
+	@set -e; for DTB in $(KERNEL_DEVICETREE); do \
 		install -m 0644 $(TI_SDK_PATH)/board-support/built-images/dtb/ti/$$(basename $$DTB) $(DESTDIR)/boot/dtb/ti/; \
 	done
 
