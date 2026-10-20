@@ -24,7 +24,7 @@ if gh release view "$version" --json isDraft --jq .isDraft > "$RUNNER_TEMP/mo62a
   }
 else
   gh release create "$version" --verify-tag --target "$GITHUB_SHA" --draft \
-    --title "Mo62A $version" --notes-file release-body.md
+    --title "$version" --notes-file release-body.md
 fi
 # Retrying an incomplete draft is safe; published releases are never overwritten.
 gh release upload "$version" --clobber "mo62a-trixie-xfce-$version.img.xz" \
