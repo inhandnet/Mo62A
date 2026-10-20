@@ -23,6 +23,7 @@ if a[:2] == ['release', 'view']:
     else: sys.exit(2)
 elif a[:2] == ['release', 'create']:
     assert '--draft' in a and '--verify-tag' in a
+    assert a[a.index('--title') + 1] == 'V1.1.0'
     (p/'existing').write_text('true')
 elif a[:2] == ['release', 'upload']:
     assert (p/'existing').read_text() == 'true'
