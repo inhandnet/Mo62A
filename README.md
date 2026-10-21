@@ -1235,7 +1235,7 @@ To switch back to GPIO mode, reboot and select the `microSD` label at the U-Boot
 | Item | Value |
 |------|-------|
 | Connector | FPC22 / 0.5 mm pitch (JP1) |
-| Standard | Raspberry Pi Camera connector, 4-lane MIPI CSI-2 |
+| Standard | 22-pin CSI camera connector, 4-lane MIPI CSI-2 |
 | Lanes | CSI0_RXP/N[0..3] + CSI0_RXCLKP/N |
 | I2C | CSI_I2C2_SDA/SCL (from SOC_I2C2) |
 | Power | VSYS_3V3_EXP |
