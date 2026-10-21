@@ -12,16 +12,10 @@ set -uo pipefail
 
 CONFIG_FILE="${1:-/boot/firmware/sysconfig.txt}"
 LOG=/var/log/mo-62a-auto-config.log
+HOSTNAME_FILE=/etc/hostname
+HOSTS_FILE=/etc/hosts
 
 log() { echo "[mo-62a-config] $*"; }
-
-if [ "$(id -u)" -ne 0 ]; then
-    log "ERROR: must run as root" >&2
-    exit 1
-fi
-
-exec > >(tee -a "$LOG") 2>&1
-log "Starting ($(date -Iseconds)); config=$CONFIG_FILE"
 
 # Recognized keys (also used to wipe the file afterwards).
 KNOWN_KEYS="user_name user_password user_realname user_shell root_password \
@@ -77,11 +71,20 @@ apply_hostname() {
     local host; host=$(cfg hostname)
     [ -n "$host" ] || return 0
     log "Setting hostname to $host"
-    hostnamectl set-hostname "$host" >/dev/null 2>&1 || true
-    echo "$host" > /etc/hostname
-    if [ -f /etc/hosts ]; then
-        sed -i '/^127\.0\.1\.1[[:space:]]/d' /etc/hosts
-        printf '127.0.1.1\t%s\n' "$host" >> /etc/hosts
+    # Persist first so later services see the intended name. If hostnamed is
+    # unavailable, still update the running kernel before discovery/X11 start.
+    printf '%s\n' "$host" > "$HOSTNAME_FILE" || {
+        log "  ERROR: could not save hostname"; return 1
+    }
+    if ! hostnamectl set-hostname "$host"; then
+        log "  WARNING: hostnamectl failed; applying the runtime hostname directly"
+        hostname "$host" || {
+            log "  ERROR: could not set runtime hostname"; return 1
+        }
+    fi
+    if [ -f "$HOSTS_FILE" ]; then
+        sed -i '/^127\.0\.1\.1[[:space:]]/d' "$HOSTS_FILE" || return 1
+        printf '127.0.1.1\t%s\n' "$host" >> "$HOSTS_FILE" || return 1
     fi
 }
 
@@ -240,4 +243,12 @@ main() {
     log "Config applied and $CONFIG_FILE removed ($(date -Iseconds))"
 }
 
-main "$@"
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    if [ "$(id -u)" -ne 0 ]; then
+        log "ERROR: must run as root" >&2
+        exit 1
+    fi
+    exec > >(tee -a "$LOG") 2>&1
+    log "Starting ($(date -Iseconds)); config=$CONFIG_FILE"
+    main "$@"
+fi
