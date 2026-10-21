@@ -1,7 +1,11 @@
 [Unit]
 Description=MO-62A first-boot: install packages, resize rootfs, apply sysconfig.txt
 # sysinit.target ensures udev has settled and block devices (/dev/mmcblk*) are visible.
-After=sysinit.target local-fs.target
+After=sysinit.target local-fs.target NetworkManager.service
+Wants=NetworkManager.service
+# Configure hostname/accounts before name publication and X11 authentication.
+# Do not wait for network-online: offline and direct Ethernet boots must work.
+Before=avahi-daemon.service lightdm.service mo-discover.service
 ConditionPathExists=!/opt/ti/.edgeai-installed
 
 [Service]
