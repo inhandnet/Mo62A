@@ -137,10 +137,11 @@ cmd_status() {
     for v in /dev/video*; do
         [ -e "$v" ] || continue
         name=$(cat "/sys/class/video4linux/$(basename "$v")/name" 2>/dev/null)
-        case "$name" in *ticsi2rx*|*wave5*|*e5010*|"") continue;; esac
+        case "${name,,}" in *ticsi2rx*|*wave5*|*e5010*|"") continue;; esac
         echo "  $v  ($name)"; found=1
     done
     [ "$found" -eq 0 ] && echo "  None found"
+    return 0
 }
 
 # ── Build yaml (identical schema for both Python and C++ backends) ────────────
