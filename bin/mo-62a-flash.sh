@@ -239,17 +239,40 @@ install_rootfs_overlay() {
   [[ -d "$overlay_dir" ]] || { echo "No rootfs-overlay directory found, skipping."; return 0; }
 
   echo "Installing rootfs overlay: $overlay_dir -> $ROOTFS_MNT"
-  cp -a "$overlay_dir"/. "$ROOTFS_MNT"/
+  # Do not carry the checkout owner's UID onto /etc and other system paths.
+  # New entries belong to the installer (root); existing base ownership stays.
+  cp -a --no-preserve=ownership "$overlay_dir"/. "$ROOTFS_MNT"/
   # Ensure scripts are executable
   find "$ROOTFS_MNT/usr/local/bin" -type f 2>/dev/null | xargs chmod +x 2>/dev/null || true
   # NetworkManager refuses to load keyfiles that aren't root:root 0600. git only
   # tracks the exec bit (not ownership, not 0600), so a fresh clone ships these
-  # 0644/non-root and cp -a carries that in — enforce the required perms here.
+  # 0644, so enforce the required keyfile permissions here.
   if [[ -d "$ROOTFS_MNT/etc/NetworkManager/system-connections" ]]; then
     chown -R 0:0 "$ROOTFS_MNT/etc/NetworkManager/system-connections"
     chmod 600 "$ROOTFS_MNT"/etc/NetworkManager/system-connections/*.nmconnection 2>/dev/null || true
   fi
   echo "Rootfs overlay installed."
+  normalize_rootfs_ownership
+}
+
+# The base rootfs archive and earlier overlays can carry the build host's
+# UID/GID (1000) onto system paths such as /etc/fstab or /usr/include. Any
+# such entry outside /home belongs to root on a fresh image; also drop the
+# group-write bit that a umask 002 checkout leaves on them.
+normalize_rootfs_ownership() {
+  [[ -d "${ROOTFS_MNT:-}" ]] || return 0
+  local count
+  count=$(find "$ROOTFS_MNT" -xdev -path "$ROOTFS_MNT/home" -prune -o \
+            \( -uid 1000 -o -gid 1000 \) -print 2>/dev/null | wc -l)
+  if (( count > 0 )); then
+    echo "Normalizing ownership of $count rootfs entries owned by UID/GID 1000 -> root"
+    find "$ROOTFS_MNT" -xdev -path "$ROOTFS_MNT/home" -prune -o \
+      \( -uid 1000 -o -gid 1000 \) -print0 2>/dev/null | xargs -0 -r chown -h 0:0
+    find "$ROOTFS_MNT" -xdev -path "$ROOTFS_MNT/home" -prune -o \
+      \( -type f -o -type d \) -perm -g+w ! -path "$ROOTFS_MNT/tmp" ! -path "$ROOTFS_MNT/var/tmp" \
+      ! -path "$ROOTFS_MNT/var/mail" ! -path "$ROOTFS_MNT/var/lock" ! -path "$ROOTFS_MNT/var/local" \
+      ! -path "$ROOTFS_MNT/dev/*" -print0 2>/dev/null | xargs -0 -r chmod g-w
+  fi
 }
 
 build_factory_deb() {

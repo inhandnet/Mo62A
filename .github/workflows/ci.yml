@@ -55,6 +55,10 @@ jobs:
             tests
             bin
             release-notes
+            board-support/rootfs-overlay/etc/systemd/system
+            board-support/rootfs-overlay/usr/local/sbin/mo-62a-auto-config.sh
+            board-support/rootfs-overlay/usr/local/bin/mo-discover
+            board-support/rootfs-overlay/usr/local/bin/edgeai-demo
       - name: Check build Python dependencies on Ubuntu 22.04
         run: |
           sudo apt-get update -q
@@ -64,3 +68,5 @@ jobs:
           bash -n bin/mo-62a-flash.sh
           for file in scripts/*.sh; do bash -n "$file"; done
           python3 -B -m unittest discover -s tests -v
+          # UID/ownership regressions use only isolated temporary rootfs fixtures.
+          sudo python3 -B -m unittest discover -s tests -p 'test_firstboot.py' -v
