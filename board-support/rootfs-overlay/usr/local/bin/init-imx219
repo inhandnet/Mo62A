@@ -100,7 +100,7 @@ mkdir -p "$(dirname "$CSI_CAMERA_CONF")"
 cat > "$CSI_CAMERA_CONF" << EOF
 # Active CSI camera config — written by init-imx219 on $(date -Iseconds)
 CAMERA_ID=imx219
-CAMERA_NAME="Raspberry Pi Camera v2 / Sony IMX219 (CSI0)"
+CAMERA_NAME="IMX219 camera module (CSI0)"
 CAMERA_TYPE=csi
 INIT=/usr/local/bin/init-imx219
 VIDEO=$SYMLINK_VIDEO
