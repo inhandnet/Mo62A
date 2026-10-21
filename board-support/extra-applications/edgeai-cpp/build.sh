@@ -59,6 +59,8 @@ tar -C "$CHROOT" --xattrs --xattrs-include='*' --numeric-owner -xpf "$BASE_TAR"
 
 echo "[2/6] Set up qemu chroot"
 cp "$QEMU" "$CHROOT/usr/bin/"
+# The base may use a systemd-resolved symlink whose /run target is absent here.
+cp --remove-destination -L /etc/resolv.conf "$CHROOT/etc/resolv.conf"
 printf '#!/bin/sh\nexit 101\n' > "$CHROOT/usr/sbin/policy-rc.d"; chmod +x "$CHROOT/usr/sbin/policy-rc.d"
 # base tar ships without empty mount-point dirs; create them before binding
 mkdir -p "$CHROOT/proc" "$CHROOT/sys" "$CHROOT/dev/pts" "$CHROOT/tmp"
@@ -71,6 +73,18 @@ rm -rf "$CHROOT/opt/ecpp"; mkdir -p "$CHROOT/opt/ecpp"
 cp -a "$SELF_DIR/src" "$CHROOT/opt/ecpp/"
 cp -a "$SELF_DIR/include" "$CHROOT/opt/ecpp/"
 cp -a "$SELF_DIR/prebuilt" "$CHROOT/opt/ecpp/"
+cp -a "$SELF_DIR/gstreamer-v4l2" "$CHROOT/opt/ecpp/"
+# The Debian base ships a V4L2 decoder caps bug; build the narrow backport
+# in this same arm64 environment so future images include the tested fix.
+mkdir -p "$OUT"
+GST_ARCHIVE="$OUT/gst-plugins-good-1.26.2.tar.xz"
+if [ ! -f "$GST_ARCHIVE" ]; then
+  curl --fail --location --retry 3 \
+    https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.26.2.tar.xz \
+    --output "$GST_ARCHIVE"
+fi
+printf '%s  %s\n' d864b9aec28c3a80895468c909dd303e5f22f92d6e2b1137f80e2a1454584339 "$GST_ARCHIVE" | sha256sum -c -
+cp "$GST_ARCHIVE" "$CHROOT/opt/ecpp/"
 
 # The base rootfs ships the TIDL runtime that matched the image it was built for.
 # When the SDK is upgraded (e.g. TIDL 11_02_17_00 / ONNX Runtime 1.23) those .so
@@ -91,6 +105,14 @@ fi
 echo "[4/6] Compile inside chroot"
 chroot "$CHROOT" /bin/bash -euo pipefail -c '
 export SOC=am62a
+if ! command -v meson >/dev/null || ! command -v ninja >/dev/null || \
+   ! pkg-config --exists gstreamer-video-1.0 gstreamer-allocators-1.0 gudev-1.0; then
+  apt-get update
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    meson ninja-build libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgudev-1.0-dev
+fi
+bash /opt/ecpp/gstreamer-v4l2/build-native.sh \
+  /opt/ecpp/gst-plugins-good-1.26.2.tar.xz /opt/ecpp/gstreamer-v4l2-out
 cp -a /opt/ecpp/include/. /usr/local/include/
 ORT=/usr/local/include/onnxruntime/core/session/onnxruntime_c_api.h
 if [ -f "$ORT" ]; then
@@ -124,6 +146,7 @@ APP_BIN="$CHROOT/opt/ecpp/src/apps_cpp/bin/Release/app_edgeai"
 DLINF_LIBDIR="$CHROOT/opt/ecpp/src/edgeai-dl-inferer/lib/Release"
 [ -f "$APP_BIN" ] || { echo "ERROR: build product missing"; exit 1; }
 mkdir -p "$OUT"; cp "$APP_BIN" "$OUT/app_edgeai"
+cp "$CHROOT/opt/ecpp/gstreamer-v4l2-out/libgstvideo4linux2.so" "$OUT/"
 echo "  product: $OUT/app_edgeai ($(du -h "$OUT/app_edgeai" | cut -f1))"
 
 if [ -n "$INSTALL_ROOTFS" ]; then
@@ -132,6 +155,8 @@ if [ -n "$INSTALL_ROOTFS" ]; then
 
   # 1. demo binary
   install -m755 -D "$APP_BIN" "$R/usr/local/bin/app_edgeai"
+  install -m644 -D "$OUT/libgstvideo4linux2.so" \
+    "$R/usr/lib/aarch64-linux-gnu/gstreamer-1.0/libgstvideo4linux2.so"
 
   # 2. SDK headers -> /usr/include/edgeai (dl-inferer API + backends + app_utils)
   rm -rf "$R/usr/include/edgeai"; mkdir -p "$R/usr/include/edgeai"
