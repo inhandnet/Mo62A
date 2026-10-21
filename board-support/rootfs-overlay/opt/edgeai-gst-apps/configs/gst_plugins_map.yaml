@@ -198,7 +198,10 @@ am62a:
     h264dec:
         element: v4l2h264dec
         property:
-            capture-io-mode: 5
+            # Wave5 exposes NV12M; export its planes and let tiovxmemalloc
+            # copy into a contiguous TI buffer. Import mode 5 expects two
+            # DMA buffers, but the TI allocator supplies one.
+            capture-io-mode: 4
     h265dec:
         element: v4l2h265dec
     h264enc:

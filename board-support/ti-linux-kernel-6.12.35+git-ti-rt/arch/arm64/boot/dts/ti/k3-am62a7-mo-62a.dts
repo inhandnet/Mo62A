@@ -743,12 +743,13 @@
 };
 
 /*
- * VDEC (wave521c) expects an IRQ and an OPP table. Without these, the driver
- * falls back to polling (IRQ index not found).
- * Keep this aligned with TI reference DTS/DTSI for AM62* wave521c.
+ * Keep the AM62A reference DTS polling path for VDEC (wave521c).
+ * The AM62P SPI 225 mapping does not signal on this board and makes sequence
+ * initialization wait for an interrupt until it times out. The wave5 driver
+ * already supports polling when no interrupt resource is supplied.
  */
 &vpu {
-	interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
+	/delete-property/ interrupts;
 
 	operating-points-v2 = <&vpu_opp_table>;
 	vpu_opp_table: opp-table {
