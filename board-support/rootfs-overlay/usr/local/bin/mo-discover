@@ -44,13 +44,13 @@ def _get_build_date() -> str:
     return "unknown"
 
 
-def _primary_ip() -> str:
+def _primary_ip(peer_ip: str) -> str:
     try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        ip = s.getsockname()[0]
-        s.close()
-        return ip
+        # Select the route back to the requester, even without a default
+        # gateway (direct link-local Ethernet). UDP connect sends no packet.
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect((peer_ip, LISTEN_PORT))
+            return s.getsockname()[0]
     except Exception:
         return "127.0.0.1"
 
@@ -120,11 +120,11 @@ def main():
         if data.strip() != PROBE_MAGIC:
             continue
 
-        ip = _primary_ip()
+        ip = _primary_ip(addr[0])
         mac = _mac_for_ip(ip)
 
         payload = json.dumps({
-            "hostname": hostname,
+            "hostname": socket.gethostname(),
             "ip": ip,
             "mac": mac,
             "version": version,
