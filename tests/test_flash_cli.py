@@ -147,7 +147,7 @@ mock_step() {
 for step in build_factory_deb create_sparse_image partition_image_mbr copy_boot_files \
   img_extract_rootfs_tarball install_kernel_modules_into_rootfs \
   install_external_apps_into_rootfs install_external_drivers_into_rootfs \
-  install_rootfs_overlay compress_outputs write_checksums; do
+  install_rootfs_overlay write_release_file compress_outputs write_checksums; do
   eval "$step() { mock_step $step; }"
 done
 attach_loop() { LOOPDEV=/dev/mock-loop; }
@@ -175,7 +175,7 @@ main "$@"
             "build_factory_deb", "create_sparse_image", "partition_image_mbr", "copy_boot_files",
             "img_extract_rootfs_tarball", "install_kernel_modules_into_rootfs",
             "install_external_apps_into_rootfs", "install_external_drivers_into_rootfs",
-            "install_rootfs_overlay", "compress_outputs", "write_checksums",
+            "install_rootfs_overlay", "write_release_file", "compress_outputs", "write_checksums",
         ]])
         self.assertEqual(list(self.output.iterdir()), [])  # lock released
 

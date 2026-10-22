@@ -40,7 +40,10 @@ SD_MODE="full"
 # Image name format: mo62a-trixie-xfce-<version>   (e.g. mo62a-trixie-xfce-V1.0.0)
 # Only VERSION varies between releases; the rest is fixed. DATE is still used to
 # stamp built external apps (BUILD_DATE) but is no longer part of the image name.
-IMAGE_VERSION="V1.0.0"
+# Default to the newest release tag of this checkout (e.g. V1.1.0) so the
+# interactive default matches the published changelog; --image requires --version.
+IMAGE_VERSION="$(git -C "$SCRIPT_DIR" tag -l 'V*' 2>/dev/null | sort -V | tail -n 1)"
+[[ -n "$IMAGE_VERSION" ]] || IMAGE_VERSION="V1.0.0"
 IMAGE_DATE="$(date +%Y-%m-%d)"
 IMAGE_PREFIX="mo62a-trixie-xfce"
 OUT_DIR=""
@@ -259,6 +262,25 @@ install_rootfs_overlay() {
 # UID/GID (1000) onto system paths such as /etc/fstab or /usr/include. Any
 # such entry outside /home belongs to root on a fresh image; also drop the
 # group-write bit that a umask 002 checkout leaves on them.
+write_release_file() {
+  # Device-side identity of the image, os-release style: cat /etc/mo-62a-release
+  local kernel_release target
+  [[ -d "${ROOTFS_MNT:-}" ]] || die "ROOTFS_MNT not mounted; cannot write release file"
+  kernel_release="$(ls -1 "$ROOTFS_MNT/usr/lib/modules" 2>/dev/null | sort -V | tail -n 1)"
+  target="$ROOTFS_MNT/etc/mo-62a-release"
+  install -d -m 0755 "$ROOTFS_MNT/etc"
+  {
+    echo "MO_BOARD=\"Mo 62A\""
+    echo "MO_IMAGE_NAME=\"$NAME\""
+    echo "MO_IMAGE_VERSION=\"$IMAGE_VERSION\""
+    echo "MO_BUILD_DATE=\"$IMAGE_DATE\""
+    echo "MO_KERNEL=\"${kernel_release:-unknown}\""
+    echo "MO_ROOTFS_TARBALL=\"$(basename -- "${ROOTFS_TARBALL:-unknown}")\""
+  } > "$target"
+  chmod 0644 "$target"
+  echo "Wrote $target ($IMAGE_VERSION, built $IMAGE_DATE)"
+}
+
 normalize_rootfs_ownership() {
   [[ -d "${ROOTFS_MNT:-}" ]] || return 0
   local count
@@ -721,6 +743,7 @@ sd_extract_rootfs() {
   install_external_apps_into_rootfs
   install_external_drivers_into_rootfs
   install_rootfs_overlay
+  write_release_file
   sync
 }
 
@@ -961,6 +984,7 @@ run_image_flow() {
   install_external_apps_into_rootfs
   install_external_drivers_into_rootfs
   install_rootfs_overlay
+  write_release_file
 
   sync
   umount "$BOOT_MNT";   rmdir "$BOOT_MNT"   || true; BOOT_MNT=""
