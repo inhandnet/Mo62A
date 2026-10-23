@@ -8,14 +8,47 @@ MO-62A single-board computer SDK, powered by the TI AM62A7 platform, offering up
 
 [![Mo repository ownership and unified website](architecture/repository-map.en.svg)](architecture/repository-map.en.svg)
 
-| Repository | Maintained source | Delivery responsibility |
-|---|---|---|
-| **developer** · GitLab | Website components, routes, search, integration and contracts | The complete website, release composition and deployment |
-| [mo-docs](https://github.com/inhandnet/mo-docs) | Software/hardware tutorials, specifications, media, design files and training | Versioned content and reference assets |
-| [mo-tools](https://github.com/inhandnet/mo-tools) | Toolchain/SDK selection, environment setup, reusable tools and Studio | Tool metadata and source packages |
-| [mo-models](https://github.com/inhandnet/mo-models) | Model catalog, compilation resources, compatibility and raw benchmarks | Model references, evidence and artifact status |
-| [mo-examples](https://github.com/inhandnet/mo-examples) | Complete examples with related firmware, clients and configuration | Example sources and their requirements |
-| **Mo\*** · product repositories | Each product's BSP, drivers, root filesystem, image build and flashing | Product images and checksummed release metadata |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="171" align="left">Repository</th>
+      <th width="398" align="left">Maintained source</th>
+      <th width="379" align="left">Delivery responsibility</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><strong>developer</strong> · GitLab</td>
+      <td align="left">Website components, routes, search, integration and contracts</td>
+      <td align="left">The complete website, release composition and deployment</td>
+    </tr>
+    <tr>
+      <td align="left"><a href="https://github.com/inhandnet/mo-docs">mo-docs</a></td>
+      <td align="left">Software/hardware tutorials, specifications, media, design files and training</td>
+      <td align="left">Versioned content and reference assets</td>
+    </tr>
+    <tr>
+      <td align="left"><a href="https://github.com/inhandnet/mo-tools">mo-tools</a></td>
+      <td align="left">Toolchain/SDK selection, environment setup, reusable tools and Studio</td>
+      <td align="left">Tool metadata and source packages</td>
+    </tr>
+    <tr>
+      <td align="left"><a href="https://github.com/inhandnet/mo-models">mo-models</a></td>
+      <td align="left">Model catalog, compilation resources, compatibility and raw benchmarks</td>
+      <td align="left">Model references, evidence and artifact status</td>
+    </tr>
+    <tr>
+      <td align="left"><a href="https://github.com/inhandnet/mo-examples">mo-examples</a></td>
+      <td align="left">Complete examples with related firmware, clients and configuration</td>
+      <td align="left">Example sources and their requirements</td>
+    </tr>
+    <tr>
+      <td align="left"><strong>Mo*</strong> · product repositories</td>
+      <td align="left">Each product&#x27;s BSP, drivers, root filesystem, image build and flashing</td>
+      <td align="left">Product images and checksummed release metadata</td>
+    </tr>
+  </tbody>
+</table>
 
 `Mo*` covers independently maintained product repositories such as [Mo62A](https://github.com/inhandnet/Mo62A), Mo68A, Mo69A, Mo67A, Mo3588 and Mo3568. The framework does not fix their number. Hardware content and maintainer training move from mo-hardware into mo-docs; mo-hardware remains a historical migration source and is not a separate member of the target website composition.
 
@@ -129,11 +162,28 @@ mo-62a/
 
 The following host environment has been verified for building this SDK:
 
-| Item | Requirement |
-|------|-------------|
-| OS | Ubuntu 22.04 LTS (x86_64) |
-| Kernel | 6.8.0 or later |
-| Architecture | x86_64 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Item</th>
+      <th width="664" align="left">Requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">OS</td>
+      <td align="left">Ubuntu 22.04 LTS (x86_64)</td>
+    </tr>
+    <tr>
+      <td align="left">Kernel</td>
+      <td align="left">6.8.0 or later</td>
+    </tr>
+    <tr>
+      <td align="left">Architecture</td>
+      <td align="left">x86_64</td>
+    </tr>
+  </tbody>
+</table>
 
 Required host packages:
 
@@ -208,21 +258,61 @@ Two cross-compilation toolchains are included in the SDK:
 
 **AArch64 toolchain** — used for Linux kernel and A53 U-Boot:
 
-| Item | Value |
-|------|-------|
-| Path | `linux-devkit/sysroots/x86_64-arago-linux/usr/bin/aarch64-oe-linux/` |
-| Prefix | `aarch64-oe-linux-` |
-| GCC version | 13.4.0 |
-| Target sysroot | `linux-devkit/sysroots/aarch64-oe-linux/` |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Item</th>
+      <th width="664" align="left">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Path</td>
+      <td align="left"><code>linux-devkit/sysroots/x86_64-arago-linux/usr/bin/aarch64-oe-linux/</code></td>
+    </tr>
+    <tr>
+      <td align="left">Prefix</td>
+      <td align="left"><code>aarch64-oe-linux-</code></td>
+    </tr>
+    <tr>
+      <td align="left">GCC version</td>
+      <td align="left">13.4.0</td>
+    </tr>
+    <tr>
+      <td align="left">Target sysroot</td>
+      <td align="left"><code>linux-devkit/sysroots/aarch64-oe-linux/</code></td>
+    </tr>
+  </tbody>
+</table>
 
 **ARMv7 R5 toolchain** — used for R5 SPL (tiboot3):
 
-| Item | Value |
-|------|-------|
-| Path | `k3r5-devkit/sysroots/x86_64-arago-linux/usr/bin/arm-oe-eabi/` |
-| Prefix | `arm-oe-eabi-` |
-| GCC version | 13.4.0 |
-| Target sysroot | `k3r5-devkit/sysroots/armv7at2hf-vfp-oe-eabi/` |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Item</th>
+      <th width="664" align="left">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Path</td>
+      <td align="left"><code>k3r5-devkit/sysroots/x86_64-arago-linux/usr/bin/arm-oe-eabi/</code></td>
+    </tr>
+    <tr>
+      <td align="left">Prefix</td>
+      <td align="left"><code>arm-oe-eabi-</code></td>
+    </tr>
+    <tr>
+      <td align="left">GCC version</td>
+      <td align="left">13.4.0</td>
+    </tr>
+    <tr>
+      <td align="left">Target sysroot</td>
+      <td align="left"><code>k3r5-devkit/sysroots/armv7at2hf-vfp-oe-eabi/</code></td>
+    </tr>
+  </tbody>
+</table>
 
 To verify both toolchains are available (run after `setup.sh` has completed):
 
@@ -254,34 +344,100 @@ Copyright (C) 2023 Free Software Foundation, Inc.
 
 MO-62A specific files added to the U-Boot source tree:
 
-| File | Description |
-|------|-------------|
-| `board-support/ti-u-boot-2025.01+git/configs/am62ax_mo_62a_a53_defconfig` | A53 U-Boot defconfig |
-| `board-support/ti-u-boot-2025.01+git/configs/am62ax_mo_62a_r5_defconfig` | R5 SPL defconfig |
-| `board-support/ti-u-boot-2025.01+git/dts/upstream/src/arm64/ti/k3-am62a7-mo-62a.dts` | A53 main device tree |
-| `board-support/ti-u-boot-2025.01+git/dts/upstream/src/arm64/ti/k3-am62a7-mo-62a-pinmux.dtsi` | Pin mux configuration |
-| `board-support/ti-u-boot-2025.01+git/arch/arm/dts/k3-am62a7-r5-mo-62a.dts` | R5 SPL device tree |
-| `board-support/ti-u-boot-2025.01+git/arch/arm/dts/k3-am62a7-mo-62a-u-boot.dtsi` | U-Boot specific DT additions |
-| `board-support/ti-u-boot-2025.01+git/arch/arm/dts/k3-am62a7-mo-62a-binman.dtsi` | Binman packaging configuration |
-| `board-support/ti-u-boot-2025.01+git/arch/arm/dts/k3-am62a7-mo-62a-lp4-4GB.dtsi` | LPDDR4 4GB memory configuration |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">File</th>
+      <th width="664" align="left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>board-support/ti-u-boot-2025.01+git/configs/am62ax_mo_62a_a53_defconfig</code></td>
+      <td align="left">A53 U-Boot defconfig</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-u-boot-2025.01+git/configs/am62ax_mo_62a_r5_defconfig</code></td>
+      <td align="left">R5 SPL defconfig</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-u-boot-2025.01+git/dts/upstream/src/arm64/ti/k3-am62a7-mo-62a.dts</code></td>
+      <td align="left">A53 main device tree</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-u-boot-2025.01+git/dts/upstream/src/arm64/ti/k3-am62a7-mo-62a-pinmux.dtsi</code></td>
+      <td align="left">Pin mux configuration</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-u-boot-2025.01+git/arch/arm/dts/k3-am62a7-r5-mo-62a.dts</code></td>
+      <td align="left">R5 SPL device tree</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-u-boot-2025.01+git/arch/arm/dts/k3-am62a7-mo-62a-u-boot.dtsi</code></td>
+      <td align="left">U-Boot specific DT additions</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-u-boot-2025.01+git/arch/arm/dts/k3-am62a7-mo-62a-binman.dtsi</code></td>
+      <td align="left">Binman packaging configuration</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-u-boot-2025.01+git/arch/arm/dts/k3-am62a7-mo-62a-lp4-4GB.dtsi</code></td>
+      <td align="left">LPDDR4 4GB memory configuration</td>
+    </tr>
+  </tbody>
+</table>
 
 Prebuilt firmware required during the build (from TI, not modified):
 
-| File | Description |
-|------|-------------|
-| `board-support/prebuilt-images/am62a-evm/bl31.bin` | Arm Trusted Firmware (TF-A) |
-| `board-support/prebuilt-images/am62a-evm/bl32.bin` | OP-TEE OS |
-| `board-support/prebuilt-images/am62a-evm/ti-dm/am62axx/dm_edgeai_mcu1_0_release_strip.out` | TI Device Manager firmware |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">File</th>
+      <th width="664" align="left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>board-support/prebuilt-images/am62a-evm/bl31.bin</code></td>
+      <td align="left">Arm Trusted Firmware (TF-A)</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/prebuilt-images/am62a-evm/bl32.bin</code></td>
+      <td align="left">OP-TEE OS</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/prebuilt-images/am62a-evm/ti-dm/am62axx/dm_edgeai_mcu1_0_release_strip.out</code></td>
+      <td align="left">TI Device Manager firmware</td>
+    </tr>
+  </tbody>
+</table>
 
 ### 3.2 Signing Keys
 
 The TI K3 binman packaging requires two RSA private key files in PEM format under
 `board-support/ti-u-boot-2025.01+git/arch/arm/mach-k3/keys/`:
 
-| File | Used for | Note |
-|------|----------|------|
-| `custMpk.pem` | Signs `tiboot3-*-hs-*.bin` and `tiboot3-*-hs-fs-*.bin` (HS / HS-FS devices) | Copied from `custMpk.key` on first build |
-| `ti-degenerate-key.pem` | Signs `tiboot3-*-gp-*.bin` (GP devices) | Generated locally; AM62A ROM does not verify the RSA signature in GP mode, so any valid RSA key is functionally equivalent |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">File</th>
+      <th width="351" align="left">Used for</th>
+      <th width="351" align="left">Note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>custMpk.pem</code></td>
+      <td align="left">Signs <code>tiboot3-*-hs-*.bin</code> and <code>tiboot3-*-hs-fs-*.bin</code> (HS / HS-FS devices)</td>
+      <td align="left">Copied from <code>custMpk.key</code> on first build</td>
+    </tr>
+    <tr>
+      <td align="left"><code>ti-degenerate-key.pem</code></td>
+      <td align="left">Signs <code>tiboot3-*-gp-*.bin</code> (GP devices)</td>
+      <td align="left">Generated locally; AM62A ROM does not verify the RSA signature in GP mode, so any valid RSA key is functionally equivalent</td>
+    </tr>
+  </tbody>
+</table>
 
 Both files are covered by `*.pem` in the U-Boot tree's `.gitignore` and are therefore never committed. `make u-boot` (via the `u-boot-keys` prerequisite) generates them automatically on first use — no manual steps are required.
 
@@ -327,14 +483,54 @@ make u-boot_stage
 
 After staging, the following files are available in `board-support/built-images/`:
 
-| File | Size | Source | Description |
-|------|------|--------|-------------|
-| `tiboot3-am62ax-gp-mo-62a.bin` | ~318 KB | R5 build | R5 SPL for GP (General Purpose) devices |
-| `tiboot3-am62ax-hs-fs-mo-62a.bin` | ~320 KB | R5 build | R5 SPL for HS-FS (High Security, Field Securable) devices |
-| `tiboot3-am62ax-hs-mo-62a.bin` | ~320 KB | R5 build | R5 SPL for HS (High Security) devices |
-| `tiboot3.bin` | ~320 KB | R5 build | Default tiboot3 (HS-FS, used by flash tool) |
-| `tispl.bin` | ~1.7 MB | A53 build | TI SPL — loads OP-TEE, TF-A, and A53 U-Boot |
-| `u-boot.img` | ~1.2 MB | A53 build | A53 U-Boot FIT image |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="209" align="left">File</th>
+      <th width="246" align="left">Size</th>
+      <th width="246" align="left">Source</th>
+      <th width="247" align="left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>tiboot3-am62ax-gp-mo-62a.bin</code></td>
+      <td align="left">~318 KB</td>
+      <td align="left">R5 build</td>
+      <td align="left">R5 SPL for GP (General Purpose) devices</td>
+    </tr>
+    <tr>
+      <td align="left"><code>tiboot3-am62ax-hs-fs-mo-62a.bin</code></td>
+      <td align="left">~320 KB</td>
+      <td align="left">R5 build</td>
+      <td align="left">R5 SPL for HS-FS (High Security, Field Securable) devices</td>
+    </tr>
+    <tr>
+      <td align="left"><code>tiboot3-am62ax-hs-mo-62a.bin</code></td>
+      <td align="left">~320 KB</td>
+      <td align="left">R5 build</td>
+      <td align="left">R5 SPL for HS (High Security) devices</td>
+    </tr>
+    <tr>
+      <td align="left"><code>tiboot3.bin</code></td>
+      <td align="left">~320 KB</td>
+      <td align="left">R5 build</td>
+      <td align="left">Default tiboot3 (HS-FS, used by flash tool)</td>
+    </tr>
+    <tr>
+      <td align="left"><code>tispl.bin</code></td>
+      <td align="left">~1.7 MB</td>
+      <td align="left">A53 build</td>
+      <td align="left">TI SPL — loads OP-TEE, TF-A, and A53 U-Boot</td>
+    </tr>
+    <tr>
+      <td align="left"><code>u-boot.img</code></td>
+      <td align="left">~1.2 MB</td>
+      <td align="left">A53 build</td>
+      <td align="left">A53 U-Boot FIT image</td>
+    </tr>
+  </tbody>
+</table>
 
 > **Note:** The appropriate `tiboot3-*.bin` variant depends on the device security state. Most production MO-62A boards ship as HS-FS, which uses `tiboot3-am62ax-hs-fs-mo-62a.bin`. The flash tool uses `tiboot3.bin` (a copy of the HS-FS variant) by default.
 
@@ -346,22 +542,68 @@ After staging, the following files are available in `board-support/built-images/
 
 MO-62A specific files added to the Linux kernel source tree:
 
-| File | Description |
-|------|-------------|
-| `board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/configs/am62ax_mo_62a_defconfig` | MO-62A base kernel defconfig |
-| `board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/boot/dts/ti/k3-am62a7-mo-62a.dts` | MO-62A main device tree |
-| `board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/boot/dts/ti/k3-am62a7-mo-62a-pinmux.dtsi` | Pin mux configuration |
-| `board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/boot/dts/ti/k3-am62a7-mo-62a-exp-periph.dtso` | 40-pin peripheral mode DT overlay (I2C + UART + SPI + PWM + MCASP2 + WM8960) |
-| `board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/boot/dts/ti/k3-am62a7-mo-62a-exp-spi0.dtso` | 40-pin SPI0-only DT overlay |
-| `board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/boot/dts/ti/k3-am62a7-mo-62a-exp-audio.dtso` | WM8960 Audio HAT DT overlay (I2C + MCASP2 only) |
-| `board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/boot/dts/ti/k3-am62a7-mo-62a-cam-imx219.dtso` | Sony IMX219 CSI2 camera DT overlay |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">File</th>
+      <th width="664" align="left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/configs/am62ax_mo_62a_defconfig</code></td>
+      <td align="left">MO-62A base kernel defconfig</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/boot/dts/ti/k3-am62a7-mo-62a.dts</code></td>
+      <td align="left">MO-62A main device tree</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/boot/dts/ti/k3-am62a7-mo-62a-pinmux.dtsi</code></td>
+      <td align="left">Pin mux configuration</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/boot/dts/ti/k3-am62a7-mo-62a-exp-periph.dtso</code></td>
+      <td align="left">40-pin peripheral mode DT overlay (I2C + UART + SPI + PWM + MCASP2 + WM8960)</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/boot/dts/ti/k3-am62a7-mo-62a-exp-spi0.dtso</code></td>
+      <td align="left">40-pin SPI0-only DT overlay</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/boot/dts/ti/k3-am62a7-mo-62a-exp-audio.dtso</code></td>
+      <td align="left">WM8960 Audio HAT DT overlay (I2C + MCASP2 only)</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/boot/dts/ti/k3-am62a7-mo-62a-cam-imx219.dtso</code></td>
+      <td align="left">Sony IMX219 CSI2 camera DT overlay</td>
+    </tr>
+  </tbody>
+</table>
 
 The following kernel config fragments are applied on top of the defconfig during the build:
 
-| Fragment | Location | Purpose |
-|----------|----------|---------|
-| `ti_arm64_prune.config` | `kernel/configs/` | Removes non-TI ARM64 platform support to reduce build size |
-| `ti_rt.config` | `kernel/configs/` | Enables PREEMPT_RT real-time kernel patches |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">Fragment</th>
+      <th width="351" align="left">Location</th>
+      <th width="351" align="left">Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>ti_arm64_prune.config</code></td>
+      <td align="left"><code>kernel/configs/</code></td>
+      <td align="left">Removes non-TI ARM64 platform support to reduce build size</td>
+    </tr>
+    <tr>
+      <td align="left"><code>ti_rt.config</code></td>
+      <td align="left"><code>kernel/configs/</code></td>
+      <td align="left">Enables PREEMPT_RT real-time kernel patches</td>
+    </tr>
+  </tbody>
+</table>
 
 ### 4.2 Build DTBs
 
@@ -408,12 +650,37 @@ make linux_stage
 
 After staging, the following files are added to `board-support/built-images/`:
 
-| File | Size | Description |
-|------|------|-------------|
-| `Image` | ~18 MB | Uncompressed kernel image |
-| `Image.gz` | ~7.0 MB | Compressed kernel image |
-| `fitImage` | ~7.3 MB | Signed FIT image (kernel + DTBs), used for verified boot |
-| `dtb/ti/*.dtb` / `dtb/ti/*.dtbo` | — | 63 device tree blobs and overlays |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">File</th>
+      <th width="351" align="left">Size</th>
+      <th width="351" align="left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>Image</code></td>
+      <td align="left">~18 MB</td>
+      <td align="left">Uncompressed kernel image</td>
+    </tr>
+    <tr>
+      <td align="left"><code>Image.gz</code></td>
+      <td align="left">~7.0 MB</td>
+      <td align="left">Compressed kernel image</td>
+    </tr>
+    <tr>
+      <td align="left"><code>fitImage</code></td>
+      <td align="left">~7.3 MB</td>
+      <td align="left">Signed FIT image (kernel + DTBs), used for verified boot</td>
+    </tr>
+    <tr>
+      <td align="left"><code>dtb/ti/*.dtb</code> / <code>dtb/ti/*.dtbo</code></td>
+      <td align="left">—</td>
+      <td align="left">63 device tree blobs and overlays</td>
+    </tr>
+  </tbody>
+</table>
 
 > **Note:** `fitImage` is signed with the `custMpk` key from the U-Boot source tree. The signing step also triggers a rebuild of `tispl.bin` so it embeds the MO-62A DTB (`k3-am62a7-mo-62a.dtb`) in the A53 SPL. This means `make linux` will always update both `fitImage` and `tispl.bin` in `built-images/`.
 
@@ -423,12 +690,32 @@ The flash tool always runs `make modules_install` during both online and offline
 
 Use the table below to determine which build commands are required before running the flash tool:
 
-| Change type | Required build steps |
-|-------------|----------------------|
-| DTS / pinmux only | `make linux-dtbs` → `make linux-dtbs_stage` → **`make linux`** → `make linux_stage` |
-| Kernel source (`.c` / `.h`) | `make linux` → `make linux_stage` |
-| U-Boot source | `make u-boot` → `make u-boot_stage` |
-| rootfs overlay only (scripts, services) | No kernel rebuild required — flash tool copies the overlay automatically |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Change type</th>
+      <th width="664" align="left">Required build steps</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">DTS / pinmux only</td>
+      <td align="left"><code>make linux-dtbs</code> → <code>make linux-dtbs_stage</code> → <strong><code>make linux</code></strong> → <code>make linux_stage</code></td>
+    </tr>
+    <tr>
+      <td align="left">Kernel source (<code>.c</code> / <code>.h</code>)</td>
+      <td align="left"><code>make linux</code> → <code>make linux_stage</code></td>
+    </tr>
+    <tr>
+      <td align="left">U-Boot source</td>
+      <td align="left"><code>make u-boot</code> → <code>make u-boot_stage</code></td>
+    </tr>
+    <tr>
+      <td align="left">rootfs overlay only (scripts, services)</td>
+      <td align="left">No kernel rebuild required — flash tool copies the overlay automatically</td>
+    </tr>
+  </tbody>
+</table>
 
 > **Important:** Even when only DTS files change, `make linux` must be run (or the kernel module `.ko` files must be confirmed to be fully compiled in the source tree) before flashing. Running only `make linux-dtbs` is not sufficient because it does not compile kernel modules.
 
@@ -497,12 +784,32 @@ Warning (reg_format): spidev@0: reg property has invalid length
 
 **Fix:** Added `#address-cells = <1>; #size-cells = <0>;` to every overlay node that contains child devices with `reg` properties:
 
-| Overlay file | Node patched |
-|---|---|
-| `exp-periph.dtso` | `&wkup_i2c0`, `&main_spi0` |
-| `exp-audio.dtso` | `&wkup_i2c0` |
-| `exp-spi0.dtso` | `&main_spi0` |
-| `cam-imx219.dtso` | `&main_i2c2` |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Overlay file</th>
+      <th width="664" align="left">Node patched</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>exp-periph.dtso</code></td>
+      <td align="left"><code>&amp;wkup_i2c0</code>, <code>&amp;main_spi0</code></td>
+    </tr>
+    <tr>
+      <td align="left"><code>exp-audio.dtso</code></td>
+      <td align="left"><code>&amp;wkup_i2c0</code></td>
+    </tr>
+    <tr>
+      <td align="left"><code>exp-spi0.dtso</code></td>
+      <td align="left"><code>&amp;main_spi0</code></td>
+    </tr>
+    <tr>
+      <td align="left"><code>cam-imx219.dtso</code></td>
+      <td align="left"><code>&amp;main_i2c2</code></td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -572,12 +879,32 @@ Select operation mode:
 Select mode number (default 1):
 ```
 
-| Mode | Description |
-|------|-------------|
-| `full` | Full write: wipe and repartition, format, copy boot files, extract rootfs, install kernel modules |
-| `partition` | Partitioning only: wipe and recreate MBR, format partitions — no content written |
-| `boot` | Overwrite BOOT partition only — re-flashes bootloader and kernel without touching rootfs |
-| `rootfs` | Overwrite rootfs partition only — re-extracts the rootfs without touching the BOOT partition |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Mode</th>
+      <th width="664" align="left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>full</code></td>
+      <td align="left">Full write: wipe and repartition, format, copy boot files, extract rootfs, install kernel modules</td>
+    </tr>
+    <tr>
+      <td align="left"><code>partition</code></td>
+      <td align="left">Partitioning only: wipe and recreate MBR, format partitions — no content written</td>
+    </tr>
+    <tr>
+      <td align="left"><code>boot</code></td>
+      <td align="left">Overwrite BOOT partition only — re-flashes bootloader and kernel without touching rootfs</td>
+    </tr>
+    <tr>
+      <td align="left"><code>rootfs</code></td>
+      <td align="left">Overwrite rootfs partition only — re-extracts the rootfs without touching the BOOT partition</td>
+    </tr>
+  </tbody>
+</table>
 
 For a fresh SD card, select `full`. The tool will ask for confirmation (`Type YES to continue`), then proceed automatically:
 
@@ -641,13 +968,36 @@ Image size (GiB, integer) (default: 12): 12
 Compression (zip|xz|none) (default: xz): xz
 ```
 
-| Parameter | Description |
-|-----------|-------------|
-| Output directory | Where to write the `.img` and checksum files |
-| Version | Forms the name `mo62a-trixie-xfce-<version>` and the external application version |
-| Date | Build date stamped into external applications |
-| Image size (GiB) | Whole image size, including BOOT, 4 GiB swap, rootfs and filesystem overhead; default 12 GiB |
-| Compression | `xz` (default), `zip`, or `none` (no compression) |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Parameter</th>
+      <th width="664" align="left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Output directory</td>
+      <td align="left">Where to write the <code>.img</code> and checksum files</td>
+    </tr>
+    <tr>
+      <td align="left">Version</td>
+      <td align="left">Forms the name <code>mo62a-trixie-xfce-&lt;version&gt;</code> and the external application version</td>
+    </tr>
+    <tr>
+      <td align="left">Date</td>
+      <td align="left">Build date stamped into external applications</td>
+    </tr>
+    <tr>
+      <td align="left">Image size (GiB)</td>
+      <td align="left">Whole image size, including BOOT, 4 GiB swap, rootfs and filesystem overhead; default 12 GiB</td>
+    </tr>
+    <tr>
+      <td align="left">Compression</td>
+      <td align="left"><code>xz</code> (default), <code>zip</code>, or <code>none</code> (no compression)</td>
+    </tr>
+  </tbody>
+</table>
 
 The tool creates a sparse `.img`, partitions and formats it via a loop device, installs the boot files and rootfs, then detaches and compresses it. It shares the kernel-module, external-application, external-driver and overlay installation functions with direct SD card writing. This does not imply byte-identical filesystem images.
 
@@ -774,10 +1124,27 @@ After repacking, re-run the flash tool as normal. The newly installed packages w
 
 **Packages currently pre-installed via this workflow:**
 
-| Package | Required by | Purpose |
-|---------|-------------|---------|
-| `frei0r-plugins` | `imx219-preview.sh` | White-balance correction via `frei0r-filter-white-balance` GStreamer element |
-| `tcpdump` (+`libpcap0.8t64`) | Wi-Fi monitor mode | 802.11 over-the-air packet capture in monitor mode |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">Package</th>
+      <th width="351" align="left">Required by</th>
+      <th width="351" align="left">Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>frei0r-plugins</code></td>
+      <td align="left"><code>imx219-preview.sh</code></td>
+      <td align="left">White-balance correction via <code>frei0r-filter-white-balance</code> GStreamer element</td>
+    </tr>
+    <tr>
+      <td align="left"><code>tcpdump</code> (+<code>libpcap0.8t64</code>)</td>
+      <td align="left">Wi-Fi monitor mode</td>
+      <td align="left">802.11 over-the-air packet capture in monitor mode</td>
+    </tr>
+  </tbody>
+</table>
 
 > **Common chroot pitfall:** if the base tar lacks the `/proc`, `/sys`, `/dev`, `/dev/pts`, `/tmp`, `/run` directories, mounting or `apt` will fail (e.g. `tcpdump`'s postinst `adduser` errors with `could not open lock file /run/adduser`). Before entering the chroot, run `sudo mkdir -p "$ROOTFS_DIR"/{proc,sys,dev,dev/pts,tmp,run}` and `chmod 1777 .../tmp`.
 
@@ -791,10 +1158,27 @@ This section documents issues that have been encountered when building or modify
 
 Two rules are non-negotiable when repacking the tarball:
 
-| Rule | Command flag | What breaks without it |
-|------|-------------|------------------------|
-| Always use `sudo` | `sudo tar -cpJf …` | Root-owned files are stored with the host user's UID (e.g. 1000). `sudo`, `su`, `passwd`, `Xorg.wrap` and other setuid binaries lose their ownership and stop working after flashing. |
-| Always use `--numeric-owner` | `tar … --numeric-owner` | UIDs/GIDs are stored as names, not numbers. If the host's `/etc/passwd` does not have the same usernames as the rootfs (e.g. `lightdm`, `saned`, `messagebus`), those entries are silently mapped to `nobody` during extraction, breaking services on the target. |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">Rule</th>
+      <th width="351" align="left">Command flag</th>
+      <th width="351" align="left">What breaks without it</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Always use <code>sudo</code></td>
+      <td align="left"><code>sudo tar -cpJf …</code></td>
+      <td align="left">Root-owned files are stored with the host user&#x27;s UID (e.g. 1000). <code>sudo</code>, <code>su</code>, <code>passwd</code>, <code>Xorg.wrap</code> and other setuid binaries lose their ownership and stop working after flashing.</td>
+    </tr>
+    <tr>
+      <td align="left">Always use <code>--numeric-owner</code></td>
+      <td align="left"><code>tar … --numeric-owner</code></td>
+      <td align="left">UIDs/GIDs are stored as names, not numbers. If the host&#x27;s <code>/etc/passwd</code> does not have the same usernames as the rootfs (e.g. <code>lightdm</code>, <code>saned</code>, <code>messagebus</code>), those entries are silently mapped to <code>nobody</code> during extraction, breaking services on the target.</td>
+    </tr>
+  </tbody>
+</table>
 
 The correct repack command is:
 
@@ -902,10 +1286,36 @@ tmpfs    /tmp    tmpfs    nosuid,nodev,size=50%    0    0
 
 Both online flashing and offline image creation produce identical partition layouts:
 
-| Partition | Number | Filesystem | Size | Label | Contents |
-|-----------|--------|------------|------|-------|----------|
-| BOOT | 1 | FAT32 (LBA) | 256 MiB | `BOOT` | Bootloader, kernel image, DTBs, extlinux config |
-| rootfs | 2 | ext4 | Remaining | `rootfs` | Root filesystem, kernel modules |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="158" align="left">Partition</th>
+      <th width="158" align="left">Number</th>
+      <th width="158" align="left">Filesystem</th>
+      <th width="158" align="left">Size</th>
+      <th width="158" align="left">Label</th>
+      <th width="158" align="left">Contents</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">BOOT</td>
+      <td align="left">1</td>
+      <td align="left">FAT32 (LBA)</td>
+      <td align="left">256 MiB</td>
+      <td align="left"><code>BOOT</code></td>
+      <td align="left">Bootloader, kernel image, DTBs, extlinux config</td>
+    </tr>
+    <tr>
+      <td align="left">rootfs</td>
+      <td align="left">2</td>
+      <td align="left">ext4</td>
+      <td align="left">Remaining</td>
+      <td align="left"><code>rootfs</code></td>
+      <td align="left">Root filesystem, kernel modules</td>
+    </tr>
+  </tbody>
+</table>
 
 Partition table type: **MBR** (Master Boot Record)
 
@@ -969,23 +1379,92 @@ Two boot labels are provided. `microSD` is the default — all 40-pin header pin
 
 The MO-62A is built around the **TI AM62A74** SoC. The top-level block diagram connects the following subsystems:
 
-| Subsystem | Key IC | SoC Interface |
-|-----------|--------|---------------|
-| Power Management | TPS65931211 (PMIC) | SOC_I2C0 |
-| eMMC Storage | — | MMC0 |
-| LPDDR4 Memory | MT53E1G32D2FW-046 | DDR32 (32-bit) |
-| Micro SD Card | — | MMC1 |
-| RGB-to-HDMI Transmitter | SiI9022ACNU | RGB888 + MCASP0 + SOC_I2C1 |
-| Gigabit Ethernet PHY | DP83867IR | RGMII1 + MDIO |
-| USB Hub (4-port) | USB2514 | USB1 |
-| Wi-Fi / BT | FG6221ASRC-0L | MMC2 (SDIO) + SOC_UART6 |
-| RTC | PCF85263ATL | SOC_I2C0 |
-| Audio Codec | TLV320AIC3106 | MCASP1 + SOC_I2C1 |
-| EEPROM | BL24C02 (M24M02E) | SOC_I2C1 |
-| CSI Camera | — | CSI0 (4-lane MIPI) + SOC_I2C2 |
-| 40-Pin Expansion | — | GPIO / I2C / SPI / UART / PWM / MCASP |
-| Fan Controller | TXB0104RUTR (voltage translation) | PWM + TIMER |
-| Debug UART | SN74LVC2G24DCUR (isolation) | SOC_UART0 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">Subsystem</th>
+      <th width="351" align="left">Key IC</th>
+      <th width="351" align="left">SoC Interface</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Power Management</td>
+      <td align="left">TPS65931211 (PMIC)</td>
+      <td align="left">SOC_I2C0</td>
+    </tr>
+    <tr>
+      <td align="left">eMMC Storage</td>
+      <td align="left">—</td>
+      <td align="left">MMC0</td>
+    </tr>
+    <tr>
+      <td align="left">LPDDR4 Memory</td>
+      <td align="left">MT53E1G32D2FW-046</td>
+      <td align="left">DDR32 (32-bit)</td>
+    </tr>
+    <tr>
+      <td align="left">Micro SD Card</td>
+      <td align="left">—</td>
+      <td align="left">MMC1</td>
+    </tr>
+    <tr>
+      <td align="left">RGB-to-HDMI Transmitter</td>
+      <td align="left">SiI9022ACNU</td>
+      <td align="left">RGB888 + MCASP0 + SOC_I2C1</td>
+    </tr>
+    <tr>
+      <td align="left">Gigabit Ethernet PHY</td>
+      <td align="left">DP83867IR</td>
+      <td align="left">RGMII1 + MDIO</td>
+    </tr>
+    <tr>
+      <td align="left">USB Hub (4-port)</td>
+      <td align="left">USB2514</td>
+      <td align="left">USB1</td>
+    </tr>
+    <tr>
+      <td align="left">Wi-Fi / BT</td>
+      <td align="left">FG6221ASRC-0L</td>
+      <td align="left">MMC2 (SDIO) + SOC_UART6</td>
+    </tr>
+    <tr>
+      <td align="left">RTC</td>
+      <td align="left">PCF85263ATL</td>
+      <td align="left">SOC_I2C0</td>
+    </tr>
+    <tr>
+      <td align="left">Audio Codec</td>
+      <td align="left">TLV320AIC3106</td>
+      <td align="left">MCASP1 + SOC_I2C1</td>
+    </tr>
+    <tr>
+      <td align="left">EEPROM</td>
+      <td align="left">BL24C02 (M24M02E)</td>
+      <td align="left">SOC_I2C1</td>
+    </tr>
+    <tr>
+      <td align="left">CSI Camera</td>
+      <td align="left">—</td>
+      <td align="left">CSI0 (4-lane MIPI) + SOC_I2C2</td>
+    </tr>
+    <tr>
+      <td align="left">40-Pin Expansion</td>
+      <td align="left">—</td>
+      <td align="left">GPIO / I2C / SPI / UART / PWM / MCASP</td>
+    </tr>
+    <tr>
+      <td align="left">Fan Controller</td>
+      <td align="left">TXB0104RUTR (voltage translation)</td>
+      <td align="left">PWM + TIMER</td>
+    </tr>
+    <tr>
+      <td align="left">Debug UART</td>
+      <td align="left">SN74LVC2G24DCUR (isolation)</td>
+      <td align="left">SOC_UART0</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -995,41 +1474,164 @@ The MO-62A is built around the **TI AM62A74** SoC. The top-level block diagram c
 
 **Power rails and distribution:**
 
-| Rail | Source | Typical Current | Consumers |
-|------|--------|-----------------|-----------|
-| VCC_3V3_MAIN | DCDC 6 A (TPS62A63RLR) | 6 A max | System 3.3 V backbone |
-| VCC_3V3_SYS | LDSW 4 A (TPS22965) | 957 mA | USB Hub, Wi-Fi/BT, Audio Codec, Ethernet PHY, HDMI TX, RTC |
-| VSYS_3V3_EXP | Load Switch 4 A (TPS22965) | — | 40-pin, CSI FPC, Micro SD |
-| VDD_CORE | PMIC Buck (3.5 A) | — | SoC core |
-| VDD_LPDDR4 | PMIC Buck (3.5 A) | — | LPDDR4 |
-| SOC_DVDD1V8 | PMIC Buck (4 A) | — | SoC 1.8 V I/O |
-| VCC1V8_SYS_SW | PMIC Buck (2 A) | 200 mA | LPDDR4 auxiliary |
-| VDD_2V5 | LDO (TPS74801DRCR, 1.5 A) | 325 mA | Ethernet PHY VDDA2P5 |
-| VDD_1V0 | LDO (TLV75510PDQN) | 108 mA | Ethernet PHY VDD1P0 |
-| VDD_1V2 | LDO (TLV75512PDQN) | 80 mA | HDMI TX VDD1P2 |
-| VDD_CANUART | LDO (FLV70S07SYP) | 10 mA | CAN / UART I/O |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="209" align="left">Rail</th>
+      <th width="246" align="left">Source</th>
+      <th width="246" align="left">Typical Current</th>
+      <th width="247" align="left">Consumers</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">VCC_3V3_MAIN</td>
+      <td align="left">DCDC 6 A (TPS62A63RLR)</td>
+      <td align="left">6 A max</td>
+      <td align="left">System 3.3 V backbone</td>
+    </tr>
+    <tr>
+      <td align="left">VCC_3V3_SYS</td>
+      <td align="left">LDSW 4 A (TPS22965)</td>
+      <td align="left">957 mA</td>
+      <td align="left">USB Hub, Wi-Fi/BT, Audio Codec, Ethernet PHY, HDMI TX, RTC</td>
+    </tr>
+    <tr>
+      <td align="left">VSYS_3V3_EXP</td>
+      <td align="left">Load Switch 4 A (TPS22965)</td>
+      <td align="left">—</td>
+      <td align="left">40-pin, CSI FPC, Micro SD</td>
+    </tr>
+    <tr>
+      <td align="left">VDD_CORE</td>
+      <td align="left">PMIC Buck (3.5 A)</td>
+      <td align="left">—</td>
+      <td align="left">SoC core</td>
+    </tr>
+    <tr>
+      <td align="left">VDD_LPDDR4</td>
+      <td align="left">PMIC Buck (3.5 A)</td>
+      <td align="left">—</td>
+      <td align="left">LPDDR4</td>
+    </tr>
+    <tr>
+      <td align="left">SOC_DVDD1V8</td>
+      <td align="left">PMIC Buck (4 A)</td>
+      <td align="left">—</td>
+      <td align="left">SoC 1.8 V I/O</td>
+    </tr>
+    <tr>
+      <td align="left">VCC1V8_SYS_SW</td>
+      <td align="left">PMIC Buck (2 A)</td>
+      <td align="left">200 mA</td>
+      <td align="left">LPDDR4 auxiliary</td>
+    </tr>
+    <tr>
+      <td align="left">VDD_2V5</td>
+      <td align="left">LDO (TPS74801DRCR, 1.5 A)</td>
+      <td align="left">325 mA</td>
+      <td align="left">Ethernet PHY VDDA2P5</td>
+    </tr>
+    <tr>
+      <td align="left">VDD_1V0</td>
+      <td align="left">LDO (TLV75510PDQN)</td>
+      <td align="left">108 mA</td>
+      <td align="left">Ethernet PHY VDD1P0</td>
+    </tr>
+    <tr>
+      <td align="left">VDD_1V2</td>
+      <td align="left">LDO (TLV75512PDQN)</td>
+      <td align="left">80 mA</td>
+      <td align="left">HDMI TX VDD1P2</td>
+    </tr>
+    <tr>
+      <td align="left">VDD_CANUART</td>
+      <td align="left">LDO (FLV70S07SYP)</td>
+      <td align="left">10 mA</td>
+      <td align="left">CAN / UART I/O</td>
+    </tr>
+  </tbody>
+</table>
 
 **Status LEDs (driven by MCU GPIO):**
 
-| LED | Color | GPIO Signal |
-|-----|-------|-------------|
-| POWER | Red | B9 / MCU_GPIO0_16 / PWR_LED |
-| STATUS | Green | D7 / MCU_GPIO0_15 / ACT_LED |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">LED</th>
+      <th width="351" align="left">Color</th>
+      <th width="351" align="left">GPIO Signal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">POWER</td>
+      <td align="left">Red</td>
+      <td align="left">B9 / MCU_GPIO0_16 / PWR_LED</td>
+    </tr>
+    <tr>
+      <td align="left">STATUS</td>
+      <td align="left">Green</td>
+      <td align="left">D7 / MCU_GPIO0_15 / ACT_LED</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
 ### 7.3 I2C Device Map
 
-| SoC Bus | Device | Address(es) |
-|---------|--------|-------------|
-| SOC_I2C0 | PMIC TPS65931211 | 0x48 / 0x49 / 0x5A / 0x5B |
-| SOC_I2C0 | RTC PCF85263ATL | 0x51 |
-| SOC_I2C1 | Audio Codec TLV320AIC3106 | 0x1B |
-| SOC_I2C1 | HDMI TX SiI9022ACNU | 0x3B / 0x3F / 0x62 |
-| SOC_I2C1 | EEPROM BL24C02 | 0x50 ¹ |
-| SOC_I2C2 | CSI FPC | — |
-| SOC_I2C2 | EXP 40-Pin (SDA1/SCL1) | — |
-| MCU_I2C0 | PMIC (secondary I2C) | — |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">SoC Bus</th>
+      <th width="351" align="left">Device</th>
+      <th width="351" align="left">Address(es)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">SOC_I2C0</td>
+      <td align="left">PMIC TPS65931211</td>
+      <td align="left">0x48 / 0x49 / 0x5A / 0x5B</td>
+    </tr>
+    <tr>
+      <td align="left">SOC_I2C0</td>
+      <td align="left">RTC PCF85263ATL</td>
+      <td align="left">0x51</td>
+    </tr>
+    <tr>
+      <td align="left">SOC_I2C1</td>
+      <td align="left">Audio Codec TLV320AIC3106</td>
+      <td align="left">0x1B</td>
+    </tr>
+    <tr>
+      <td align="left">SOC_I2C1</td>
+      <td align="left">HDMI TX SiI9022ACNU</td>
+      <td align="left">0x3B / 0x3F / 0x62</td>
+    </tr>
+    <tr>
+      <td align="left">SOC_I2C1</td>
+      <td align="left">EEPROM BL24C02</td>
+      <td align="left">0x50 ¹</td>
+    </tr>
+    <tr>
+      <td align="left">SOC_I2C2</td>
+      <td align="left">CSI FPC</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">SOC_I2C2</td>
+      <td align="left">EXP 40-Pin (SDA1/SCL1)</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">MCU_I2C0</td>
+      <td align="left">PMIC (secondary I2C)</td>
+      <td align="left">—</td>
+    </tr>
+  </tbody>
+</table>
 
 > ¹ The EEPROM hardware is present at 0x50, but the `eeprom@50` DTS node is not enabled in the kernel device tree. The SiI9022A HDMI transmitter uses the same I2C address (0x50) for EDID DDC access via its internal I2C bypass; enabling both simultaneously causes bus conflicts. See [Section 10](#10-eeprom) for details.
 
@@ -1039,22 +1641,65 @@ The MO-62A is built around the **TI AM62A74** SoC. The top-level block diagram c
 
 **LPDDR4 (MT53E1G32D2FW-046)**
 
-| Item | Value |
-|------|-------|
-| Bus width | 32-bit |
-| Configuration | Single channel, 32-bit |
-| SoC interface | DDR0 (full 32-bit data bus) |
-| Power | VDD_LPDDR4 (1.1 V), SOC_DVDD1V8 |
-| Reset pull-down | R120, 10 kΩ (populated) |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Item</th>
+      <th width="664" align="left">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Bus width</td>
+      <td align="left">32-bit</td>
+    </tr>
+    <tr>
+      <td align="left">Configuration</td>
+      <td align="left">Single channel, 32-bit</td>
+    </tr>
+    <tr>
+      <td align="left">SoC interface</td>
+      <td align="left">DDR0 (full 32-bit data bus)</td>
+    </tr>
+    <tr>
+      <td align="left">Power</td>
+      <td align="left">VDD_LPDDR4 (1.1 V), SOC_DVDD1V8</td>
+    </tr>
+    <tr>
+      <td align="left">Reset pull-down</td>
+      <td align="left">R120, 10 kΩ (populated)</td>
+    </tr>
+  </tbody>
+</table>
 
 **EEPROM (BL24C02F)**
 
-| Item | Value |
-|------|-------|
-| Package | SOT23-5 |
-| Interface | I2C (SOC_I2C1) |
-| Address | 0x50 |
-| Write protect | GPIO: C19/GPIO1_7/EEP_WC (active-high; pulled high via R267 10 kΩ — write-protected by default when driver not loaded) |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Item</th>
+      <th width="664" align="left">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Package</td>
+      <td align="left">SOT23-5</td>
+    </tr>
+    <tr>
+      <td align="left">Interface</td>
+      <td align="left">I2C (SOC_I2C1)</td>
+    </tr>
+    <tr>
+      <td align="left">Address</td>
+      <td align="left">0x50</td>
+    </tr>
+    <tr>
+      <td align="left">Write protect</td>
+      <td align="left">GPIO: C19/GPIO1_7/EEP_WC (active-high; pulled high via R267 10 kΩ — write-protected by default when driver not loaded)</td>
+    </tr>
+  </tbody>
+</table>
 
 > The `eeprom@50` DTS node is currently removed. See [Section 10](#10-eeprom).
 
@@ -1080,15 +1725,44 @@ The MO-62A is built around the **TI AM62A74** SoC. The top-level block diagram c
 
 **RGB-to-HDMI Transmitter: SiI9022ACNU**
 
-| Item | Value |
-|------|-------|
-| SoC video interface | VOUT0_DATA[0..15], VOUT0_PCLK, VSYNC, HSYNC, DE (parallel RGB) |
-| SoC audio interface | MCASP0 (ACLKX, AFSX, AXR2) |
-| I2C control | SOC_I2C1 (0x3B / 0x3F / 0x62) |
-| Reset GPIO | AA19/GPIO0_89/HDMI_RSTn |
-| Output connector | Micro HDMI (J7) |
-| ESD protection | ESD7304D (×2 groups) |
-| Power | VDD_1V2 (1.2 V), VCC_3V3_SYS |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Item</th>
+      <th width="664" align="left">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">SoC video interface</td>
+      <td align="left">VOUT0_DATA[0..15], VOUT0_PCLK, VSYNC, HSYNC, DE (parallel RGB)</td>
+    </tr>
+    <tr>
+      <td align="left">SoC audio interface</td>
+      <td align="left">MCASP0 (ACLKX, AFSX, AXR2)</td>
+    </tr>
+    <tr>
+      <td align="left">I2C control</td>
+      <td align="left">SOC_I2C1 (0x3B / 0x3F / 0x62)</td>
+    </tr>
+    <tr>
+      <td align="left">Reset GPIO</td>
+      <td align="left">AA19/GPIO0_89/HDMI_RSTn</td>
+    </tr>
+    <tr>
+      <td align="left">Output connector</td>
+      <td align="left">Micro HDMI (J7)</td>
+    </tr>
+    <tr>
+      <td align="left">ESD protection</td>
+      <td align="left">ESD7304D (×2 groups)</td>
+    </tr>
+    <tr>
+      <td align="left">Power</td>
+      <td align="left">VDD_1V2 (1.2 V), VCC_3V3_SYS</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -1096,20 +1770,64 @@ The MO-62A is built around the **TI AM62A74** SoC. The top-level block diagram c
 
 **Ethernet PHY: DP83867CSRGZR**
 
-| Item | Value |
-|------|-------|
-| Interface | RGMII1 (1 Gbps) |
-| PHY address | 0x00 |
-| Auto-negotiation | Enabled, Auto-MDI-X |
-| TX clock skew | 0 ns |
-| RX clock skew | 2 ns |
-| MDIO | SoC_RGMII_MDC / MDO |
-| Crystal | Y8, 25 MHz / 2016 / 30 ppm / 12 pF |
-| Power | VDDA2P5 = 2.5 V, VDD1P0 = 1.0 V, VDD1P2 = 1.2 V |
-| Connector | RJ45 with integrated magnetics (LPJG4928HENL) |
-| PoE header | J5 (2×2, 2.54 mm pitch) |
-| Link LED | Left (green) |
-| Activity LED | Right (yellow) |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Item</th>
+      <th width="664" align="left">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Interface</td>
+      <td align="left">RGMII1 (1 Gbps)</td>
+    </tr>
+    <tr>
+      <td align="left">PHY address</td>
+      <td align="left">0x00</td>
+    </tr>
+    <tr>
+      <td align="left">Auto-negotiation</td>
+      <td align="left">Enabled, Auto-MDI-X</td>
+    </tr>
+    <tr>
+      <td align="left">TX clock skew</td>
+      <td align="left">0 ns</td>
+    </tr>
+    <tr>
+      <td align="left">RX clock skew</td>
+      <td align="left">2 ns</td>
+    </tr>
+    <tr>
+      <td align="left">MDIO</td>
+      <td align="left">SoC_RGMII_MDC / MDO</td>
+    </tr>
+    <tr>
+      <td align="left">Crystal</td>
+      <td align="left">Y8, 25 MHz / 2016 / 30 ppm / 12 pF</td>
+    </tr>
+    <tr>
+      <td align="left">Power</td>
+      <td align="left">VDDA2P5 = 2.5 V, VDD1P0 = 1.0 V, VDD1P2 = 1.2 V</td>
+    </tr>
+    <tr>
+      <td align="left">Connector</td>
+      <td align="left">RJ45 with integrated magnetics (LPJG4928HENL)</td>
+    </tr>
+    <tr>
+      <td align="left">PoE header</td>
+      <td align="left">J5 (2×2, 2.54 mm pitch)</td>
+    </tr>
+    <tr>
+      <td align="left">Link LED</td>
+      <td align="left">Left (green)</td>
+    </tr>
+    <tr>
+      <td align="left">Activity LED</td>
+      <td align="left">Right (yellow)</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -1117,13 +1835,36 @@ The MO-62A is built around the **TI AM62A74** SoC. The top-level block diagram c
 
 **USB Hub: USB2514 (USB2514BQFN36)**
 
-| Item | Value |
-|------|-------|
-| Upstream port | 1× USB 2.0 (from SoC USB1) |
-| Downstream ports | 4× USB 2.0 Type-A |
-| Power switch | TPS2561DRC, Ilimit = 2800 mA |
-| VBUS supply | VBUS_5V0_TYPEA (from 5 V input via SW 2 A) |
-| Current per port | Up to 2 A total for all 4 ports |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Item</th>
+      <th width="664" align="left">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Upstream port</td>
+      <td align="left">1× USB 2.0 (from SoC USB1)</td>
+    </tr>
+    <tr>
+      <td align="left">Downstream ports</td>
+      <td align="left">4× USB 2.0 Type-A</td>
+    </tr>
+    <tr>
+      <td align="left">Power switch</td>
+      <td align="left">TPS2561DRC, Ilimit = 2800 mA</td>
+    </tr>
+    <tr>
+      <td align="left">VBUS supply</td>
+      <td align="left">VBUS_5V0_TYPEA (from 5 V input via SW 2 A)</td>
+    </tr>
+    <tr>
+      <td align="left">Current per port</td>
+      <td align="left">Up to 2 A total for all 4 ports</td>
+    </tr>
+  </tbody>
+</table>
 
 **USB Type-C (J31)**
 
@@ -1137,15 +1878,44 @@ The MO-62A is built around the **TI AM62A74** SoC. The top-level block diagram c
 
 **Module: FG6221ASRC-0L (6221A-SRC)**
 
-| Item | Value |
-|------|-------|
-| Wi-Fi interface | MMC2 (SDIO 4-bit, 1.8 V) |
-| BT interface | SOC_UART6 (with CTS/RTS, 1.8 V) |
-| Enable — Wi-Fi | EN_WLAN (F22/GPIO0_71/WLAN_EN/1V8) |
-| Enable — BT | EN_BT (K22/GPIO0_1/BT_EN/1V8) |
-| Interrupt | INT_WLAN (E21/GPIO0_72/WLAN_IRQ/1V8) |
-| Antenna connector | U.FL × 1 (CON1) |
-| Supply | SOC_DVDD1V8 (1.8 V), VCC_3V3_SYS (3.3 V) |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Item</th>
+      <th width="664" align="left">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Wi-Fi interface</td>
+      <td align="left">MMC2 (SDIO 4-bit, 1.8 V)</td>
+    </tr>
+    <tr>
+      <td align="left">BT interface</td>
+      <td align="left">SOC_UART6 (with CTS/RTS, 1.8 V)</td>
+    </tr>
+    <tr>
+      <td align="left">Enable — Wi-Fi</td>
+      <td align="left">EN_WLAN (F22/GPIO0_71/WLAN_EN/1V8)</td>
+    </tr>
+    <tr>
+      <td align="left">Enable — BT</td>
+      <td align="left">EN_BT (K22/GPIO0_1/BT_EN/1V8)</td>
+    </tr>
+    <tr>
+      <td align="left">Interrupt</td>
+      <td align="left">INT_WLAN (E21/GPIO0_72/WLAN_IRQ/1V8)</td>
+    </tr>
+    <tr>
+      <td align="left">Antenna connector</td>
+      <td align="left">U.FL × 1 (CON1)</td>
+    </tr>
+    <tr>
+      <td align="left">Supply</td>
+      <td align="left">SOC_DVDD1V8 (1.8 V), VCC_3V3_SYS (3.3 V)</td>
+    </tr>
+  </tbody>
+</table>
 
 **Regulatory Database**
 
@@ -1162,16 +1932,48 @@ active database (the Debian-signed variant is removed). This eliminates the
 
 **Audio Codec: TLV320AIC3106IRGZ**
 
-| Item | Value |
-|------|-------|
-| I2S interface | MCASP1 (ACLKX_BUF, AFSX_BUF, AXR0_BUF, AXR2_BUF) |
-| I2C control | SOC_I2C1, address 0x1B |
-| MCLK | 12.288 MHz crystal oscillator (25 ppm, 3.3 V) |
-| Reset GPIO | W18/GPIO0_1/AUD_RSTn |
-| Headphone output | HPLOUT / HPROUT (stereo) |
-| Microphone input | MIC_IN (LINE IN) |
-| 3.5 mm jack (J8) | Pin 1: L — Pin 2: MIC — Pin 3: GND — Pin 4/5: HPROUT/HPLOUT |
-| Wiring standard | 国标 (CTIA): L / R / GND / MIC |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Item</th>
+      <th width="664" align="left">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">I2S interface</td>
+      <td align="left">MCASP1 (ACLKX_BUF, AFSX_BUF, AXR0_BUF, AXR2_BUF)</td>
+    </tr>
+    <tr>
+      <td align="left">I2C control</td>
+      <td align="left">SOC_I2C1, address 0x1B</td>
+    </tr>
+    <tr>
+      <td align="left">MCLK</td>
+      <td align="left">12.288 MHz crystal oscillator (25 ppm, 3.3 V)</td>
+    </tr>
+    <tr>
+      <td align="left">Reset GPIO</td>
+      <td align="left">W18/GPIO0_1/AUD_RSTn</td>
+    </tr>
+    <tr>
+      <td align="left">Headphone output</td>
+      <td align="left">HPLOUT / HPROUT (stereo)</td>
+    </tr>
+    <tr>
+      <td align="left">Microphone input</td>
+      <td align="left">MIC_IN (LINE IN)</td>
+    </tr>
+    <tr>
+      <td align="left">3.5 mm jack (J8)</td>
+      <td align="left">Pin 1: L — Pin 2: MIC — Pin 3: GND — Pin 4/5: HPROUT/HPLOUT</td>
+    </tr>
+    <tr>
+      <td align="left">Wiring standard</td>
+      <td align="left">国标 (CTIA): L / R / GND / MIC</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -1179,11 +1981,28 @@ active database (the Debian-signed variant is removed). This eliminates the
 
 **RTC IC: PCF85263ATL**
 
-| Item | Value |
-|------|-------|
-| Interface | SOC_I2C0, I2C 7-bit address 0x51 (0b0101001) |
-| Crystal | Y1, SSP-T7-F, 32.768 kHz, 20 ppm, 12.5 pF load |
-| Battery connector | J2 (SH1.0-2p, 3 V button cell) |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Item</th>
+      <th width="664" align="left">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Interface</td>
+      <td align="left">SOC_I2C0, I2C 7-bit address 0x51 (0b0101001)</td>
+    </tr>
+    <tr>
+      <td align="left">Crystal</td>
+      <td align="left">Y1, SSP-T7-F, 32.768 kHz, 20 ppm, 12.5 pF load</td>
+    </tr>
+    <tr>
+      <td align="left">Battery connector</td>
+      <td align="left">J2 (SH1.0-2p, 3 V button cell)</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -1195,48 +2014,340 @@ The 40-pin expansion header (silk: USER EXPN) provides GPIO signals at **3.3 V l
 
 > **Note:** Pins 27/28 (I2C2) are permanently assigned to the internal I2C bus used by the camera module and cannot be used as general GPIO.
 
-| Pin | Name        | Default Function        | gpiochip  | Line | Optional Function    |
-|-----|-------------|-------------------------|-----------|------|----------------------|
-|  1  | 3V3         | 3.3 V power             | —         | —    | —                    |
-|  2  | 5V          | 5 V power               | —         | —    | —                    |
-|  3  | GPIO2       | GPIO (MCU\_GPIO0\_20)   | gpiochip0 | 20   | WKUP\_I2C0\_SDA      |
-|  4  | 5V          | 5 V power               | —         | —    | —                    |
-|  5  | GPIO3       | GPIO (MCU\_GPIO0\_19)   | gpiochip0 | 19   | WKUP\_I2C0\_SCL      |
-|  6  | GND         | Ground                  | —         | —    | —                    |
-|  7  | GPIO4       | GPIO (GPIO0\_39)        | gpiochip1 | 39   | —                    |
-|  8  | GPIO14      | GPIO (GPIO1\_25)        | gpiochip2 | 25   | UART5\_TXD           |
-|  9  | GND         | Ground                  | —         | —    | —                    |
-| 10  | GPIO15      | GPIO (GPIO1\_24)        | gpiochip2 | 24   | UART5\_RXD           |
-| 11  | GPIO17      | GPIO (GPIO1\_23)        | gpiochip2 | 23   | —                    |
-| 12  | GPIO18      | GPIO (GPIO1\_0)         | gpiochip2 |  0   | MCASP2\_ACLKX        |
-| 13  | GPIO27      | GPIO (GPIO0\_42)        | gpiochip1 | 42   | —                    |
-| 14  | GND         | Ground                  | —         | —    | —                    |
-| 15  | GPIO22      | GPIO (GPIO1\_22)        | gpiochip2 | 22   | —                    |
-| 16  | GPIO23      | GPIO (GPIO0\_38)        | gpiochip1 | 38   | —                    |
-| 17  | 3V3         | 3.3 V power             | —         | —    | —                    |
-| 18  | GPIO24      | GPIO (GPIO0\_40)        | gpiochip1 | 40   | —                    |
-| 19  | GPIO10      | GPIO (GPIO1\_18)        | gpiochip2 | 18   | SPI0\_D0 (MOSI)      |
-| 20  | GND         | Ground                  | —         | —    | —                    |
-| 21  | GPIO9       | GPIO (GPIO1\_19)        | gpiochip2 | 19   | SPI0\_D1 (MISO)      |
-| 22  | GPIO25      | GPIO (GPIO0\_14)        | gpiochip1 | 14   | —                    |
-| 23  | GPIO11      | GPIO (GPIO1\_17)        | gpiochip2 | 17   | SPI0\_CLK            |
-| 24  | GPIO8       | GPIO (GPIO1\_15)        | gpiochip2 | 15   | SPI0\_CS0            |
-| 25  | GND         | Ground                  | —         | —    | —                    |
-| 26  | GPIO7       | GPIO (GPIO1\_16)        | gpiochip2 | 16   | SPI0\_CS1            |
-| 27  | I2C2\_SDA   | I2C2 SDA (`i2c-2`)     | —         | —    | (camera bus, fixed)  |
-| 28  | I2C2\_SCL   | I2C2 SCL (`i2c-2`)     | —         | —    | (camera bus, fixed)  |
-| 29  | GPIO5       | GPIO (GPIO0\_36)        | gpiochip1 | 36   | —                    |
-| 30  | GND         | Ground                  | —         | —    | —                    |
-| 31  | GPIO6       | GPIO (GPIO0\_33)        | gpiochip1 | 33   | —                    |
-| 32  | GPIO12      | GPIO (GPIO1\_14)        | gpiochip2 | 14   | EHRPWM0\_B           |
-| 33  | GPIO13      | GPIO (GPIO1\_13)        | gpiochip2 | 13   | EHRPWM0\_A           |
-| 34  | GND         | Ground                  | —         | —    | —                    |
-| 35  | GPIO19      | GPIO (GPIO0\_91)        | gpiochip1 | 91   | MCASP2\_AFSX         |
-| 36  | GPIO16      | GPIO (GPIO1\_9)         | gpiochip2 |  9   | EHRPWM1\_A           |
-| 37  | GPIO26      | GPIO (GPIO0\_41)        | gpiochip1 | 41   | —                    |
-| 38  | GPIO20      | GPIO (GPIO1\_5)         | gpiochip2 |  5   | MCASP2\_AXR0         |
-| 39  | GND         | Ground                  | —         | —    | —                    |
-| 40  | GPIO21      | GPIO (GPIO1\_2)         | gpiochip2 |  2   | MCASP2\_AXR1         |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="158" align="left">Pin</th>
+      <th width="158" align="left">Name</th>
+      <th width="158" align="left">Default Function</th>
+      <th width="158" align="left">gpiochip</th>
+      <th width="158" align="left">Line</th>
+      <th width="158" align="left">Optional Function</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">1</td>
+      <td align="left">3V3</td>
+      <td align="left">3.3 V power</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">2</td>
+      <td align="left">5V</td>
+      <td align="left">5 V power</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">3</td>
+      <td align="left">GPIO2</td>
+      <td align="left">GPIO (MCU_GPIO0_20)</td>
+      <td align="left">gpiochip0</td>
+      <td align="left">20</td>
+      <td align="left">WKUP_I2C0_SDA</td>
+    </tr>
+    <tr>
+      <td align="left">4</td>
+      <td align="left">5V</td>
+      <td align="left">5 V power</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">5</td>
+      <td align="left">GPIO3</td>
+      <td align="left">GPIO (MCU_GPIO0_19)</td>
+      <td align="left">gpiochip0</td>
+      <td align="left">19</td>
+      <td align="left">WKUP_I2C0_SCL</td>
+    </tr>
+    <tr>
+      <td align="left">6</td>
+      <td align="left">GND</td>
+      <td align="left">Ground</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">7</td>
+      <td align="left">GPIO4</td>
+      <td align="left">GPIO (GPIO0_39)</td>
+      <td align="left">gpiochip1</td>
+      <td align="left">39</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">8</td>
+      <td align="left">GPIO14</td>
+      <td align="left">GPIO (GPIO1_25)</td>
+      <td align="left">gpiochip2</td>
+      <td align="left">25</td>
+      <td align="left">UART5_TXD</td>
+    </tr>
+    <tr>
+      <td align="left">9</td>
+      <td align="left">GND</td>
+      <td align="left">Ground</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">10</td>
+      <td align="left">GPIO15</td>
+      <td align="left">GPIO (GPIO1_24)</td>
+      <td align="left">gpiochip2</td>
+      <td align="left">24</td>
+      <td align="left">UART5_RXD</td>
+    </tr>
+    <tr>
+      <td align="left">11</td>
+      <td align="left">GPIO17</td>
+      <td align="left">GPIO (GPIO1_23)</td>
+      <td align="left">gpiochip2</td>
+      <td align="left">23</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">12</td>
+      <td align="left">GPIO18</td>
+      <td align="left">GPIO (GPIO1_0)</td>
+      <td align="left">gpiochip2</td>
+      <td align="left">0</td>
+      <td align="left">MCASP2_ACLKX</td>
+    </tr>
+    <tr>
+      <td align="left">13</td>
+      <td align="left">GPIO27</td>
+      <td align="left">GPIO (GPIO0_42)</td>
+      <td align="left">gpiochip1</td>
+      <td align="left">42</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">14</td>
+      <td align="left">GND</td>
+      <td align="left">Ground</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">15</td>
+      <td align="left">GPIO22</td>
+      <td align="left">GPIO (GPIO1_22)</td>
+      <td align="left">gpiochip2</td>
+      <td align="left">22</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">16</td>
+      <td align="left">GPIO23</td>
+      <td align="left">GPIO (GPIO0_38)</td>
+      <td align="left">gpiochip1</td>
+      <td align="left">38</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">17</td>
+      <td align="left">3V3</td>
+      <td align="left">3.3 V power</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">18</td>
+      <td align="left">GPIO24</td>
+      <td align="left">GPIO (GPIO0_40)</td>
+      <td align="left">gpiochip1</td>
+      <td align="left">40</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">19</td>
+      <td align="left">GPIO10</td>
+      <td align="left">GPIO (GPIO1_18)</td>
+      <td align="left">gpiochip2</td>
+      <td align="left">18</td>
+      <td align="left">SPI0_D0 (MOSI)</td>
+    </tr>
+    <tr>
+      <td align="left">20</td>
+      <td align="left">GND</td>
+      <td align="left">Ground</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">21</td>
+      <td align="left">GPIO9</td>
+      <td align="left">GPIO (GPIO1_19)</td>
+      <td align="left">gpiochip2</td>
+      <td align="left">19</td>
+      <td align="left">SPI0_D1 (MISO)</td>
+    </tr>
+    <tr>
+      <td align="left">22</td>
+      <td align="left">GPIO25</td>
+      <td align="left">GPIO (GPIO0_14)</td>
+      <td align="left">gpiochip1</td>
+      <td align="left">14</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">23</td>
+      <td align="left">GPIO11</td>
+      <td align="left">GPIO (GPIO1_17)</td>
+      <td align="left">gpiochip2</td>
+      <td align="left">17</td>
+      <td align="left">SPI0_CLK</td>
+    </tr>
+    <tr>
+      <td align="left">24</td>
+      <td align="left">GPIO8</td>
+      <td align="left">GPIO (GPIO1_15)</td>
+      <td align="left">gpiochip2</td>
+      <td align="left">15</td>
+      <td align="left">SPI0_CS0</td>
+    </tr>
+    <tr>
+      <td align="left">25</td>
+      <td align="left">GND</td>
+      <td align="left">Ground</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">26</td>
+      <td align="left">GPIO7</td>
+      <td align="left">GPIO (GPIO1_16)</td>
+      <td align="left">gpiochip2</td>
+      <td align="left">16</td>
+      <td align="left">SPI0_CS1</td>
+    </tr>
+    <tr>
+      <td align="left">27</td>
+      <td align="left">I2C2_SDA</td>
+      <td align="left">I2C2 SDA (<code>i2c-2</code>)</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+      <td align="left">(camera bus, fixed)</td>
+    </tr>
+    <tr>
+      <td align="left">28</td>
+      <td align="left">I2C2_SCL</td>
+      <td align="left">I2C2 SCL (<code>i2c-2</code>)</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+      <td align="left">(camera bus, fixed)</td>
+    </tr>
+    <tr>
+      <td align="left">29</td>
+      <td align="left">GPIO5</td>
+      <td align="left">GPIO (GPIO0_36)</td>
+      <td align="left">gpiochip1</td>
+      <td align="left">36</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">30</td>
+      <td align="left">GND</td>
+      <td align="left">Ground</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">31</td>
+      <td align="left">GPIO6</td>
+      <td align="left">GPIO (GPIO0_33)</td>
+      <td align="left">gpiochip1</td>
+      <td align="left">33</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">32</td>
+      <td align="left">GPIO12</td>
+      <td align="left">GPIO (GPIO1_14)</td>
+      <td align="left">gpiochip2</td>
+      <td align="left">14</td>
+      <td align="left">EHRPWM0_B</td>
+    </tr>
+    <tr>
+      <td align="left">33</td>
+      <td align="left">GPIO13</td>
+      <td align="left">GPIO (GPIO1_13)</td>
+      <td align="left">gpiochip2</td>
+      <td align="left">13</td>
+      <td align="left">EHRPWM0_A</td>
+    </tr>
+    <tr>
+      <td align="left">34</td>
+      <td align="left">GND</td>
+      <td align="left">Ground</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">35</td>
+      <td align="left">GPIO19</td>
+      <td align="left">GPIO (GPIO0_91)</td>
+      <td align="left">gpiochip1</td>
+      <td align="left">91</td>
+      <td align="left">MCASP2_AFSX</td>
+    </tr>
+    <tr>
+      <td align="left">36</td>
+      <td align="left">GPIO16</td>
+      <td align="left">GPIO (GPIO1_9)</td>
+      <td align="left">gpiochip2</td>
+      <td align="left">9</td>
+      <td align="left">EHRPWM1_A</td>
+    </tr>
+    <tr>
+      <td align="left">37</td>
+      <td align="left">GPIO26</td>
+      <td align="left">GPIO (GPIO0_41)</td>
+      <td align="left">gpiochip1</td>
+      <td align="left">41</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">38</td>
+      <td align="left">GPIO20</td>
+      <td align="left">GPIO (GPIO1_5)</td>
+      <td align="left">gpiochip2</td>
+      <td align="left">5</td>
+      <td align="left">MCASP2_AXR0</td>
+    </tr>
+    <tr>
+      <td align="left">39</td>
+      <td align="left">GND</td>
+      <td align="left">Ground</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">40</td>
+      <td align="left">GPIO21</td>
+      <td align="left">GPIO (GPIO1_2)</td>
+      <td align="left">gpiochip2</td>
+      <td align="left">2</td>
+      <td align="left">MCASP2_AXR1</td>
+    </tr>
+  </tbody>
+</table>
 
 > `gpiochip0` = `mcu_gpio0` (MCU domain).  `gpiochip1` = `main_gpio0` (GPIO0\_x).  `gpiochip2` = `main_gpio1` (GPIO1\_x).
 
@@ -1244,14 +2355,47 @@ The 40-pin expansion header (silk: USER EXPN) provides GPIO signals at **3.3 V l
 
 Optional peripheral functions are enabled by booting with the `microSD-periph` extlinux label. This applies the `k3-am62a7-mo-62a-exp-periph.dtbo` overlay, which activates the following interfaces:
 
-| Interface | Pins | Linux device |
-|-----------|------|--------------|
-| WKUP\_I2C0 | 3 (SDA), 5 (SCL) | `/dev/i2c-0` |
-| UART5 | 8 (TXD), 10 (RXD) | `/dev/ttyS3` |
-| SPI0 | 19 (MOSI), 21 (MISO), 23 (CLK), 24 (CS0), 26 (CS1) | `/sys/bus/spi/devices/spi0.*` (no `spidev` node by default) |
-| EHRPWM0\_A | 33 | `/sys/class/pwm/pwmchip0/pwm0` |
-| EHRPWM0\_B | 32 | `/sys/class/pwm/pwmchip0/pwm1` |
-| MCASP2 | 12 (ACLKX), 35 (AFSX), 38 (AXR0), 40 (AXR1) | no soundcard (no codec binding) |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">Interface</th>
+      <th width="351" align="left">Pins</th>
+      <th width="351" align="left">Linux device</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">WKUP_I2C0</td>
+      <td align="left">3 (SDA), 5 (SCL)</td>
+      <td align="left"><code>/dev/i2c-0</code></td>
+    </tr>
+    <tr>
+      <td align="left">UART5</td>
+      <td align="left">8 (TXD), 10 (RXD)</td>
+      <td align="left"><code>/dev/ttyS3</code></td>
+    </tr>
+    <tr>
+      <td align="left">SPI0</td>
+      <td align="left">19 (MOSI), 21 (MISO), 23 (CLK), 24 (CS0), 26 (CS1)</td>
+      <td align="left"><code>/sys/bus/spi/devices/spi0.*</code> (no <code>spidev</code> node by default)</td>
+    </tr>
+    <tr>
+      <td align="left">EHRPWM0_A</td>
+      <td align="left">33</td>
+      <td align="left"><code>/sys/class/pwm/pwmchip0/pwm0</code></td>
+    </tr>
+    <tr>
+      <td align="left">EHRPWM0_B</td>
+      <td align="left">32</td>
+      <td align="left"><code>/sys/class/pwm/pwmchip0/pwm1</code></td>
+    </tr>
+    <tr>
+      <td align="left">MCASP2</td>
+      <td align="left">12 (ACLKX), 35 (AFSX), 38 (AXR0), 40 (AXR1)</td>
+      <td align="left">no soundcard (no codec binding)</td>
+    </tr>
+  </tbody>
+</table>
 
 > When peripheral mode is active, I2C bus numbering shifts: `i2c-0` = WKUP\_I2C0 (expansion pins 3/5), `i2c-1` = main\_i2c0, `i2c-2` = main\_i2c1 (HDMI), `i2c-3` = main\_i2c2 (camera).
 
@@ -1259,24 +2403,73 @@ To switch back to GPIO mode, reboot and select the `microSD` label at the U-Boot
 
 #### 7.12.2 FPC 22-Pin CSI Camera (JP1)
 
-| Item | Value |
-|------|-------|
-| Connector | FPC22 / 0.5 mm pitch (JP1) |
-| Standard | 22-pin CSI camera connector, 4-lane MIPI CSI-2 |
-| Lanes | CSI0_RXP/N[0..3] + CSI0_RXCLKP/N |
-| I2C | CSI_I2C2_SDA/SCL (from SOC_I2C2) |
-| Power | VSYS_3V3_EXP |
-| Enable / Power-down | CSI0_PWDN (Y19/GPIO0_87) |
-| Calibration | CSI0_RXRCALIB (499 Ω to GND) |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Item</th>
+      <th width="664" align="left">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Connector</td>
+      <td align="left">FPC22 / 0.5 mm pitch (JP1)</td>
+    </tr>
+    <tr>
+      <td align="left">Standard</td>
+      <td align="left">22-pin CSI camera connector, 4-lane MIPI CSI-2</td>
+    </tr>
+    <tr>
+      <td align="left">Lanes</td>
+      <td align="left">CSI0_RXP/N[0..3] + CSI0_RXCLKP/N</td>
+    </tr>
+    <tr>
+      <td align="left">I2C</td>
+      <td align="left">CSI_I2C2_SDA/SCL (from SOC_I2C2)</td>
+    </tr>
+    <tr>
+      <td align="left">Power</td>
+      <td align="left">VSYS_3V3_EXP</td>
+    </tr>
+    <tr>
+      <td align="left">Enable / Power-down</td>
+      <td align="left">CSI0_PWDN (Y19/GPIO0_87)</td>
+    </tr>
+    <tr>
+      <td align="left">Calibration</td>
+      <td align="left">CSI0_RXRCALIB (499 Ω to GND)</td>
+    </tr>
+  </tbody>
+</table>
 
 #### 7.12.3 Fan Connector (J6)
 
-| Item | Value |
-|------|-------|
-| Connector | SH1.0-4p |
-| PWM control | FAN_PWM (via TXB0104RUTR voltage translation) |
-| Tach feedback | FAN_TACH |
-| SoC signals | PWM (D18/TIMER_IO7), TACH (D1/ID1_10/EHRPWM1_B) |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Item</th>
+      <th width="664" align="left">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Connector</td>
+      <td align="left">SH1.0-4p</td>
+    </tr>
+    <tr>
+      <td align="left">PWM control</td>
+      <td align="left">FAN_PWM (via TXB0104RUTR voltage translation)</td>
+    </tr>
+    <tr>
+      <td align="left">Tach feedback</td>
+      <td align="left">FAN_TACH</td>
+    </tr>
+    <tr>
+      <td align="left">SoC signals</td>
+      <td align="left">PWM (D18/TIMER_IO7), TACH (D1/ID1_10/EHRPWM1_B)</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -1286,11 +2479,28 @@ To switch back to GPIO mode, reboot and select the `microSD` label at the U-Boot
 
 UART0 is the MPU debug UART. A SN74LVC2G24DCUR provides voltage isolation.
 
-| Pin | Signal |
-|-----|--------|
-| 1 | UART0_RXD |
-| 2 | GND |
-| 3 | UART0_TXD |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Pin</th>
+      <th width="664" align="left">Signal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">1</td>
+      <td align="left">UART0_RXD</td>
+    </tr>
+    <tr>
+      <td align="left">2</td>
+      <td align="left">GND</td>
+    </tr>
+    <tr>
+      <td align="left">3</td>
+      <td align="left">UART0_TXD</td>
+    </tr>
+  </tbody>
+</table>
 
 Baud rate: 115200 8N1 (matches kernel console on `ttyS2`).
 
@@ -1302,19 +2512,61 @@ The MO-62A uses a fixed resistor boot mode configuration (BOOTMODE[15:0]).
 
 **Configured boot modes:**
 
-| Priority | Mode | Description |
-|----------|------|-------------|
-| Primary | SD CARD (MMC1) | 4-bit MMC SD card boot |
-| Backup | Ethernet | Network boot fallback |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">Priority</th>
+      <th width="351" align="left">Mode</th>
+      <th width="351" align="left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Primary</td>
+      <td align="left">SD CARD (MMC1)</td>
+      <td align="left">4-bit MMC SD card boot</td>
+    </tr>
+    <tr>
+      <td align="left">Backup</td>
+      <td align="left">Ethernet</td>
+      <td align="left">Network boot fallback</td>
+    </tr>
+  </tbody>
+</table>
 
 **BOOTMODE register settings (as configured by resistors):**
 
-| Bits | Value | Meaning |
-|------|-------|---------|
-| BOOTMODE[2:0] | 011 | 25 MHz PLL input frequency |
-| MCU_BOOTMODE[6:3] | 1000 | Primary boot = MMCSD (SD Card) |
-| MCU_BOOTMODE[9:7] | B8=1, B7=0 | MMC Port 1, 4-bit width |
-| MCU_BOOTMODE[12:10] | 100 | Backup boot = Ethernet |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">Bits</th>
+      <th width="351" align="left">Value</th>
+      <th width="351" align="left">Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">BOOTMODE[2:0]</td>
+      <td align="left">011</td>
+      <td align="left">25 MHz PLL input frequency</td>
+    </tr>
+    <tr>
+      <td align="left">MCU_BOOTMODE[6:3]</td>
+      <td align="left">1000</td>
+      <td align="left">Primary boot = MMCSD (SD Card)</td>
+    </tr>
+    <tr>
+      <td align="left">MCU_BOOTMODE[9:7]</td>
+      <td align="left">B8=1, B7=0</td>
+      <td align="left">MMC Port 1, 4-bit width</td>
+    </tr>
+    <tr>
+      <td align="left">MCU_BOOTMODE[12:10]</td>
+      <td align="left">100</td>
+      <td align="left">Backup boot = Ethernet</td>
+    </tr>
+  </tbody>
+</table>
 
 **All supported boot modes (per silicon):**
 
@@ -1330,14 +2582,40 @@ The MO-62A uses a fixed resistor boot mode configuration (BOOTMODE[15:0]).
 
 ### 7.15 JTAG Interface
 
-| Signal | Description |
-|--------|-------------|
-| SoC_EMU0 / SoC_EMU1 | Emulation pins |
-| SoC_TCK | JTAG clock |
-| SoC_TMS | JTAG mode select |
-| SoC_TDI | JTAG data in |
-| SoC_TDO | JTAG data out |
-| SoC_TRSTN | JTAG reset |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Signal</th>
+      <th width="664" align="left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">SoC_EMU0 / SoC_EMU1</td>
+      <td align="left">Emulation pins</td>
+    </tr>
+    <tr>
+      <td align="left">SoC_TCK</td>
+      <td align="left">JTAG clock</td>
+    </tr>
+    <tr>
+      <td align="left">SoC_TMS</td>
+      <td align="left">JTAG mode select</td>
+    </tr>
+    <tr>
+      <td align="left">SoC_TDI</td>
+      <td align="left">JTAG data in</td>
+    </tr>
+    <tr>
+      <td align="left">SoC_TDO</td>
+      <td align="left">JTAG data out</td>
+    </tr>
+    <tr>
+      <td align="left">SoC_TRSTN</td>
+      <td align="left">JTAG reset</td>
+    </tr>
+  </tbody>
+</table>
 
 Pull-up resistors: 4.7 kΩ to VCC_3V3_SYS.
 
@@ -1367,13 +2645,48 @@ On any keyboard or mouse input:
 
 ### Fixes Applied
 
-| # | Layer | Root Cause | Fix |
-|---|-------|-----------|-----|
-| 1 | `drivers/gpu/drm/bridge/sii902x.c` | 20 ms TMDS PLL delay was gated on `mode.clock`, which is 0 after a module reload — PLL never locked, HDMI stayed dark | Delay moved unconditionally before `PWR_DWN` clear; CRTC state fallback added for `mode.clock = 0` |
-| 2 | `rootfs-overlay/usr/local/bin/dpms-wakeup` | Xorg does not automatically call `xset dpms force on` when raw input arrives while DPMS is Off | Python daemon watches all `/dev/input/event*` nodes, calls `xset dpms force on` on activity (2 s cooldown) |
-| 3 | `rootfs-overlay/etc/udev/rules.d/72-seat-input.rules` | USB input devices not tagged `ID_SEAT=seat0` — logind excludes them because the USB hub parent differs from the DSS/DRM parent | udev rules explicitly set `ID_SEAT=seat0` and `TAG+="seat"` for all recognised input device types |
-| 4 | `rootfs-overlay/etc/xdg/autostart/xfce4-power-manager.desktop` | xfce4-power-manager 4.20.0 polls the XSS idle counter and re-blanks the display ~1 s after wake due to a race with the idle-counter reset | `Hidden=true` suppresses xfce4-power-manager autostart; DPMS fully managed by the X server |
-| 5 | `drivers/gpu/drm/tidss/tidss_plane.c` | `dispc_initial_config()` resets `DISPC_VID_ATTRIBUTES` bit 0 (VID enable) to 0 on resume; DRM skips `atomic_enable()` because the plane is already bound to the CRTC | `dispc_plane_enable(true)` added inside `tidss_plane_atomic_update()` whenever the plane is visible |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="209" align="left">#</th>
+      <th width="246" align="left">Layer</th>
+      <th width="246" align="left">Root Cause</th>
+      <th width="247" align="left">Fix</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">1</td>
+      <td align="left"><code>drivers/gpu/drm/bridge/sii902x.c</code></td>
+      <td align="left">20 ms TMDS PLL delay was gated on <code>mode.clock</code>, which is 0 after a module reload — PLL never locked, HDMI stayed dark</td>
+      <td align="left">Delay moved unconditionally before <code>PWR_DWN</code> clear; CRTC state fallback added for <code>mode.clock = 0</code></td>
+    </tr>
+    <tr>
+      <td align="left">2</td>
+      <td align="left"><code>rootfs-overlay/usr/local/bin/dpms-wakeup</code></td>
+      <td align="left">Xorg does not automatically call <code>xset dpms force on</code> when raw input arrives while DPMS is Off</td>
+      <td align="left">Python daemon watches all <code>/dev/input/event*</code> nodes, calls <code>xset dpms force on</code> on activity (2 s cooldown)</td>
+    </tr>
+    <tr>
+      <td align="left">3</td>
+      <td align="left"><code>rootfs-overlay/etc/udev/rules.d/72-seat-input.rules</code></td>
+      <td align="left">USB input devices not tagged <code>ID_SEAT=seat0</code> — logind excludes them because the USB hub parent differs from the DSS/DRM parent</td>
+      <td align="left">udev rules explicitly set <code>ID_SEAT=seat0</code> and <code>TAG+=&quot;seat&quot;</code> for all recognised input device types</td>
+    </tr>
+    <tr>
+      <td align="left">4</td>
+      <td align="left"><code>rootfs-overlay/etc/xdg/autostart/xfce4-power-manager.desktop</code></td>
+      <td align="left">xfce4-power-manager 4.20.0 polls the XSS idle counter and re-blanks the display ~1 s after wake due to a race with the idle-counter reset</td>
+      <td align="left"><code>Hidden=true</code> suppresses xfce4-power-manager autostart; DPMS fully managed by the X server</td>
+    </tr>
+    <tr>
+      <td align="left">5</td>
+      <td align="left"><code>drivers/gpu/drm/tidss/tidss_plane.c</code></td>
+      <td align="left"><code>dispc_initial_config()</code> resets <code>DISPC_VID_ATTRIBUTES</code> bit 0 (VID enable) to 0 on resume; DRM skips <code>atomic_enable()</code> because the plane is already bound to the CRTC</td>
+      <td align="left"><code>dispc_plane_enable(true)</code> added inside <code>tidss_plane_atomic_update()</code> whenever the plane is visible</td>
+    </tr>
+  </tbody>
+</table>
 
 ### DPMS Configuration
 
@@ -1410,13 +2723,42 @@ The S1 button is connected to the `NPWRON` pin of the TPS6593-Q1 PMIC (I²C bus 
 
 ### Behaviour
 
-| Event | Action | Notes |
-|-------|--------|-------|
-| Press | XFCE4 shutdown dialog | Appears immediately while button is still held |
-| Release before 5 s | Dialog stays open | User can choose from dialog options |
-| Hold ≥ 5 s | `systemctl poweroff` | Dialog bypassed; poweroff forced |
-| Hold ~7 s | PMIC hardware forced shutdown | FSD — hardware safety, not software-controlled |
-| After soft poweroff | Short S1 press restarts system | PMIC switched to ENABLE mode by reboot notifier |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="436" align="left">Event</th>
+      <th width="256" align="left">Action</th>
+      <th width="256" align="left">Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Press</td>
+      <td align="left">XFCE4 shutdown dialog</td>
+      <td align="left">Appears immediately while button is still held</td>
+    </tr>
+    <tr>
+      <td align="left">Release before 5 s</td>
+      <td align="left">Dialog stays open</td>
+      <td align="left">User can choose from dialog options</td>
+    </tr>
+    <tr>
+      <td align="left">Hold ≥ 5 s</td>
+      <td align="left"><code>systemctl poweroff</code></td>
+      <td align="left">Dialog bypassed; poweroff forced</td>
+    </tr>
+    <tr>
+      <td align="left">Hold ~7 s</td>
+      <td align="left">PMIC hardware forced shutdown</td>
+      <td align="left">FSD — hardware safety, not software-controlled</td>
+    </tr>
+    <tr>
+      <td align="left">After soft poweroff</td>
+      <td align="left">Short S1 press restarts system</td>
+      <td align="left">PMIC switched to ENABLE mode by reboot notifier</td>
+    </tr>
+  </tbody>
+</table>
 
 This matches standard Ubuntu laptop power-button behaviour.
 
@@ -1426,12 +2768,37 @@ After `systemctl poweroff`, the kernel reboot notifier switches the PMIC `NPWRON
 
 ### Software Stack
 
-| Component | Location | Role |
-|-----------|----------|------|
-| Kernel driver | `drivers/mfd/tps6594-core.c` | Configures `NPWRON_SEL = 01` (button mode); registers `NPWRON_START` IRQ; reports `KEY_POWER` events via `tps6594-pwrbutton` input device; reboot notifier switches back to ENABLE mode on poweroff |
-| `s1-powerkey` daemon | `/usr/local/bin/s1-powerkey` | Python daemon that reads `KEY_POWER` events from `/dev/input/eventN` and fires `threading.Timer` callback at 5 s |
-| systemd service | `/etc/systemd/system/s1-powerkey.service` | Starts the daemon at boot (`WantedBy=multi-user.target`); `Restart=always` |
-| logind override | `/etc/systemd/logind.conf.d/s1-powerkey.conf` | Sets `HandlePowerKey=ignore` and `HandlePowerKeyLongPress=ignore` so logind does not consume `KEY_POWER` events before the daemon |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">Component</th>
+      <th width="351" align="left">Location</th>
+      <th width="351" align="left">Role</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Kernel driver</td>
+      <td align="left"><code>drivers/mfd/tps6594-core.c</code></td>
+      <td align="left">Configures <code>NPWRON_SEL = 01</code> (button mode); registers <code>NPWRON_START</code> IRQ; reports <code>KEY_POWER</code> events via <code>tps6594-pwrbutton</code> input device; reboot notifier switches back to ENABLE mode on poweroff</td>
+    </tr>
+    <tr>
+      <td align="left"><code>s1-powerkey</code> daemon</td>
+      <td align="left"><code>/usr/local/bin/s1-powerkey</code></td>
+      <td align="left">Python daemon that reads <code>KEY_POWER</code> events from <code>/dev/input/eventN</code> and fires <code>threading.Timer</code> callback at 5 s</td>
+    </tr>
+    <tr>
+      <td align="left">systemd service</td>
+      <td align="left"><code>/etc/systemd/system/s1-powerkey.service</code></td>
+      <td align="left">Starts the daemon at boot (<code>WantedBy=multi-user.target</code>); <code>Restart=always</code></td>
+    </tr>
+    <tr>
+      <td align="left">logind override</td>
+      <td align="left"><code>/etc/systemd/logind.conf.d/s1-powerkey.conf</code></td>
+      <td align="left">Sets <code>HandlePowerKey=ignore</code> and <code>HandlePowerKeyLongPress=ignore</code> so logind does not consume <code>KEY_POWER</code> events before the daemon</td>
+    </tr>
+  </tbody>
+</table>
 
 ### PMIC Hardware Safety (FSD)
 
@@ -1460,12 +2827,32 @@ The MO-62A carries a **BL24C02F** 2 Kbit (256-byte) I2C EEPROM on SOC_I2C1 (addr
 
 ### Hardware
 
-| Item | Value |
-|------|-------|
-| IC | BL24C02F (SOT23-5, compatible with Atmel 24C02) |
-| Interface | SOC_I2C1, 7-bit address 0x50 |
-| Capacity | 256 bytes, page size 16 bytes |
-| Write protect | WP pin (GPIO1_7 / C19 / EEP_WC), active-high, pulled to VCC_3V3_SYS via R267 (10 kΩ) |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Item</th>
+      <th width="664" align="left">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">IC</td>
+      <td align="left">BL24C02F (SOT23-5, compatible with Atmel 24C02)</td>
+    </tr>
+    <tr>
+      <td align="left">Interface</td>
+      <td align="left">SOC_I2C1, 7-bit address 0x50</td>
+    </tr>
+    <tr>
+      <td align="left">Capacity</td>
+      <td align="left">256 bytes, page size 16 bytes</td>
+    </tr>
+    <tr>
+      <td align="left">Write protect</td>
+      <td align="left">WP pin (GPIO1_7 / C19 / EEP_WC), active-high, pulled to VCC_3V3_SYS via R267 (10 kΩ)</td>
+    </tr>
+  </tbody>
+</table>
 
 ### I2C Address Conflict with SiI9022A
 
@@ -1529,20 +2916,64 @@ Connect to the device on the **Connect** page, select test items on the **Select
 
 ### Test Categories
 
-| Category | Coverage |
-|----------|----------|
-| System Basics | Firmware version, kernel version, DTB/overlays, OS version, hostname, uptime, filesystem usage, memory, CPU cores, CPU frequency (from OPP table), CPU temperature, Ethernet MAC address |
-| LEDs | Power LED and Status LED GPIO control |
-| Fan | PWM fan speed control and tachometer feedback |
-| RTC | PCF85263A time read/write |
-| I2C | Bus enumeration, device presence check |
-| HDMI | Display mode and connector state |
-| Audio | Codec detection, playback/capture |
-| Camera | CSI pipeline, device node presence |
-| Network | Ethernet link, IP assignment, connectivity |
-| USB | Hub enumeration, port detection |
-| GPIO | 40-pin header GPIO toggling |
-| Services | systemd service states |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">Category</th>
+      <th width="664" align="left">Coverage</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">System Basics</td>
+      <td align="left">Firmware version, kernel version, DTB/overlays, OS version, hostname, uptime, filesystem usage, memory, CPU cores, CPU frequency (from OPP table), CPU temperature, Ethernet MAC address</td>
+    </tr>
+    <tr>
+      <td align="left">LEDs</td>
+      <td align="left">Power LED and Status LED GPIO control</td>
+    </tr>
+    <tr>
+      <td align="left">Fan</td>
+      <td align="left">PWM fan speed control and tachometer feedback</td>
+    </tr>
+    <tr>
+      <td align="left">RTC</td>
+      <td align="left">PCF85263A time read/write</td>
+    </tr>
+    <tr>
+      <td align="left">I2C</td>
+      <td align="left">Bus enumeration, device presence check</td>
+    </tr>
+    <tr>
+      <td align="left">HDMI</td>
+      <td align="left">Display mode and connector state</td>
+    </tr>
+    <tr>
+      <td align="left">Audio</td>
+      <td align="left">Codec detection, playback/capture</td>
+    </tr>
+    <tr>
+      <td align="left">Camera</td>
+      <td align="left">CSI pipeline, device node presence</td>
+    </tr>
+    <tr>
+      <td align="left">Network</td>
+      <td align="left">Ethernet link, IP assignment, connectivity</td>
+    </tr>
+    <tr>
+      <td align="left">USB</td>
+      <td align="left">Hub enumeration, port detection</td>
+    </tr>
+    <tr>
+      <td align="left">GPIO</td>
+      <td align="left">40-pin header GPIO toggling</td>
+    </tr>
+    <tr>
+      <td align="left">Services</td>
+      <td align="left">systemd service states</td>
+    </tr>
+  </tbody>
+</table>
 
 ### Device-side Daemon
 
