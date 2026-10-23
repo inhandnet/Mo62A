@@ -8,14 +8,47 @@ MO-62A 单板计算机 SDK，基于 TI AM62A7 平台，提供高达 2 TOPS AI �
 
 [![Mo 系列仓库职责与统一网站](architecture/repository-map.zh-CN.svg)](architecture/repository-map.zh-CN.svg)
 
-| 仓库 | 人工维护的源内容 | 交付职责 |
-|---|---|---|
-| **developer** · GitLab | 网站组件、路由、搜索、接入层与内容接口 | 完整网站、发布组成清单与部署 |
-| [mo-docs](https://github.com/inhandnet/mo-docs) | 软硬件教程、规格、媒体、设计资料与维护培训 | 版本化内容与参考附件 |
-| [mo-tools](https://github.com/inhandnet/mo-tools) | 工具链/SDK 选择、环境准备、通用开发工具与 Studio | 工具元信息和源码包 |
-| [mo-models](https://github.com/inhandnet/mo-models) | 模型目录、编译资源、兼容关系与原始基准 | 模型引用、验证证据与托管状态 |
-| [mo-examples](https://github.com/inhandnet/mo-examples) | 完整示例及配套固件、客户端和配置 | 示例源码及适用条件 |
-| **Mo\*** · 各型号仓库 | 各自 BSP、驱动、根文件系统、镜像构建与烧录 | 系统镜像及带校验值的发布元信息 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="171" align="left">仓库</th>
+      <th width="398" align="left">人工维护的源内容</th>
+      <th width="379" align="left">交付职责</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><strong>developer</strong> · GitLab</td>
+      <td align="left">网站组件、路由、搜索、接入层与内容接口</td>
+      <td align="left">完整网站、发布组成清单与部署</td>
+    </tr>
+    <tr>
+      <td align="left"><a href="https://github.com/inhandnet/mo-docs">mo-docs</a></td>
+      <td align="left">软硬件教程、规格、媒体、设计资料与维护培训</td>
+      <td align="left">版本化内容与参考附件</td>
+    </tr>
+    <tr>
+      <td align="left"><a href="https://github.com/inhandnet/mo-tools">mo-tools</a></td>
+      <td align="left">工具链/SDK 选择、环境准备、通用开发工具与 Studio</td>
+      <td align="left">工具元信息和源码包</td>
+    </tr>
+    <tr>
+      <td align="left"><a href="https://github.com/inhandnet/mo-models">mo-models</a></td>
+      <td align="left">模型目录、编译资源、兼容关系与原始基准</td>
+      <td align="left">模型引用、验证证据与托管状态</td>
+    </tr>
+    <tr>
+      <td align="left"><a href="https://github.com/inhandnet/mo-examples">mo-examples</a></td>
+      <td align="left">完整示例及配套固件、客户端和配置</td>
+      <td align="left">示例源码及适用条件</td>
+    </tr>
+    <tr>
+      <td align="left"><strong>Mo*</strong> · 各型号仓库</td>
+      <td align="left">各自 BSP、驱动、根文件系统、镜像构建与烧录</td>
+      <td align="left">系统镜像及带校验值的发布元信息</td>
+    </tr>
+  </tbody>
+</table>
 
 `Mo*` 表示各型号独立的产品仓库，例如 [Mo62A](https://github.com/inhandnet/Mo62A)、Mo68A、Mo69A、Mo67A、Mo3588、Mo3568，框架不固定数量。mo-hardware 的资料与维护培训迁入 mo-docs；mo-hardware 保留为历史迁移来源，不再单列为目标网站发布组成项。
 
@@ -125,11 +158,28 @@ mo-62a/
 
 以下主机环境已经过编译验证：
 
-| 项目 | 要求 |
-|------|------|
-| 操作系统 | Ubuntu 22.04 LTS（x86_64） |
-| 内核版本 | 6.8.0 或更高 |
-| 架构 | x86_64 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">项目</th>
+      <th width="664" align="left">要求</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">操作系统</td>
+      <td align="left">Ubuntu 22.04 LTS（x86_64）</td>
+    </tr>
+    <tr>
+      <td align="left">内核版本</td>
+      <td align="left">6.8.0 或更高</td>
+    </tr>
+    <tr>
+      <td align="left">架构</td>
+      <td align="left">x86_64</td>
+    </tr>
+  </tbody>
+</table>
 
 所需主机软件包：
 
@@ -204,21 +254,61 @@ SDK 包含两套交叉编译工具链：
 
 **AArch64 工具链**——用于 Linux 内核和 A53 U-Boot：
 
-| 项目 | 值 |
-|------|-----|
-| 路径 | `linux-devkit/sysroots/x86_64-arago-linux/usr/bin/aarch64-oe-linux/` |
-| 前缀 | `aarch64-oe-linux-` |
-| GCC 版本 | 13.4.0 |
-| 目标 sysroot | `linux-devkit/sysroots/aarch64-oe-linux/` |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">项目</th>
+      <th width="664" align="left">值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">路径</td>
+      <td align="left"><code>linux-devkit/sysroots/x86_64-arago-linux/usr/bin/aarch64-oe-linux/</code></td>
+    </tr>
+    <tr>
+      <td align="left">前缀</td>
+      <td align="left"><code>aarch64-oe-linux-</code></td>
+    </tr>
+    <tr>
+      <td align="left">GCC 版本</td>
+      <td align="left">13.4.0</td>
+    </tr>
+    <tr>
+      <td align="left">目标 sysroot</td>
+      <td align="left"><code>linux-devkit/sysroots/aarch64-oe-linux/</code></td>
+    </tr>
+  </tbody>
+</table>
 
 **ARMv7 R5 工具链**——用于 R5 SPL（tiboot3）：
 
-| 项目 | 值 |
-|------|-----|
-| 路径 | `k3r5-devkit/sysroots/x86_64-arago-linux/usr/bin/arm-oe-eabi/` |
-| 前缀 | `arm-oe-eabi-` |
-| GCC 版本 | 13.4.0 |
-| 目标 sysroot | `k3r5-devkit/sysroots/armv7at2hf-vfp-oe-eabi/` |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">项目</th>
+      <th width="664" align="left">值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">路径</td>
+      <td align="left"><code>k3r5-devkit/sysroots/x86_64-arago-linux/usr/bin/arm-oe-eabi/</code></td>
+    </tr>
+    <tr>
+      <td align="left">前缀</td>
+      <td align="left"><code>arm-oe-eabi-</code></td>
+    </tr>
+    <tr>
+      <td align="left">GCC 版本</td>
+      <td align="left">13.4.0</td>
+    </tr>
+    <tr>
+      <td align="left">目标 sysroot</td>
+      <td align="left"><code>k3r5-devkit/sysroots/armv7at2hf-vfp-oe-eabi/</code></td>
+    </tr>
+  </tbody>
+</table>
 
 验证两套工具链均可用（执行 `setup.sh` 完成后运行）：
 
@@ -250,24 +340,73 @@ Copyright (C) 2023 Free Software Foundation, Inc.
 
 添加到 U-Boot 源码树中的 MO-62A 专用文件：
 
-| 文件 | 描述 |
-|------|------|
-| `board-support/ti-u-boot-2025.01+git/configs/am62ax_mo_62a_a53_defconfig` | A53 U-Boot defconfig |
-| `board-support/ti-u-boot-2025.01+git/configs/am62ax_mo_62a_r5_defconfig` | R5 SPL defconfig |
-| `board-support/ti-u-boot-2025.01+git/dts/upstream/src/arm64/ti/k3-am62a7-mo-62a.dts` | A53 主设备树 |
-| `board-support/ti-u-boot-2025.01+git/dts/upstream/src/arm64/ti/k3-am62a7-mo-62a-pinmux.dtsi` | 引脚复用配置 |
-| `board-support/ti-u-boot-2025.01+git/arch/arm/dts/k3-am62a7-r5-mo-62a.dts` | R5 SPL 设备树 |
-| `board-support/ti-u-boot-2025.01+git/arch/arm/dts/k3-am62a7-mo-62a-u-boot.dtsi` | U-Boot 专用 DT 扩展 |
-| `board-support/ti-u-boot-2025.01+git/arch/arm/dts/k3-am62a7-mo-62a-binman.dtsi` | Binman 打包配置 |
-| `board-support/ti-u-boot-2025.01+git/arch/arm/dts/k3-am62a7-mo-62a-lp4-4GB.dtsi` | LPDDR4 4GB 内存配置 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">文件</th>
+      <th width="664" align="left">描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>board-support/ti-u-boot-2025.01+git/configs/am62ax_mo_62a_a53_defconfig</code></td>
+      <td align="left">A53 U-Boot defconfig</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-u-boot-2025.01+git/configs/am62ax_mo_62a_r5_defconfig</code></td>
+      <td align="left">R5 SPL defconfig</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-u-boot-2025.01+git/dts/upstream/src/arm64/ti/k3-am62a7-mo-62a.dts</code></td>
+      <td align="left">A53 主设备树</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-u-boot-2025.01+git/dts/upstream/src/arm64/ti/k3-am62a7-mo-62a-pinmux.dtsi</code></td>
+      <td align="left">引脚复用配置</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-u-boot-2025.01+git/arch/arm/dts/k3-am62a7-r5-mo-62a.dts</code></td>
+      <td align="left">R5 SPL 设备树</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-u-boot-2025.01+git/arch/arm/dts/k3-am62a7-mo-62a-u-boot.dtsi</code></td>
+      <td align="left">U-Boot 专用 DT 扩展</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-u-boot-2025.01+git/arch/arm/dts/k3-am62a7-mo-62a-binman.dtsi</code></td>
+      <td align="left">Binman 打包配置</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-u-boot-2025.01+git/arch/arm/dts/k3-am62a7-mo-62a-lp4-4GB.dtsi</code></td>
+      <td align="left">LPDDR4 4GB 内存配置</td>
+    </tr>
+  </tbody>
+</table>
 
 编译期间所需的预编译固件（来自 TI，未修改）：
 
-| 文件 | 描述 |
-|------|------|
-| `board-support/prebuilt-images/am62a-evm/bl31.bin` | Arm Trusted Firmware（TF-A） |
-| `board-support/prebuilt-images/am62a-evm/bl32.bin` | OP-TEE OS |
-| `board-support/prebuilt-images/am62a-evm/ti-dm/am62axx/dm_edgeai_mcu1_0_release_strip.out` | TI 设备管理器固件 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">文件</th>
+      <th width="664" align="left">描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>board-support/prebuilt-images/am62a-evm/bl31.bin</code></td>
+      <td align="left">Arm Trusted Firmware（TF-A）</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/prebuilt-images/am62a-evm/bl32.bin</code></td>
+      <td align="left">OP-TEE OS</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/prebuilt-images/am62a-evm/ti-dm/am62axx/dm_edgeai_mcu1_0_release_strip.out</code></td>
+      <td align="left">TI 设备管理器固件</td>
+    </tr>
+  </tbody>
+</table>
 
 ### 3.2 编译 U-Boot
 
@@ -307,14 +446,54 @@ make u-boot_stage
 
 归档完成后，`board-support/built-images/` 中包含以下文件：
 
-| 文件 | 大小 | 来源 | 描述 |
-|------|------|------|------|
-| `tiboot3-am62ax-gp-mo-62a.bin` | ~318 KB | R5 编译 | 适用于 GP（通用）设备的 R5 SPL |
-| `tiboot3-am62ax-hs-fs-mo-62a.bin` | ~320 KB | R5 编译 | 适用于 HS-FS（高安全、可量产）设备的 R5 SPL |
-| `tiboot3-am62ax-hs-mo-62a.bin` | ~320 KB | R5 编译 | 适用于 HS（高安全）设备的 R5 SPL |
-| `tiboot3.bin` | ~320 KB | R5 编译 | 默认 tiboot3（HS-FS，烧录工具使用） |
-| `tispl.bin` | ~1.7 MB | A53 编译 | TI SPL——加载 OP-TEE、TF-A 和 A53 U-Boot |
-| `u-boot.img` | ~1.2 MB | A53 编译 | A53 U-Boot FIT 镜像 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="209" align="left">文件</th>
+      <th width="246" align="left">大小</th>
+      <th width="246" align="left">来源</th>
+      <th width="247" align="left">描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>tiboot3-am62ax-gp-mo-62a.bin</code></td>
+      <td align="left">~318 KB</td>
+      <td align="left">R5 编译</td>
+      <td align="left">适用于 GP（通用）设备的 R5 SPL</td>
+    </tr>
+    <tr>
+      <td align="left"><code>tiboot3-am62ax-hs-fs-mo-62a.bin</code></td>
+      <td align="left">~320 KB</td>
+      <td align="left">R5 编译</td>
+      <td align="left">适用于 HS-FS（高安全、可量产）设备的 R5 SPL</td>
+    </tr>
+    <tr>
+      <td align="left"><code>tiboot3-am62ax-hs-mo-62a.bin</code></td>
+      <td align="left">~320 KB</td>
+      <td align="left">R5 编译</td>
+      <td align="left">适用于 HS（高安全）设备的 R5 SPL</td>
+    </tr>
+    <tr>
+      <td align="left"><code>tiboot3.bin</code></td>
+      <td align="left">~320 KB</td>
+      <td align="left">R5 编译</td>
+      <td align="left">默认 tiboot3（HS-FS，烧录工具使用）</td>
+    </tr>
+    <tr>
+      <td align="left"><code>tispl.bin</code></td>
+      <td align="left">~1.7 MB</td>
+      <td align="left">A53 编译</td>
+      <td align="left">TI SPL——加载 OP-TEE、TF-A 和 A53 U-Boot</td>
+    </tr>
+    <tr>
+      <td align="left"><code>u-boot.img</code></td>
+      <td align="left">~1.2 MB</td>
+      <td align="left">A53 编译</td>
+      <td align="left">A53 U-Boot FIT 镜像</td>
+    </tr>
+  </tbody>
+</table>
 
 > **注意：** 具体使用哪个 `tiboot3-*.bin` 变体取决于设备安全状态。大多数量产 MO-62A 板卡出厂为 HS-FS，使用 `tiboot3-am62ax-hs-fs-mo-62a.bin`。烧录工具默认使用 `tiboot3.bin`（即 HS-FS 变体的副本）。
 
@@ -326,18 +505,52 @@ make u-boot_stage
 
 添加到 Linux 内核源码树中的 MO-62A 专用文件：
 
-| 文件 | 描述 |
-|------|------|
-| `board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/configs/am62ax_mo_62a_defconfig` | MO-62A 基础内核 defconfig |
-| `board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/boot/dts/ti/k3-am62a7-mo-62a.dts` | MO-62A 主设备树 |
-| `board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/boot/dts/ti/k3-am62a7-mo-62a-pinmux.dtsi` | 引脚复用配置 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">文件</th>
+      <th width="664" align="left">描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/configs/am62ax_mo_62a_defconfig</code></td>
+      <td align="left">MO-62A 基础内核 defconfig</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/boot/dts/ti/k3-am62a7-mo-62a.dts</code></td>
+      <td align="left">MO-62A 主设备树</td>
+    </tr>
+    <tr>
+      <td align="left"><code>board-support/ti-linux-kernel-6.12.35+git-ti-rt/arch/arm64/boot/dts/ti/k3-am62a7-mo-62a-pinmux.dtsi</code></td>
+      <td align="left">引脚复用配置</td>
+    </tr>
+  </tbody>
+</table>
 
 编译时在 defconfig 基础上叠加应用的内核配置片段：
 
-| 片段 | 位置 | 用途 |
-|------|------|------|
-| `ti_arm64_prune.config` | `kernel/configs/` | 移除非 TI ARM64 平台支持，减小编译体积 |
-| `ti_rt.config` | `kernel/configs/` | 启用 PREEMPT_RT 实时内核补丁 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">片段</th>
+      <th width="351" align="left">位置</th>
+      <th width="351" align="left">用途</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>ti_arm64_prune.config</code></td>
+      <td align="left"><code>kernel/configs/</code></td>
+      <td align="left">移除非 TI ARM64 平台支持，减小编译体积</td>
+    </tr>
+    <tr>
+      <td align="left"><code>ti_rt.config</code></td>
+      <td align="left"><code>kernel/configs/</code></td>
+      <td align="left">启用 PREEMPT_RT 实时内核补丁</td>
+    </tr>
+  </tbody>
+</table>
 
 ### 4.2 编译 DTB
 
@@ -384,12 +597,37 @@ make linux_stage
 
 归档完成后，`board-support/built-images/` 中新增以下文件：
 
-| 文件 | 大小 | 描述 |
-|------|------|------|
-| `Image` | ~18 MB | 未压缩内核镜像 |
-| `Image.gz` | ~7.0 MB | 压缩内核镜像 |
-| `fitImage` | ~7.3 MB | 签名 FIT 镜像（内核 + DTB），用于验证启动 |
-| `dtb/ti/*.dtb` / `dtb/ti/*.dtbo` | — | 62 个设备树 blob 和覆盖层 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">文件</th>
+      <th width="351" align="left">大小</th>
+      <th width="351" align="left">描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>Image</code></td>
+      <td align="left">~18 MB</td>
+      <td align="left">未压缩内核镜像</td>
+    </tr>
+    <tr>
+      <td align="left"><code>Image.gz</code></td>
+      <td align="left">~7.0 MB</td>
+      <td align="left">压缩内核镜像</td>
+    </tr>
+    <tr>
+      <td align="left"><code>fitImage</code></td>
+      <td align="left">~7.3 MB</td>
+      <td align="left">签名 FIT 镜像（内核 + DTB），用于验证启动</td>
+    </tr>
+    <tr>
+      <td align="left"><code>dtb/ti/*.dtb</code> / <code>dtb/ti/*.dtbo</code></td>
+      <td align="left">—</td>
+      <td align="left">62 个设备树 blob 和覆盖层</td>
+    </tr>
+  </tbody>
+</table>
 
 > **注意：** `fitImage` 使用 U-Boot 源码树中的 `custMpk` 密钥签名。签名步骤同时触发 `tispl.bin` 的重新编译，使其嵌入 MO-62A DTB（`k3-am62a7-mo-62a.dtb`）。因此，`make linux` 始终会同时更新 `built-images/` 中的 `fitImage` 和 `tispl.bin`。
 
@@ -399,12 +637,32 @@ make linux_stage
 
 请根据下表判断运行烧录工具前需要执行哪些编译步骤：
 
-| 变更类型 | 必要的编译步骤 |
-|----------|--------------|
-| 仅修改 DTS / 引脚复用 | `make linux-dtbs` → `make linux-dtbs_stage` → **`make linux`** → `make linux_stage` |
-| 修改内核源码（`.c` / `.h`） | `make linux` → `make linux_stage` |
-| 修改 U-Boot 源码 | `make u-boot` → `make u-boot_stage` |
-| 仅修改 rootfs overlay（脚本、服务文件） | 无需重新编译内核——烧录工具会自动复制 overlay |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">变更类型</th>
+      <th width="664" align="left">必要的编译步骤</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">仅修改 DTS / 引脚复用</td>
+      <td align="left"><code>make linux-dtbs</code> → <code>make linux-dtbs_stage</code> → <strong><code>make linux</code></strong> → <code>make linux_stage</code></td>
+    </tr>
+    <tr>
+      <td align="left">修改内核源码（<code>.c</code> / <code>.h</code>）</td>
+      <td align="left"><code>make linux</code> → <code>make linux_stage</code></td>
+    </tr>
+    <tr>
+      <td align="left">修改 U-Boot 源码</td>
+      <td align="left"><code>make u-boot</code> → <code>make u-boot_stage</code></td>
+    </tr>
+    <tr>
+      <td align="left">仅修改 rootfs overlay（脚本、服务文件）</td>
+      <td align="left">无需重新编译内核——烧录工具会自动复制 overlay</td>
+    </tr>
+  </tbody>
+</table>
 
 > **重要：** 即使只修改了 DTS 文件，烧录前也必须执行 `make linux`（或确认内核源码树中已有完整编译好的 `.ko` 文件）。**仅运行 `make linux-dtbs` 是不够的**，因为它不会编译内核模块。
 
@@ -494,12 +752,32 @@ Select operation mode:
 Select mode number (default 1):
 ```
 
-| 模式 | 描述 |
-|------|------|
-| `full` | 全量写入：擦除并重新分区、格式化、复制启动文件、解压 rootfs、安装内核模块 |
-| `partition` | 仅分区：擦除并重建 MBR、格式化分区——不写入任何内容 |
-| `boot` | 仅覆盖 BOOT 分区——重新烧录引导程序和内核，不影响 rootfs |
-| `rootfs` | 仅覆盖 rootfs 分区——重新解压 rootfs，不影响 BOOT 分区 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">模式</th>
+      <th width="664" align="left">描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>full</code></td>
+      <td align="left">全量写入：擦除并重新分区、格式化、复制启动文件、解压 rootfs、安装内核模块</td>
+    </tr>
+    <tr>
+      <td align="left"><code>partition</code></td>
+      <td align="left">仅分区：擦除并重建 MBR、格式化分区——不写入任何内容</td>
+    </tr>
+    <tr>
+      <td align="left"><code>boot</code></td>
+      <td align="left">仅覆盖 BOOT 分区——重新烧录引导程序和内核，不影响 rootfs</td>
+    </tr>
+    <tr>
+      <td align="left"><code>rootfs</code></td>
+      <td align="left">仅覆盖 rootfs 分区——重新解压 rootfs，不影响 BOOT 分区</td>
+    </tr>
+  </tbody>
+</table>
 
 全新 SD 卡请选择 `full`。工具将要求确认（输入 `YES` 继续），然后自动执行：
 
@@ -563,13 +841,36 @@ Image size (GiB, integer) (default: 12): 12
 Compression (zip|xz|none) (default: xz): xz
 ```
 
-| 参数 | 描述 |
-|------|------|
-| 输出目录 | `.img` 及校验文件的写入路径 |
-| 版本 | 用于 `mo62a-trixie-xfce-<version>` 文件名和外部应用版本 |
-| 日期 | 写入外部应用的构建日期 |
-| 镜像大小（GiB） | 包含 BOOT、4 GiB swap、rootfs 和文件系统开销的总大小，默认 12 GiB |
-| 压缩格式 | `xz`（默认）、`zip` 或 `none`（不压缩） |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">参数</th>
+      <th width="664" align="left">描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">输出目录</td>
+      <td align="left"><code>.img</code> 及校验文件的写入路径</td>
+    </tr>
+    <tr>
+      <td align="left">版本</td>
+      <td align="left">用于 <code>mo62a-trixie-xfce-&lt;version&gt;</code> 文件名和外部应用版本</td>
+    </tr>
+    <tr>
+      <td align="left">日期</td>
+      <td align="left">写入外部应用的构建日期</td>
+    </tr>
+    <tr>
+      <td align="left">镜像大小（GiB）</td>
+      <td align="left">包含 BOOT、4 GiB swap、rootfs 和文件系统开销的总大小，默认 12 GiB</td>
+    </tr>
+    <tr>
+      <td align="left">压缩格式</td>
+      <td align="left"><code>xz</code>（默认）、<code>zip</code> 或 <code>none</code>（不压缩）</td>
+    </tr>
+  </tbody>
+</table>
 
 工具创建稀疏 `.img` 文件，通过 loop 设备分区、格式化并安装启动文件和 rootfs，卸载后压缩输出。内核模块、外部应用、外置驱动及 overlay 与直接写卡复用相同的安装函数；这不表示两种文件系统镜像逐字节一致。
 
@@ -685,10 +986,27 @@ python3 -B -m unittest discover -s tests -p 'test_flash_cli.py' -v
 
 **通过此工作流程预装的软件包：**
 
-| 软件包 | 被哪个组件依赖 | 用途 |
-|--------|--------------|------|
-| `frei0r-plugins` | `imx219-preview.sh` | 通过 `frei0r-filter-white-balance` GStreamer 元素实现白平衡校正 |
-| `tcpdump`（+`libpcap0.8t64`） | Wi-Fi monitor 模式 | 在 monitor 模式下进行 802.11 空口抓包 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">软件包</th>
+      <th width="351" align="left">被哪个组件依赖</th>
+      <th width="351" align="left">用途</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><code>frei0r-plugins</code></td>
+      <td align="left"><code>imx219-preview.sh</code></td>
+      <td align="left">通过 <code>frei0r-filter-white-balance</code> GStreamer 元素实现白平衡校正</td>
+    </tr>
+    <tr>
+      <td align="left"><code>tcpdump</code>（+<code>libpcap0.8t64</code>）</td>
+      <td align="left">Wi-Fi monitor 模式</td>
+      <td align="left">在 monitor 模式下进行 802.11 空口抓包</td>
+    </tr>
+  </tbody>
+</table>
 
 > **chroot 常见坑**：若 base tar 缺 `/proc`、`/sys`、`/dev`、`/dev/pts`、`/tmp`、`/run` 目录，挂载或 `apt` 会失败（如 `tcpdump` postinst 的 `adduser` 报 `could not open lock file /run/adduser`）。进 chroot 前先 `sudo mkdir -p "$ROOTFS_DIR"/{proc,sys,dev,dev/pts,tmp,run}` 并 `chmod 1777 .../tmp`。
 
@@ -698,10 +1016,36 @@ python3 -B -m unittest discover -s tests -p 'test_flash_cli.py' -v
 
 在线烧录和离线镜像制作均产生完全相同的分区布局：
 
-| 分区 | 编号 | 文件系统 | 大小 | 标签 | 内容 |
-|------|------|---------|------|------|------|
-| BOOT | 1 | FAT32（LBA） | 256 MiB | `BOOT` | 引导程序、内核镜像、DTB、extlinux 配置 |
-| rootfs | 2 | ext4 | 剩余空间 | `rootfs` | 根文件系统、内核模块 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="158" align="left">分区</th>
+      <th width="158" align="left">编号</th>
+      <th width="158" align="left">文件系统</th>
+      <th width="158" align="left">大小</th>
+      <th width="158" align="left">标签</th>
+      <th width="158" align="left">内容</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">BOOT</td>
+      <td align="left">1</td>
+      <td align="left">FAT32（LBA）</td>
+      <td align="left">256 MiB</td>
+      <td align="left"><code>BOOT</code></td>
+      <td align="left">引导程序、内核镜像、DTB、extlinux 配置</td>
+    </tr>
+    <tr>
+      <td align="left">rootfs</td>
+      <td align="left">2</td>
+      <td align="left">ext4</td>
+      <td align="left">剩余空间</td>
+      <td align="left"><code>rootfs</code></td>
+      <td align="left">根文件系统、内核模块</td>
+    </tr>
+  </tbody>
+</table>
 
 分区表类型：**MBR**（主引导记录）
 
@@ -757,23 +1101,92 @@ label microSD
 
 MO-62A 以 **TI AM62A74** SoC 为核心，顶层框图连接以下子系统：
 
-| 子系统 | 关键 IC | SoC 接口 |
-|--------|--------|---------|
-| 电源管理 | TPS65931211（PMIC） | SOC_I2C0 |
-| eMMC 存储 | — | MMC0 |
-| LPDDR4 内存 | MT53E1G32D2FW-046 | DDR32（32-bit） |
-| Micro SD 卡 | — | MMC1 |
-| RGB 转 HDMI 发送器 | SiI9022ACNU | RGB888 + MCASP0 + SOC_I2C1 |
-| 千兆以太网 PHY | DP83867IR | RGMII1 + MDIO |
-| USB Hub（4 口） | USB2514 | USB1 |
-| Wi-Fi / 蓝牙 | FG6221ASRC-0L | MMC2（SDIO）+ SOC_UART6 |
-| RTC | PCF85263ATL | SOC_I2C0 |
-| 音频编解码器 | TLV320AIC3106 | MCASP1 + SOC_I2C1 |
-| EEPROM | BL24C02（M24M02E） | SOC_I2C1 |
-| CSI 摄像头 | — | CSI0（4-lane MIPI）+ SOC_I2C2 |
-| 40 Pin 扩展接口 | — | GPIO / I2C / SPI / UART / PWM / MCASP |
-| 风扇控制器 | TXB0104RUTR（电平转换） | PWM + TIMER |
-| 调试 UART | SN74LVC2G24DCUR（隔离） | SOC_UART0 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">子系统</th>
+      <th width="351" align="left">关键 IC</th>
+      <th width="351" align="left">SoC 接口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">电源管理</td>
+      <td align="left">TPS65931211（PMIC）</td>
+      <td align="left">SOC_I2C0</td>
+    </tr>
+    <tr>
+      <td align="left">eMMC 存储</td>
+      <td align="left">—</td>
+      <td align="left">MMC0</td>
+    </tr>
+    <tr>
+      <td align="left">LPDDR4 内存</td>
+      <td align="left">MT53E1G32D2FW-046</td>
+      <td align="left">DDR32（32-bit）</td>
+    </tr>
+    <tr>
+      <td align="left">Micro SD 卡</td>
+      <td align="left">—</td>
+      <td align="left">MMC1</td>
+    </tr>
+    <tr>
+      <td align="left">RGB 转 HDMI 发送器</td>
+      <td align="left">SiI9022ACNU</td>
+      <td align="left">RGB888 + MCASP0 + SOC_I2C1</td>
+    </tr>
+    <tr>
+      <td align="left">千兆以太网 PHY</td>
+      <td align="left">DP83867IR</td>
+      <td align="left">RGMII1 + MDIO</td>
+    </tr>
+    <tr>
+      <td align="left">USB Hub（4 口）</td>
+      <td align="left">USB2514</td>
+      <td align="left">USB1</td>
+    </tr>
+    <tr>
+      <td align="left">Wi-Fi / 蓝牙</td>
+      <td align="left">FG6221ASRC-0L</td>
+      <td align="left">MMC2（SDIO）+ SOC_UART6</td>
+    </tr>
+    <tr>
+      <td align="left">RTC</td>
+      <td align="left">PCF85263ATL</td>
+      <td align="left">SOC_I2C0</td>
+    </tr>
+    <tr>
+      <td align="left">音频编解码器</td>
+      <td align="left">TLV320AIC3106</td>
+      <td align="left">MCASP1 + SOC_I2C1</td>
+    </tr>
+    <tr>
+      <td align="left">EEPROM</td>
+      <td align="left">BL24C02（M24M02E）</td>
+      <td align="left">SOC_I2C1</td>
+    </tr>
+    <tr>
+      <td align="left">CSI 摄像头</td>
+      <td align="left">—</td>
+      <td align="left">CSI0（4-lane MIPI）+ SOC_I2C2</td>
+    </tr>
+    <tr>
+      <td align="left">40 Pin 扩展接口</td>
+      <td align="left">—</td>
+      <td align="left">GPIO / I2C / SPI / UART / PWM / MCASP</td>
+    </tr>
+    <tr>
+      <td align="left">风扇控制器</td>
+      <td align="left">TXB0104RUTR（电平转换）</td>
+      <td align="left">PWM + TIMER</td>
+    </tr>
+    <tr>
+      <td align="left">调试 UART</td>
+      <td align="left">SN74LVC2G24DCUR（隔离）</td>
+      <td align="left">SOC_UART0</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -783,41 +1196,164 @@ MO-62A 以 **TI AM62A74** SoC 为核心，顶层框图连接以下子系统：
 
 **电源轨及分配：**
 
-| 电源轨 | 来源 | 典型电流 | 负载 |
-|--------|------|---------|------|
-| VCC_3V3_MAIN | DCDC 6 A（TPS62A63RLR） | 最大 6 A | 系统 3.3 V 主干 |
-| VCC_3V3_SYS | LDSW 4 A（TPS22965） | 957 mA | USB Hub、Wi-Fi/BT、音频编解码器、以太网 PHY、HDMI TX、RTC |
-| VSYS_3V3_EXP | 负载开关 4 A（TPS22965） | — | 40 Pin、CSI FPC、Micro SD |
-| VDD_CORE | PMIC Buck（3.5 A） | — | SoC 核心 |
-| VDD_LPDDR4 | PMIC Buck（3.5 A） | — | LPDDR4 |
-| SOC_DVDD1V8 | PMIC Buck（4 A） | — | SoC 1.8 V I/O |
-| VCC1V8_SYS_SW | PMIC Buck（2 A） | 200 mA | LPDDR4 辅助 |
-| VDD_2V5 | LDO（TPS74801DRCR，1.5 A） | 325 mA | 以太网 PHY VDDA2P5 |
-| VDD_1V0 | LDO（TLV75510PDQN） | 108 mA | 以太网 PHY VDD1P0 |
-| VDD_1V2 | LDO（TLV75512PDQN） | 80 mA | HDMI TX VDD1P2 |
-| VDD_CANUART | LDO（FLV70S07SYP） | 10 mA | CAN / UART I/O |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="209" align="left">电源轨</th>
+      <th width="246" align="left">来源</th>
+      <th width="246" align="left">典型电流</th>
+      <th width="247" align="left">负载</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">VCC_3V3_MAIN</td>
+      <td align="left">DCDC 6 A（TPS62A63RLR）</td>
+      <td align="left">最大 6 A</td>
+      <td align="left">系统 3.3 V 主干</td>
+    </tr>
+    <tr>
+      <td align="left">VCC_3V3_SYS</td>
+      <td align="left">LDSW 4 A（TPS22965）</td>
+      <td align="left">957 mA</td>
+      <td align="left">USB Hub、Wi-Fi/BT、音频编解码器、以太网 PHY、HDMI TX、RTC</td>
+    </tr>
+    <tr>
+      <td align="left">VSYS_3V3_EXP</td>
+      <td align="left">负载开关 4 A（TPS22965）</td>
+      <td align="left">—</td>
+      <td align="left">40 Pin、CSI FPC、Micro SD</td>
+    </tr>
+    <tr>
+      <td align="left">VDD_CORE</td>
+      <td align="left">PMIC Buck（3.5 A）</td>
+      <td align="left">—</td>
+      <td align="left">SoC 核心</td>
+    </tr>
+    <tr>
+      <td align="left">VDD_LPDDR4</td>
+      <td align="left">PMIC Buck（3.5 A）</td>
+      <td align="left">—</td>
+      <td align="left">LPDDR4</td>
+    </tr>
+    <tr>
+      <td align="left">SOC_DVDD1V8</td>
+      <td align="left">PMIC Buck（4 A）</td>
+      <td align="left">—</td>
+      <td align="left">SoC 1.8 V I/O</td>
+    </tr>
+    <tr>
+      <td align="left">VCC1V8_SYS_SW</td>
+      <td align="left">PMIC Buck（2 A）</td>
+      <td align="left">200 mA</td>
+      <td align="left">LPDDR4 辅助</td>
+    </tr>
+    <tr>
+      <td align="left">VDD_2V5</td>
+      <td align="left">LDO（TPS74801DRCR，1.5 A）</td>
+      <td align="left">325 mA</td>
+      <td align="left">以太网 PHY VDDA2P5</td>
+    </tr>
+    <tr>
+      <td align="left">VDD_1V0</td>
+      <td align="left">LDO（TLV75510PDQN）</td>
+      <td align="left">108 mA</td>
+      <td align="left">以太网 PHY VDD1P0</td>
+    </tr>
+    <tr>
+      <td align="left">VDD_1V2</td>
+      <td align="left">LDO（TLV75512PDQN）</td>
+      <td align="left">80 mA</td>
+      <td align="left">HDMI TX VDD1P2</td>
+    </tr>
+    <tr>
+      <td align="left">VDD_CANUART</td>
+      <td align="left">LDO（FLV70S07SYP）</td>
+      <td align="left">10 mA</td>
+      <td align="left">CAN / UART I/O</td>
+    </tr>
+  </tbody>
+</table>
 
 **状态指示灯（由 MCU GPIO 驱动）：**
 
-| LED | 颜色 | GPIO 信号 |
-|-----|------|----------|
-| POWER | 红色 | B9 / MCU_GPIO0_16 / PWR_LED |
-| STATUS | 绿色 | D7 / MCU_GPIO0_15 / ACT_LED |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">LED</th>
+      <th width="351" align="left">颜色</th>
+      <th width="351" align="left">GPIO 信号</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">POWER</td>
+      <td align="left">红色</td>
+      <td align="left">B9 / MCU_GPIO0_16 / PWR_LED</td>
+    </tr>
+    <tr>
+      <td align="left">STATUS</td>
+      <td align="left">绿色</td>
+      <td align="left">D7 / MCU_GPIO0_15 / ACT_LED</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
 ### 7.3 I2C 设备地址映射
 
-| SoC 总线 | 设备 | 地址 |
-|---------|------|------|
-| SOC_I2C0 | PMIC TPS65931211 | 0x48 / 0x49 / 0x5A / 0x5B |
-| SOC_I2C0 | RTC PCF85263ATL | 0x51 |
-| SOC_I2C1 | 音频编解码器 TLV320AIC3106 | 0x1B |
-| SOC_I2C1 | HDMI TX SiI9022ACNU | 0x3B / 0x3F / 0x62 |
-| SOC_I2C1 | EEPROM BL24C02 | 0x50 ¹ |
-| SOC_I2C2 | CSI FPC | — |
-| SOC_I2C2 | EXP 40 Pin（SDA1/SCL1） | — |
-| MCU_I2C0 | PMIC（从 I2C） | — |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">SoC 总线</th>
+      <th width="351" align="left">设备</th>
+      <th width="351" align="left">地址</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">SOC_I2C0</td>
+      <td align="left">PMIC TPS65931211</td>
+      <td align="left">0x48 / 0x49 / 0x5A / 0x5B</td>
+    </tr>
+    <tr>
+      <td align="left">SOC_I2C0</td>
+      <td align="left">RTC PCF85263ATL</td>
+      <td align="left">0x51</td>
+    </tr>
+    <tr>
+      <td align="left">SOC_I2C1</td>
+      <td align="left">音频编解码器 TLV320AIC3106</td>
+      <td align="left">0x1B</td>
+    </tr>
+    <tr>
+      <td align="left">SOC_I2C1</td>
+      <td align="left">HDMI TX SiI9022ACNU</td>
+      <td align="left">0x3B / 0x3F / 0x62</td>
+    </tr>
+    <tr>
+      <td align="left">SOC_I2C1</td>
+      <td align="left">EEPROM BL24C02</td>
+      <td align="left">0x50 ¹</td>
+    </tr>
+    <tr>
+      <td align="left">SOC_I2C2</td>
+      <td align="left">CSI FPC</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">SOC_I2C2</td>
+      <td align="left">EXP 40 Pin（SDA1/SCL1）</td>
+      <td align="left">—</td>
+    </tr>
+    <tr>
+      <td align="left">MCU_I2C0</td>
+      <td align="left">PMIC（从 I2C）</td>
+      <td align="left">—</td>
+    </tr>
+  </tbody>
+</table>
 
 > ¹ EEPROM 硬件存在于 0x50 地址，但内核设备树中未启用 `eeprom@50` DTS 节点。SiI9022A HDMI 发送器通过内部 I2C 旁路以相同地址（0x50）提供 EDID DDC 访问；同时启用两者会导致总线冲突。详见[第 10 节](#10-eeprom)。
 
@@ -827,22 +1363,65 @@ MO-62A 以 **TI AM62A74** SoC 为核心，顶层框图连接以下子系统：
 
 **LPDDR4（MT53E1G32D2FW-046）**
 
-| 项目 | 值 |
-|------|-----|
-| 总线位宽 | 32-bit |
-| 配置 | 单通道，32-bit |
-| SoC 接口 | DDR0（32-bit 全位宽） |
-| 供电 | VDD_LPDDR4（1.1 V），SOC_DVDD1V8 |
-| 复位下拉 | R120，10 kΩ（已贴装） |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">项目</th>
+      <th width="664" align="left">值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">总线位宽</td>
+      <td align="left">32-bit</td>
+    </tr>
+    <tr>
+      <td align="left">配置</td>
+      <td align="left">单通道，32-bit</td>
+    </tr>
+    <tr>
+      <td align="left">SoC 接口</td>
+      <td align="left">DDR0（32-bit 全位宽）</td>
+    </tr>
+    <tr>
+      <td align="left">供电</td>
+      <td align="left">VDD_LPDDR4（1.1 V），SOC_DVDD1V8</td>
+    </tr>
+    <tr>
+      <td align="left">复位下拉</td>
+      <td align="left">R120，10 kΩ（已贴装）</td>
+    </tr>
+  </tbody>
+</table>
 
 **EEPROM（BL24C02F）**
 
-| 项目 | 值 |
-|------|-----|
-| 封装 | SOT23-5 |
-| 接口 | I2C（SOC_I2C1） |
-| 地址 | 0x50 |
-| 写保护 | GPIO：C19/GPIO1_7/EEP_WC（高电平有效；经 R267 10 kΩ 上拉至 VCC_3V3_SYS，驱动未加载时默认写保护） |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">项目</th>
+      <th width="664" align="left">值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">封装</td>
+      <td align="left">SOT23-5</td>
+    </tr>
+    <tr>
+      <td align="left">接口</td>
+      <td align="left">I2C（SOC_I2C1）</td>
+    </tr>
+    <tr>
+      <td align="left">地址</td>
+      <td align="left">0x50</td>
+    </tr>
+    <tr>
+      <td align="left">写保护</td>
+      <td align="left">GPIO：C19/GPIO1_7/EEP_WC（高电平有效；经 R267 10 kΩ 上拉至 VCC_3V3_SYS，驱动未加载时默认写保护）</td>
+    </tr>
+  </tbody>
+</table>
 
 > `eeprom@50` DTS 节点当前已移除，详见[第 10 节](#10-eeprom)。
 
@@ -868,15 +1447,44 @@ MO-62A 以 **TI AM62A74** SoC 为核心，顶层框图连接以下子系统：
 
 **RGB 转 HDMI 发送器：SiI9022ACNU**
 
-| 项目 | 值 |
-|------|-----|
-| SoC 视频接口 | VOUT0_DATA[0..15]、VOUT0_PCLK、VSYNC、HSYNC、DE（并行 RGB） |
-| SoC 音频接口 | MCASP0（ACLKX、AFSX、AXR2） |
-| I2C 控制 | SOC_I2C1（0x3B / 0x3F / 0x62） |
-| 复位 GPIO | AA19/GPIO0_89/HDMI_RSTn |
-| 输出连接器 | Micro HDMI（J7） |
-| ESD 保护 | ESD7304D（×2 组） |
-| 供电 | VDD_1V2（1.2 V），VCC_3V3_SYS |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">项目</th>
+      <th width="664" align="left">值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">SoC 视频接口</td>
+      <td align="left">VOUT0_DATA[0..15]、VOUT0_PCLK、VSYNC、HSYNC、DE（并行 RGB）</td>
+    </tr>
+    <tr>
+      <td align="left">SoC 音频接口</td>
+      <td align="left">MCASP0（ACLKX、AFSX、AXR2）</td>
+    </tr>
+    <tr>
+      <td align="left">I2C 控制</td>
+      <td align="left">SOC_I2C1（0x3B / 0x3F / 0x62）</td>
+    </tr>
+    <tr>
+      <td align="left">复位 GPIO</td>
+      <td align="left">AA19/GPIO0_89/HDMI_RSTn</td>
+    </tr>
+    <tr>
+      <td align="left">输出连接器</td>
+      <td align="left">Micro HDMI（J7）</td>
+    </tr>
+    <tr>
+      <td align="left">ESD 保护</td>
+      <td align="left">ESD7304D（×2 组）</td>
+    </tr>
+    <tr>
+      <td align="left">供电</td>
+      <td align="left">VDD_1V2（1.2 V），VCC_3V3_SYS</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -884,20 +1492,64 @@ MO-62A 以 **TI AM62A74** SoC 为核心，顶层框图连接以下子系统：
 
 **以太网 PHY：DP83867CSRGZR**
 
-| 项目 | 值 |
-|------|-----|
-| 接口 | RGMII1（1 Gbps） |
-| PHY 地址 | 0x00 |
-| 自动协商 | 已启用，Auto-MDI-X |
-| TX 时钟偏移 | 0 ns |
-| RX 时钟偏移 | 2 ns |
-| MDIO | SoC_RGMII_MDC / MDO |
-| 晶振 | Y8，25 MHz / 2016 / 30 ppm / 12 pF |
-| 供电 | VDDA2P5 = 2.5 V，VDD1P0 = 1.0 V，VDD1P2 = 1.2 V |
-| 连接器 | RJ45（含集成磁性器件 LPJG4928HENL） |
-| PoE 接头 | J5（2×2，2.54 mm 间距） |
-| 链路 LED | 左侧（绿色） |
-| 活动 LED | 右侧（黄色） |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">项目</th>
+      <th width="664" align="left">值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">接口</td>
+      <td align="left">RGMII1（1 Gbps）</td>
+    </tr>
+    <tr>
+      <td align="left">PHY 地址</td>
+      <td align="left">0x00</td>
+    </tr>
+    <tr>
+      <td align="left">自动协商</td>
+      <td align="left">已启用，Auto-MDI-X</td>
+    </tr>
+    <tr>
+      <td align="left">TX 时钟偏移</td>
+      <td align="left">0 ns</td>
+    </tr>
+    <tr>
+      <td align="left">RX 时钟偏移</td>
+      <td align="left">2 ns</td>
+    </tr>
+    <tr>
+      <td align="left">MDIO</td>
+      <td align="left">SoC_RGMII_MDC / MDO</td>
+    </tr>
+    <tr>
+      <td align="left">晶振</td>
+      <td align="left">Y8，25 MHz / 2016 / 30 ppm / 12 pF</td>
+    </tr>
+    <tr>
+      <td align="left">供电</td>
+      <td align="left">VDDA2P5 = 2.5 V，VDD1P0 = 1.0 V，VDD1P2 = 1.2 V</td>
+    </tr>
+    <tr>
+      <td align="left">连接器</td>
+      <td align="left">RJ45（含集成磁性器件 LPJG4928HENL）</td>
+    </tr>
+    <tr>
+      <td align="left">PoE 接头</td>
+      <td align="left">J5（2×2，2.54 mm 间距）</td>
+    </tr>
+    <tr>
+      <td align="left">链路 LED</td>
+      <td align="left">左侧（绿色）</td>
+    </tr>
+    <tr>
+      <td align="left">活动 LED</td>
+      <td align="left">右侧（黄色）</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -905,13 +1557,36 @@ MO-62A 以 **TI AM62A74** SoC 为核心，顶层框图连接以下子系统：
 
 **USB Hub：USB2514（USB2514BQFN36）**
 
-| 项目 | 值 |
-|------|-----|
-| 上行端口 | 1× USB 2.0（来自 SoC USB1） |
-| 下行端口 | 4× USB 2.0 Type-A |
-| 电源开关 | TPS2561DRC，限流 2800 mA |
-| VBUS 供电 | VBUS_5V0_TYPEA（5 V 输入经 SW 2 A） |
-| 单端口电流 | 4 个端口合计最高 2 A |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">项目</th>
+      <th width="664" align="left">值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">上行端口</td>
+      <td align="left">1× USB 2.0（来自 SoC USB1）</td>
+    </tr>
+    <tr>
+      <td align="left">下行端口</td>
+      <td align="left">4× USB 2.0 Type-A</td>
+    </tr>
+    <tr>
+      <td align="left">电源开关</td>
+      <td align="left">TPS2561DRC，限流 2800 mA</td>
+    </tr>
+    <tr>
+      <td align="left">VBUS 供电</td>
+      <td align="left">VBUS_5V0_TYPEA（5 V 输入经 SW 2 A）</td>
+    </tr>
+    <tr>
+      <td align="left">单端口电流</td>
+      <td align="left">4 个端口合计最高 2 A</td>
+    </tr>
+  </tbody>
+</table>
 
 **USB Type-C（J31）**
 
@@ -925,15 +1600,44 @@ MO-62A 以 **TI AM62A74** SoC 为核心，顶层框图连接以下子系统：
 
 **模块：FG6221ASRC-0L（6221A-SRC）**
 
-| 项目 | 值 |
-|------|-----|
-| Wi-Fi 接口 | MMC2（SDIO 4-bit，1.8 V） |
-| 蓝牙接口 | SOC_UART6（含 CTS/RTS，1.8 V） |
-| Wi-Fi 使能 | EN_WLAN（F22/GPIO0_71/WLAN_EN/1V8） |
-| 蓝牙使能 | EN_BT（K22/GPIO0_1/BT_EN/1V8） |
-| 中断 | INT_WLAN（E21/GPIO0_72/WLAN_IRQ/1V8） |
-| 天线连接器 | U.FL × 1（CON1） |
-| 供电 | SOC_DVDD1V8（1.8 V），VCC_3V3_SYS（3.3 V） |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">项目</th>
+      <th width="664" align="left">值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Wi-Fi 接口</td>
+      <td align="left">MMC2（SDIO 4-bit，1.8 V）</td>
+    </tr>
+    <tr>
+      <td align="left">蓝牙接口</td>
+      <td align="left">SOC_UART6（含 CTS/RTS，1.8 V）</td>
+    </tr>
+    <tr>
+      <td align="left">Wi-Fi 使能</td>
+      <td align="left">EN_WLAN（F22/GPIO0_71/WLAN_EN/1V8）</td>
+    </tr>
+    <tr>
+      <td align="left">蓝牙使能</td>
+      <td align="left">EN_BT（K22/GPIO0_1/BT_EN/1V8）</td>
+    </tr>
+    <tr>
+      <td align="left">中断</td>
+      <td align="left">INT_WLAN（E21/GPIO0_72/WLAN_IRQ/1V8）</td>
+    </tr>
+    <tr>
+      <td align="left">天线连接器</td>
+      <td align="left">U.FL × 1（CON1）</td>
+    </tr>
+    <tr>
+      <td align="left">供电</td>
+      <td align="left">SOC_DVDD1V8（1.8 V），VCC_3V3_SYS（3.3 V）</td>
+    </tr>
+  </tbody>
+</table>
 
 **信道规范库（Regulatory Database）**
 
@@ -949,16 +1653,48 @@ MO-62A 以 **TI AM62A74** SoC 为核心，顶层框图连接以下子系统：
 
 **音频编解码器：TLV320AIC3106IRGZ**
 
-| 项目 | 值 |
-|------|-----|
-| I2S 接口 | MCASP1（ACLKX_BUF、AFSX_BUF、AXR0_BUF、AXR2_BUF） |
-| I2C 控制 | SOC_I2C1，地址 0x1B |
-| MCLK | 12.288 MHz 晶振（25 ppm，3.3 V） |
-| 复位 GPIO | W18/GPIO0_1/AUD_RSTn |
-| 耳机输出 | HPLOUT / HPROUT（立体声） |
-| 麦克风输入 | MIC_IN（LINE IN） |
-| 3.5 mm 接口（J8） | Pin 1：L — Pin 2：MIC — Pin 3：GND — Pin 4/5：HPROUT/HPLOUT |
-| 接线标准 | 国标（CTIA）：L / R / GND / MIC |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">项目</th>
+      <th width="664" align="left">值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">I2S 接口</td>
+      <td align="left">MCASP1（ACLKX_BUF、AFSX_BUF、AXR0_BUF、AXR2_BUF）</td>
+    </tr>
+    <tr>
+      <td align="left">I2C 控制</td>
+      <td align="left">SOC_I2C1，地址 0x1B</td>
+    </tr>
+    <tr>
+      <td align="left">MCLK</td>
+      <td align="left">12.288 MHz 晶振（25 ppm，3.3 V）</td>
+    </tr>
+    <tr>
+      <td align="left">复位 GPIO</td>
+      <td align="left">W18/GPIO0_1/AUD_RSTn</td>
+    </tr>
+    <tr>
+      <td align="left">耳机输出</td>
+      <td align="left">HPLOUT / HPROUT（立体声）</td>
+    </tr>
+    <tr>
+      <td align="left">麦克风输入</td>
+      <td align="left">MIC_IN（LINE IN）</td>
+    </tr>
+    <tr>
+      <td align="left">3.5 mm 接口（J8）</td>
+      <td align="left">Pin 1：L — Pin 2：MIC — Pin 3：GND — Pin 4/5：HPROUT/HPLOUT</td>
+    </tr>
+    <tr>
+      <td align="left">接线标准</td>
+      <td align="left">国标（CTIA）：L / R / GND / MIC</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -966,11 +1702,28 @@ MO-62A 以 **TI AM62A74** SoC 为核心，顶层框图连接以下子系统：
 
 **RTC IC：PCF85263ATL**
 
-| 项目 | 值 |
-|------|-----|
-| 接口 | SOC_I2C0，I2C 7-bit 地址 0x51（0b0101001） |
-| 晶振 | Y1，SSP-T7-F，32.768 kHz，20 ppm，12.5 pF 负载 |
-| 电池接口 | J2（SH1.0-2p，3 V 纽扣电池） |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">项目</th>
+      <th width="664" align="left">值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">接口</td>
+      <td align="left">SOC_I2C0，I2C 7-bit 地址 0x51（0b0101001）</td>
+    </tr>
+    <tr>
+      <td align="left">晶振</td>
+      <td align="left">Y1，SSP-T7-F，32.768 kHz，20 ppm，12.5 pF 负载</td>
+    </tr>
+    <tr>
+      <td align="left">电池接口</td>
+      <td align="left">J2（SH1.0-2p，3 V 纽扣电池）</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -980,36 +1733,114 @@ MO-62A 以 **TI AM62A74** SoC 为核心，顶层框图连接以下子系统：
 
 40 Pin 扩展接口（丝印：USER EXPN）引出以下 SoC 信号：
 
-| 功能 | SoC 信号 |
-|------|---------|
-| GPIO | GPIO0..21（多个） |
-| I2C | SOC_I2C2（SDA/SCL）——同时作为 EXP40 Pin 3/6 |
-| UART | SOC_UART5 × 2（TX/RX） |
-| SPI | SOC_SPI0（CLK/D0/D1/CS0/CS1） |
-| PWM | PWM × 3 |
-| I2S | MCASP2（ACLKX、AFSX、AXR） |
-| 唤醒 I2C | WKUP_I2C0 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">功能</th>
+      <th width="664" align="left">SoC 信号</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">GPIO</td>
+      <td align="left">GPIO0..21（多个）</td>
+    </tr>
+    <tr>
+      <td align="left">I2C</td>
+      <td align="left">SOC_I2C2（SDA/SCL）——同时作为 EXP40 Pin 3/6</td>
+    </tr>
+    <tr>
+      <td align="left">UART</td>
+      <td align="left">SOC_UART5 × 2（TX/RX）</td>
+    </tr>
+    <tr>
+      <td align="left">SPI</td>
+      <td align="left">SOC_SPI0（CLK/D0/D1/CS0/CS1）</td>
+    </tr>
+    <tr>
+      <td align="left">PWM</td>
+      <td align="left">PWM × 3</td>
+    </tr>
+    <tr>
+      <td align="left">I2S</td>
+      <td align="left">MCASP2（ACLKX、AFSX、AXR）</td>
+    </tr>
+    <tr>
+      <td align="left">唤醒 I2C</td>
+      <td align="left">WKUP_I2C0</td>
+    </tr>
+  </tbody>
+</table>
 
 #### 7.12.2 FPC 22 Pin CSI 摄像头（JP1）
 
-| 项目 | 值 |
-|------|-----|
-| 连接器 | FPC22 / 0.5 mm 间距（JP1） |
-| 标准 | 树莓派摄像头接口，4-lane MIPI CSI-2 |
-| 差分通道 | CSI0_RXP/N[0..3] + CSI0_RXCLKP/N |
-| I2C | CSI_I2C2_SDA/SCL（来自 SOC_I2C2） |
-| 供电 | VSYS_3V3_EXP |
-| 使能 / 掉电 | CSI0_PWDN（Y19/GPIO0_87） |
-| 阻抗校准 | CSI0_RXRCALIB（499 Ω 接地） |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">项目</th>
+      <th width="664" align="left">值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">连接器</td>
+      <td align="left">FPC22 / 0.5 mm 间距（JP1）</td>
+    </tr>
+    <tr>
+      <td align="left">标准</td>
+      <td align="left">树莓派摄像头接口，4-lane MIPI CSI-2</td>
+    </tr>
+    <tr>
+      <td align="left">差分通道</td>
+      <td align="left">CSI0_RXP/N[0..3] + CSI0_RXCLKP/N</td>
+    </tr>
+    <tr>
+      <td align="left">I2C</td>
+      <td align="left">CSI_I2C2_SDA/SCL（来自 SOC_I2C2）</td>
+    </tr>
+    <tr>
+      <td align="left">供电</td>
+      <td align="left">VSYS_3V3_EXP</td>
+    </tr>
+    <tr>
+      <td align="left">使能 / 掉电</td>
+      <td align="left">CSI0_PWDN（Y19/GPIO0_87）</td>
+    </tr>
+    <tr>
+      <td align="left">阻抗校准</td>
+      <td align="left">CSI0_RXRCALIB（499 Ω 接地）</td>
+    </tr>
+  </tbody>
+</table>
 
 #### 7.12.3 风扇接口（J6）
 
-| 项目 | 值 |
-|------|-----|
-| 连接器 | SH1.0-4p |
-| PWM 控制 | FAN_PWM（经 TXB0104RUTR 电平转换） |
-| 转速反馈 | FAN_TACH |
-| SoC 信号 | PWM（D18/TIMER_IO7），TACH（D1/ID1_10/EHRPWM1_B） |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">项目</th>
+      <th width="664" align="left">值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">连接器</td>
+      <td align="left">SH1.0-4p</td>
+    </tr>
+    <tr>
+      <td align="left">PWM 控制</td>
+      <td align="left">FAN_PWM（经 TXB0104RUTR 电平转换）</td>
+    </tr>
+    <tr>
+      <td align="left">转速反馈</td>
+      <td align="left">FAN_TACH</td>
+    </tr>
+    <tr>
+      <td align="left">SoC 信号</td>
+      <td align="left">PWM（D18/TIMER_IO7），TACH（D1/ID1_10/EHRPWM1_B）</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -1019,11 +1850,28 @@ MO-62A 以 **TI AM62A74** SoC 为核心，顶层框图连接以下子系统：
 
 UART0 为 MPU 调试 UART。SN74LVC2G24DCUR 提供电压隔离。
 
-| 引脚 | 信号 |
-|------|------|
-| 1 | UART0_RXD |
-| 2 | GND |
-| 3 | UART0_TXD |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">引脚</th>
+      <th width="664" align="left">信号</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">1</td>
+      <td align="left">UART0_RXD</td>
+    </tr>
+    <tr>
+      <td align="left">2</td>
+      <td align="left">GND</td>
+    </tr>
+    <tr>
+      <td align="left">3</td>
+      <td align="left">UART0_TXD</td>
+    </tr>
+  </tbody>
+</table>
 
 波特率：115200 8N1（与内核控制台 `ttyS2` 一致）。
 
@@ -1035,19 +1883,61 @@ MO-62A 使用固定电阻启动模式配置（BOOTMODE[15:0]）。
 
 **已配置的启动模式：**
 
-| 优先级 | 模式 | 描述 |
-|--------|------|------|
-| 主启动 | SD CARD（MMC1） | 4-bit MMC SD 卡启动 |
-| 备用 | Ethernet | 网络启动 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">优先级</th>
+      <th width="351" align="left">模式</th>
+      <th width="351" align="left">描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">主启动</td>
+      <td align="left">SD CARD（MMC1）</td>
+      <td align="left">4-bit MMC SD 卡启动</td>
+    </tr>
+    <tr>
+      <td align="left">备用</td>
+      <td align="left">Ethernet</td>
+      <td align="left">网络启动</td>
+    </tr>
+  </tbody>
+</table>
 
 **BOOTMODE 寄存器设置（由电阻配置）：**
 
-| 位段 | 值 | 含义 |
-|------|-----|------|
-| BOOTMODE[2:0] | 011 | PLL 输入频率 25 MHz |
-| MCU_BOOTMODE[6:3] | 1000 | 主启动 = MMCSD（SD 卡） |
-| MCU_BOOTMODE[9:7] | B8=1, B7=0 | MMC 端口 1，4-bit 位宽 |
-| MCU_BOOTMODE[12:10] | 100 | 备用启动 = 以太网 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">位段</th>
+      <th width="351" align="left">值</th>
+      <th width="351" align="left">含义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">BOOTMODE[2:0]</td>
+      <td align="left">011</td>
+      <td align="left">PLL 输入频率 25 MHz</td>
+    </tr>
+    <tr>
+      <td align="left">MCU_BOOTMODE[6:3]</td>
+      <td align="left">1000</td>
+      <td align="left">主启动 = MMCSD（SD 卡）</td>
+    </tr>
+    <tr>
+      <td align="left">MCU_BOOTMODE[9:7]</td>
+      <td align="left">B8=1, B7=0</td>
+      <td align="left">MMC 端口 1，4-bit 位宽</td>
+    </tr>
+    <tr>
+      <td align="left">MCU_BOOTMODE[12:10]</td>
+      <td align="left">100</td>
+      <td align="left">备用启动 = 以太网</td>
+    </tr>
+  </tbody>
+</table>
 
 **芯片支持的所有启动模式：**
 
@@ -1063,14 +1953,40 @@ MO-62A 使用固定电阻启动模式配置（BOOTMODE[15:0]）。
 
 ### 7.15 JTAG 接口
 
-| 信号 | 描述 |
-|------|------|
-| SoC_EMU0 / SoC_EMU1 | 仿真引脚 |
-| SoC_TCK | JTAG 时钟 |
-| SoC_TMS | JTAG 模式选择 |
-| SoC_TDI | JTAG 数据输入 |
-| SoC_TDO | JTAG 数据输出 |
-| SoC_TRSTN | JTAG 复位 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">信号</th>
+      <th width="664" align="left">描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">SoC_EMU0 / SoC_EMU1</td>
+      <td align="left">仿真引脚</td>
+    </tr>
+    <tr>
+      <td align="left">SoC_TCK</td>
+      <td align="left">JTAG 时钟</td>
+    </tr>
+    <tr>
+      <td align="left">SoC_TMS</td>
+      <td align="left">JTAG 模式选择</td>
+    </tr>
+    <tr>
+      <td align="left">SoC_TDI</td>
+      <td align="left">JTAG 数据输入</td>
+    </tr>
+    <tr>
+      <td align="left">SoC_TDO</td>
+      <td align="left">JTAG 数据输出</td>
+    </tr>
+    <tr>
+      <td align="left">SoC_TRSTN</td>
+      <td align="left">JTAG 复位</td>
+    </tr>
+  </tbody>
+</table>
 
 上拉电阻：4.7 kΩ 接 VCC_3V3_SYS。
 
@@ -1100,13 +2016,48 @@ MO-62A 支持通过 DPMS（显示器电源管理信号）自动息屏，以及�
 
 ### 已应用的修复
 
-| # | 层次 | 根本原因 | 修复方案 |
-|---|------|---------|---------|
-| 1 | `drivers/gpu/drm/bridge/sii902x.c` | 20 ms TMDS PLL 延迟依赖 `mode.clock`，模块重载后该值为 0，导致 PLL 无法锁定，HDMI 保持黑屏 | 将延迟移至 `PWR_DWN` 清除之前无条件执行；为 `mode.clock = 0` 场景添加 CRTC 状态回退逻辑 |
-| 2 | `rootfs-overlay/usr/local/bin/dpms-wakeup` | DPMS 息屏状态下收到原始输入事件时，Xorg 不会自动调用 `xset dpms force on` | Python 守护进程监控所有 `/dev/input/event*` 节点，有输入时调用 `xset dpms force on`（2 秒冷却） |
-| 3 | `rootfs-overlay/etc/udev/rules.d/72-seat-input.rules` | USB 输入设备未被标记为 `ID_SEAT=seat0`——因为 USB Hub 父设备与 DSS/DRM 父设备不同，logind 将其排除在 seat0 设备列表之外 | udev 规则为所有已识别的输入设备类型显式设置 `ID_SEAT=seat0` 和 `TAG+="seat"` |
-| 4 | `rootfs-overlay/etc/xdg/autostart/xfce4-power-manager.desktop` | xfce4-power-manager 4.20.0 轮询 XSS 空闲计数器，在唤醒后约 1 秒因与计数器复位存在竞态而再次息屏 | `Hidden=true` 屏蔽 xfce4-power-manager 自启动；DPMS 完全由 X 服务器管理 |
-| 5 | `drivers/gpu/drm/tidss/tidss_plane.c` | `dispc_initial_config()` 在恢复时将 `DISPC_VID_ATTRIBUTES` bit 0（VID 使能位）复位为 0；由于 plane 已绑定 CRTC，DRM 跳过 `atomic_enable()`，VID pipeline 保持禁用状态 | 在 `tidss_plane_atomic_update()` 中，对可见 plane 无条件调用 `dispc_plane_enable(true)` |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="209" align="left">#</th>
+      <th width="246" align="left">层次</th>
+      <th width="246" align="left">根本原因</th>
+      <th width="247" align="left">修复方案</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">1</td>
+      <td align="left"><code>drivers/gpu/drm/bridge/sii902x.c</code></td>
+      <td align="left">20 ms TMDS PLL 延迟依赖 <code>mode.clock</code>，模块重载后该值为 0，导致 PLL 无法锁定，HDMI 保持黑屏</td>
+      <td align="left">将延迟移至 <code>PWR_DWN</code> 清除之前无条件执行；为 <code>mode.clock = 0</code> 场景添加 CRTC 状态回退逻辑</td>
+    </tr>
+    <tr>
+      <td align="left">2</td>
+      <td align="left"><code>rootfs-overlay/usr/local/bin/dpms-wakeup</code></td>
+      <td align="left">DPMS 息屏状态下收到原始输入事件时，Xorg 不会自动调用 <code>xset dpms force on</code></td>
+      <td align="left">Python 守护进程监控所有 <code>/dev/input/event*</code> 节点，有输入时调用 <code>xset dpms force on</code>（2 秒冷却）</td>
+    </tr>
+    <tr>
+      <td align="left">3</td>
+      <td align="left"><code>rootfs-overlay/etc/udev/rules.d/72-seat-input.rules</code></td>
+      <td align="left">USB 输入设备未被标记为 <code>ID_SEAT=seat0</code>——因为 USB Hub 父设备与 DSS/DRM 父设备不同，logind 将其排除在 seat0 设备列表之外</td>
+      <td align="left">udev 规则为所有已识别的输入设备类型显式设置 <code>ID_SEAT=seat0</code> 和 <code>TAG+=&quot;seat&quot;</code></td>
+    </tr>
+    <tr>
+      <td align="left">4</td>
+      <td align="left"><code>rootfs-overlay/etc/xdg/autostart/xfce4-power-manager.desktop</code></td>
+      <td align="left">xfce4-power-manager 4.20.0 轮询 XSS 空闲计数器，在唤醒后约 1 秒因与计数器复位存在竞态而再次息屏</td>
+      <td align="left"><code>Hidden=true</code> 屏蔽 xfce4-power-manager 自启动；DPMS 完全由 X 服务器管理</td>
+    </tr>
+    <tr>
+      <td align="left">5</td>
+      <td align="left"><code>drivers/gpu/drm/tidss/tidss_plane.c</code></td>
+      <td align="left"><code>dispc_initial_config()</code> 在恢复时将 <code>DISPC_VID_ATTRIBUTES</code> bit 0（VID 使能位）复位为 0；由于 plane 已绑定 CRTC，DRM 跳过 <code>atomic_enable()</code>，VID pipeline 保持禁用状态</td>
+      <td align="left">在 <code>tidss_plane_atomic_update()</code> 中，对可见 plane 无条件调用 <code>dispc_plane_enable(true)</code></td>
+    </tr>
+  </tbody>
+</table>
 
 ### DPMS 配置
 
@@ -1143,13 +2094,42 @@ S1 按键连接至 TPS6593-Q1 PMIC（I²C 总线 0，地址 0x48）的 `NPWRON` 
 
 ### 行为说明
 
-| 事件 | 动作 | 说明 |
-|------|------|------|
-| 按下 | 弹出 XFCE4 关机对话框 | 按住期间立即弹出，无需松开 |
-| 5 秒内松开 | 对话框保持显示 | 用户可在对话框中选择操作 |
-| 持续按住 ≥ 5 秒 | `systemctl poweroff` | 绕过对话框，强制关机 |
-| 持续按住约 7 秒 | PMIC 硬件强制断电 | FSD——硬件安全机制，非软件控制 |
-| 软关机后 | S1 短按重新启动系统 | reboot notifier 已将 PMIC 切换为使能模式 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">事件</th>
+      <th width="351" align="left">动作</th>
+      <th width="351" align="left">说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">按下</td>
+      <td align="left">弹出 XFCE4 关机对话框</td>
+      <td align="left">按住期间立即弹出，无需松开</td>
+    </tr>
+    <tr>
+      <td align="left">5 秒内松开</td>
+      <td align="left">对话框保持显示</td>
+      <td align="left">用户可在对话框中选择操作</td>
+    </tr>
+    <tr>
+      <td align="left">持续按住 ≥ 5 秒</td>
+      <td align="left"><code>systemctl poweroff</code></td>
+      <td align="left">绕过对话框，强制关机</td>
+    </tr>
+    <tr>
+      <td align="left">持续按住约 7 秒</td>
+      <td align="left">PMIC 硬件强制断电</td>
+      <td align="left">FSD——硬件安全机制，非软件控制</td>
+    </tr>
+    <tr>
+      <td align="left">软关机后</td>
+      <td align="left">S1 短按重新启动系统</td>
+      <td align="left">reboot notifier 已将 PMIC 切换为使能模式</td>
+    </tr>
+  </tbody>
+</table>
 
 此行为与标准 Ubuntu 笔记本电源键逻辑一致。
 
@@ -1159,12 +2139,37 @@ S1 按键连接至 TPS6593-Q1 PMIC（I²C 总线 0，地址 0x48）的 `NPWRON` 
 
 ### 软件栈
 
-| 组件 | 路径 | 职责 |
-|------|------|------|
-| 内核驱动 | `drivers/mfd/tps6594-core.c` | 配置 `NPWRON_SEL = 01`（按键模式）；注册 `NPWRON_START` IRQ；通过 `tps6594-pwrbutton` 输入设备上报 `KEY_POWER` 事件；reboot notifier 在关机时切回使能模式 |
-| `s1-powerkey` 守护进程 | `/usr/local/bin/s1-powerkey` | Python 守护进程，读取 `/dev/input/eventN` 的 `KEY_POWER` 事件，使用 `threading.Timer` 在 5 秒时触发关机动作 |
-| systemd 服务 | `/etc/systemd/system/s1-powerkey.service` | 开机自动启动（`WantedBy=multi-user.target`）；`Restart=always` |
-| logind 配置 | `/etc/systemd/logind.conf.d/s1-powerkey.conf` | 设置 `HandlePowerKey=ignore` 和 `HandlePowerKeyLongPress=ignore`，阻止 logind 在守护进程之前消费 `KEY_POWER` 事件 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="246" align="left">组件</th>
+      <th width="351" align="left">路径</th>
+      <th width="351" align="left">职责</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">内核驱动</td>
+      <td align="left"><code>drivers/mfd/tps6594-core.c</code></td>
+      <td align="left">配置 <code>NPWRON_SEL = 01</code>（按键模式）；注册 <code>NPWRON_START</code> IRQ；通过 <code>tps6594-pwrbutton</code> 输入设备上报 <code>KEY_POWER</code> 事件；reboot notifier 在关机时切回使能模式</td>
+    </tr>
+    <tr>
+      <td align="left"><code>s1-powerkey</code> 守护进程</td>
+      <td align="left"><code>/usr/local/bin/s1-powerkey</code></td>
+      <td align="left">Python 守护进程，读取 <code>/dev/input/eventN</code> 的 <code>KEY_POWER</code> 事件，使用 <code>threading.Timer</code> 在 5 秒时触发关机动作</td>
+    </tr>
+    <tr>
+      <td align="left">systemd 服务</td>
+      <td align="left"><code>/etc/systemd/system/s1-powerkey.service</code></td>
+      <td align="left">开机自动启动（<code>WantedBy=multi-user.target</code>）；<code>Restart=always</code></td>
+    </tr>
+    <tr>
+      <td align="left">logind 配置</td>
+      <td align="left"><code>/etc/systemd/logind.conf.d/s1-powerkey.conf</code></td>
+      <td align="left">设置 <code>HandlePowerKey=ignore</code> 和 <code>HandlePowerKeyLongPress=ignore</code>，阻止 logind 在守护进程之前消费 <code>KEY_POWER</code> 事件</td>
+    </tr>
+  </tbody>
+</table>
 
 ### PMIC 硬件安全机制（FSD）
 
@@ -1193,12 +2198,32 @@ MO-62A 板上搭载一颗 **BL24C02F** 2 Kbit（256 字节）I2C EEPROM，挂载
 
 ### 硬件参数
 
-| 项目 | 值 |
-|------|-----|
-| 芯片 | BL24C02F（SOT23-5，兼容 Atmel 24C02） |
-| 接口 | SOC_I2C1，7 位地址 0x50 |
-| 容量 | 256 字节，页大小 16 字节 |
-| 写保护 | WP 引脚（GPIO1_7 / C19 / EEP_WC），高电平有效，经 R267（10 kΩ）上拉至 VCC_3V3_SYS |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">项目</th>
+      <th width="664" align="left">值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">芯片</td>
+      <td align="left">BL24C02F（SOT23-5，兼容 Atmel 24C02）</td>
+    </tr>
+    <tr>
+      <td align="left">接口</td>
+      <td align="left">SOC_I2C1，7 位地址 0x50</td>
+    </tr>
+    <tr>
+      <td align="left">容量</td>
+      <td align="left">256 字节，页大小 16 字节</td>
+    </tr>
+    <tr>
+      <td align="left">写保护</td>
+      <td align="left">WP 引脚（GPIO1_7 / C19 / EEP_WC），高电平有效，经 R267（10 kΩ）上拉至 VCC_3V3_SYS</td>
+    </tr>
+  </tbody>
+</table>
 
 ### I2C 地址与 SiI9022A 冲突
 
@@ -1262,20 +2287,64 @@ python3 tools/mo62a-tester/main.py
 
 ### 测试分类
 
-| 分类 | 测试内容 |
-|------|---------|
-| 系统基础信息 | 固件版本、内核版本、DTB/overlay、OS 版本、主机名、运行时长、文件系统用量、内存、CPU 核心数、CPU 主频（从 OPP 表读取）、CPU 温度、以太网 MAC 地址 |
-| LED | 电源 LED 和状态 LED GPIO 控制 |
-| 风扇 | PWM 风扇转速控制与转速计反馈 |
-| RTC | PCF85263A 时间读写 |
-| I2C | 总线枚举、设备在线检测 |
-| HDMI | 显示模式与连接器状态 |
-| 音频 | 编解码器检测、播放/录音 |
-| 摄像头 | CSI 通道、设备节点在线 |
-| 网络 | 以太网链路、IP 分配、连通性 |
-| USB | Hub 枚举、端口检测 |
-| GPIO | 40 Pin 扩展接口 GPIO 拨控 |
-| 系统服务 | systemd 服务状态检测 |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="284" align="left">分类</th>
+      <th width="664" align="left">测试内容</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">系统基础信息</td>
+      <td align="left">固件版本、内核版本、DTB/overlay、OS 版本、主机名、运行时长、文件系统用量、内存、CPU 核心数、CPU 主频（从 OPP 表读取）、CPU 温度、以太网 MAC 地址</td>
+    </tr>
+    <tr>
+      <td align="left">LED</td>
+      <td align="left">电源 LED 和状态 LED GPIO 控制</td>
+    </tr>
+    <tr>
+      <td align="left">风扇</td>
+      <td align="left">PWM 风扇转速控制与转速计反馈</td>
+    </tr>
+    <tr>
+      <td align="left">RTC</td>
+      <td align="left">PCF85263A 时间读写</td>
+    </tr>
+    <tr>
+      <td align="left">I2C</td>
+      <td align="left">总线枚举、设备在线检测</td>
+    </tr>
+    <tr>
+      <td align="left">HDMI</td>
+      <td align="left">显示模式与连接器状态</td>
+    </tr>
+    <tr>
+      <td align="left">音频</td>
+      <td align="left">编解码器检测、播放/录音</td>
+    </tr>
+    <tr>
+      <td align="left">摄像头</td>
+      <td align="left">CSI 通道、设备节点在线</td>
+    </tr>
+    <tr>
+      <td align="left">网络</td>
+      <td align="left">以太网链路、IP 分配、连通性</td>
+    </tr>
+    <tr>
+      <td align="left">USB</td>
+      <td align="left">Hub 枚举、端口检测</td>
+    </tr>
+    <tr>
+      <td align="left">GPIO</td>
+      <td align="left">40 Pin 扩展接口 GPIO 拨控</td>
+    </tr>
+    <tr>
+      <td align="left">系统服务</td>
+      <td align="left">systemd 服务状态检测</td>
+    </tr>
+  </tbody>
+</table>
 
 ### 设备端守护进程
 
