@@ -4,6 +4,33 @@ MO-62A single-board computer SDK, powered by the TI AM62A7 platform, offering up
 
 [中文](README_ZH.md) · [Downloads and changelog](RELEASES.md) · [Contributing and release policy](CONTRIBUTING.md)
 
+## Mo series repository architecture
+
+[![Mo repository ownership and unified website](architecture/repository-map.en.svg)](architecture/repository-map.en.svg)
+
+| Repository | Maintained source | Delivery responsibility |
+|---|---|---|
+| **developer** · GitLab | Website components, routes, search, integration and contracts | The complete website, release composition and deployment |
+| [mo-docs](https://github.com/inhandnet/mo-docs) | Software/hardware tutorials, specifications, media, design files and training | Versioned content and reference assets |
+| [mo-tools](https://github.com/inhandnet/mo-tools) | Toolchain/SDK selection, environment setup, reusable tools and Studio | Tool metadata and source packages |
+| [mo-models](https://github.com/inhandnet/mo-models) | Model catalog, compilation resources, compatibility and raw benchmarks | Model references, evidence and artifact status |
+| [mo-examples](https://github.com/inhandnet/mo-examples) | Complete examples with related firmware, clients and configuration | Example sources and their requirements |
+| **Mo\*** · product repositories | Each product's BSP, drivers, root filesystem, image build and flashing | Product images and checksummed release metadata |
+
+`Mo*` covers independently maintained product repositories such as [Mo62A](https://github.com/inhandnet/Mo62A), Mo68A, Mo69A, Mo67A, Mo3588 and Mo3568. The framework does not fix their number. Hardware content and maintainer training move from mo-hardware into mo-docs; mo-hardware remains a historical migration source and is not a separate member of the target website composition.
+
+Each source repository publishes ordinary versions. Developer alone has website RC/final channels. The target composition binds **developer + mo-docs + mo-tools + mo-models + mo-examples + selected Mo\*** to exact commits and consumed-asset hashes. A new source release does not change an already frozen website combination. Tutorial applicability, PCB revisions, image versions and actual validation remain distinct.
+
+## Product repository boundary
+
+[![Repository ownership and delivery](architecture/ownership.en.svg)](architecture/ownership.en.svg)
+
+Mo62A continues to own BSP, drivers, image builds, flashing and system integration. Website migration does not require changing the kernel, rebuilding images or downloading large images during frontend builds. Developer consumes release.json and SHA256SUMS from a pinned Release. Hardware boot validation follows that Release's validation fields and actual evidence.
+
+The BSP development instructions below retain their existing purpose. Shared tools, models and complete applications connect through their own pinned versions. These diagrams describe the unified target and do not claim release freezing or website rollout is complete.
+
+[![Release composition and promotion](architecture/release-flow.en.svg)](architecture/release-flow.en.svg)
+
 ---
 
 ## Table of Contents
