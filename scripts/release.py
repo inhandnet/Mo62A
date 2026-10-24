@@ -11,6 +11,7 @@ import sys
 
 from commit_policy import ROOT, check_range, git, load_yaml, parse_message
 
+BOOT_TESTS = ROOT / "validation" / "boot-tests"
 VERSION = re.compile(r"^V(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
 GROUPS = {
     "feat": ("Added", "新增"), "fix": ("Fixed", "修复"),
@@ -94,6 +95,29 @@ def checksum(path):
     return digest.hexdigest()
 
 
+def boot_test(version, commit, kernel):
+    """Read the recorded board boot test for this exact release source, if any.
+
+    Evidence lives in validation/boot-tests/<version>.json and is written by the
+    person who booted the built image on hardware. The release only reports a
+    passed test when the record names the same version, source commit and
+    kernel; anything else is reported as not recorded.
+    """
+    file = BOOT_TESTS / f"{version}.json"
+    if not file.exists():
+        return False, None
+    record = json.loads(file.read_text())
+    required = {"version", "commit", "kernel", "board", "image_name", "date", "result", "tester", "method"}
+    missing = required - set(record)
+    if missing:
+        raise ValueError(f"Boot test record is missing {sorted(missing)}")
+    if record["version"] != version or record["commit"] != commit or record["kernel"] != kernel:
+        raise ValueError("Boot test record does not describe this release source")
+    if record["result"] not in ("passed", "failed"):
+        raise ValueError("Boot test result must be passed or failed")
+    return record["result"] == "passed", record
+
+
 def generate(version, ref, output, image=None, raw_size=None, kernel=None):
     config = settings()
     entries = history(version, ref)
@@ -119,6 +143,7 @@ def generate(version, ref, output, image=None, raw_size=None, kernel=None):
             raise ValueError("Unexpected raw image size")
         if not kernel:
             raise ValueError("Built kernel release is required")
+        booted, evidence = boot_test(version, entries[0]["commit"], kernel)
         manifest = {
             "schemaVersion": 1, "board": "mo-62a", "version": version,
             "source": {"repository": config["repository"], "commit": entries[0]["commit"], "tag": version},
@@ -130,8 +155,10 @@ def generate(version, ref, output, image=None, raw_size=None, kernel=None):
             "checksums": f"{base}/SHA256SUMS",
             "changelog": {lang: f"{base}/CHANGELOG.{lang}.md" for lang in ("en", "zh")},
             "history": entries,
-            "validation": {"build": True, "imageStructure": True, "hardwareBootTest": False},
+            "validation": {"build": True, "imageStructure": True, "hardwareBootTest": booted},
         }
+        if evidence is not None:
+            manifest["validation"]["hardwareBootTestEvidence"] = evidence
         (output / "release.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
         assets = [image, output / "CHANGELOG.en.md", output / "CHANGELOG.zh.md", output / "release.json"]
         for asset in assets:
