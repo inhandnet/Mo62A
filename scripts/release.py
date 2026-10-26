@@ -118,7 +118,7 @@ def boot_test(version, commit, kernel):
     return record["result"] == "passed", record
 
 
-def generate(version, ref, output, image=None, raw_size=None, kernel=None):
+def generate(version, ref, output, image=None, raw_size=None, kernel=None, sbom=None):
     config = settings()
     entries = history(version, ref)
     output.mkdir(parents=True, exist_ok=True)
@@ -143,6 +143,12 @@ def generate(version, ref, output, image=None, raw_size=None, kernel=None):
             raise ValueError("Unexpected raw image size")
         if not kernel:
             raise ValueError("Built kernel release is required")
+        expected_sbom = f'{config["image_prefix"]}-{version}.spdx.json'
+        if sbom is None or sbom.name != expected_sbom or sbom.is_symlink() or not sbom.is_file():
+            raise ValueError("SBOM must be a regular file with the expected versioned .spdx.json name")
+        document = json.loads(sbom.read_text())
+        if document.get("spdxVersion") != "SPDX-2.3" or not document.get("packages"):
+            raise ValueError("SBOM is not a non-empty SPDX 2.3 document")
         booted, evidence = boot_test(version, entries[0]["commit"], kernel)
         manifest = {
             "schemaVersion": 1, "board": "mo-62a", "version": version,
@@ -153,6 +159,8 @@ def generate(version, ref, output, image=None, raw_size=None, kernel=None):
                       "minimumCardBytes": max(config["minimum_card_bytes"], raw_size)},
             "rootfs": {"file": config["rootfs"], "sha256": config["rootfs_sha256"]},
             "checksums": f"{base}/SHA256SUMS",
+            "sbom": {"name": sbom.name, "url": f"{base}/{sbom.name}", "format": "SPDX-2.3",
+                     "sha256": checksum(sbom), "packages": len(document["packages"])},
             "changelog": {lang: f"{base}/CHANGELOG.{lang}.md" for lang in ("en", "zh")},
             "history": entries,
             "validation": {"build": True, "imageStructure": True, "hardwareBootTest": booted},
@@ -160,7 +168,7 @@ def generate(version, ref, output, image=None, raw_size=None, kernel=None):
         if evidence is not None:
             manifest["validation"]["hardwareBootTestEvidence"] = evidence
         (output / "release.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
-        assets = [image, output / "CHANGELOG.en.md", output / "CHANGELOG.zh.md", output / "release.json"]
+        assets = [image, sbom, output / "CHANGELOG.en.md", output / "CHANGELOG.zh.md", output / "release.json"]
         for asset in assets:
             if asset.stat().st_size >= config["asset_limit_bytes"]:
                 raise ValueError(f"Asset too large: {asset.name}")
@@ -176,10 +184,11 @@ def main():
     parser.add_argument("--image", type=Path)
     parser.add_argument("--raw-size", type=int)
     parser.add_argument("--kernel")
+    parser.add_argument("--sbom", type=Path)
     args = parser.parse_args()
     if args.ref.startswith("-"):
         raise ValueError("Invalid source ref")
-    generate(args.version, args.ref, args.output, args.image, args.raw_size, args.kernel)
+    generate(args.version, args.ref, args.output, args.image, args.raw_size, args.kernel, args.sbom)
 
 
 if __name__ == "__main__":

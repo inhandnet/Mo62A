@@ -60,6 +60,8 @@ Each source repository publishes ordinary versions. Developer alone has website 
 
 Mo62A continues to own BSP, drivers, image builds, flashing and system integration. Website migration does not require changing the kernel, rebuilding images or downloading large images during frontend builds. Developer consumes release.json and SHA256SUMS from a pinned Release. Hardware boot validation follows that Release's validation fields and actual evidence.
 
+Each Release also attaches an SPDX SBOM (`mo62a-trixie-xfce-<version>.spdx.json`) listing the image's Debian packages and kernel. Report security vulnerabilities privately as described in [SECURITY.md](SECURITY.md), not in public issues.
+
 The BSP development instructions below retain their existing purpose. Shared tools, models and complete applications connect through their own pinned versions. These diagrams describe the unified target and do not claim release freezing or website rollout is complete.
 
 [![Release composition and promotion](architecture/release-flow.en.svg)](architecture/release-flow.en.svg)

@@ -14,7 +14,7 @@ assert m['version']==sys.argv[1] and m['board']=='mo-62a'
 assert m['source']['commit']==os.environ['GITHUB_SHA']
 assert m['image']['name']==f'mo62a-trixie-xfce-{sys.argv[1]}.img.xz'
 assert m['validation']['build'] and m['validation']['imageStructure']
-for f in [m['image']['name'], 'SHA256SUMS', 'CHANGELOG.en.md', 'CHANGELOG.zh.md', 'release.json']:
+for f in [m['image']['name'], m['sbom']['name'], 'SHA256SUMS', 'CHANGELOG.en.md', 'CHANGELOG.zh.md', 'release.json']:
     p=Path(f)
     assert p.is_file() and not p.is_symlink() and 0<p.stat().st_size<2**31
 PY
@@ -28,7 +28,7 @@ else
 fi
 # Retrying an incomplete draft is safe; published releases are never overwritten.
 gh release upload "$version" --clobber "mo62a-trixie-xfce-$version.img.xz" \
-  SHA256SUMS CHANGELOG.en.md CHANGELOG.zh.md release.json
+  "mo62a-trixie-xfce-$version.spdx.json" SHA256SUMS CHANGELOG.en.md CHANGELOG.zh.md release.json
 # The tag endpoint is for published releases. Resolve a draft through gh, then
 # inspect it by numeric release ID before making it public.
 release_id=$(gh release view "$version" --json databaseId --jq .databaseId)
@@ -40,7 +40,7 @@ from pathlib import Path
 r=json.loads(Path(sys.argv[1]).read_text()); assert r['draft']
 assets={a['name']: a for a in r['assets']}
 m=json.loads(Path('release.json').read_text())
-for name in [m['image']['name'], 'SHA256SUMS', 'CHANGELOG.en.md', 'CHANGELOG.zh.md', 'release.json']:
+for name in [m['image']['name'], m['sbom']['name'], 'SHA256SUMS', 'CHANGELOG.en.md', 'CHANGELOG.zh.md', 'release.json']:
     a=assets[name]; p=Path(name)
     assert a['state']=='uploaded' and a['size']==p.stat().st_size
     h=hashlib.sha256()
