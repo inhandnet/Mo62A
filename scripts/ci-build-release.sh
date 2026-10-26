@@ -23,13 +23,19 @@ sudo env TI_SDK_PATH="$TI_SDK_PATH" JOBS="$jobs" bash bin/mo-62a-flash.sh \
   --image --rootfs "$rootfs" --version "$version" --output-dir "$output" \
   --image-size-gib "$image_size" --compression xz --date "$build_date"
 kernel=$(cat board-support/ti-linux-kernel-*/include/config/kernel.release)
-sudo bash scripts/verify-image.sh "$output/mo62a-trixie-xfce-$version.img" "$kernel"
+dpkg_status="$RUNNER_TEMP/mo62a-dpkg-status"
+sudo bash scripts/verify-image.sh "$output/mo62a-trixie-xfce-$version.img" "$kernel" "$dpkg_status"
+sudo chown "$(id -u):$(id -g)" "$dpkg_status"
 xz -t "$output/mo62a-trixie-xfce-$version.img.xz"
 mkdir -p dist
 sudo mv "$output/mo62a-trixie-xfce-$version.img.xz" dist/
 sudo chown "$(id -u):$(id -g)" "dist/mo62a-trixie-xfce-$version.img.xz"
 raw_size=$(stat -c %s "$output/mo62a-trixie-xfce-$version.img")
+python3 scripts/sbom.py --version "$version" --image-name "mo62a-trixie-xfce-$version.img.xz" \
+  --kernel "$kernel" --date "$build_date" --dpkg-status "$dpkg_status" \
+  --output "dist/mo62a-trixie-xfce-$version.spdx.json"
 python3 scripts/release.py --version "$version" --output dist \
-  --image "dist/mo62a-trixie-xfce-$version.img.xz" --raw-size "$raw_size" --kernel "$kernel"
+  --image "dist/mo62a-trixie-xfce-$version.img.xz" --raw-size "$raw_size" --kernel "$kernel" \
+  --sbom "dist/mo62a-trixie-xfce-$version.spdx.json"
 ( cd dist && sha256sum -c SHA256SUMS )
 du -h dist/*

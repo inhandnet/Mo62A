@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Inspect an already-built raw image using read-only loop devices and mounts.
 set -euo pipefail
-[[ $# == 2 && $EUID == 0 ]] || { echo 'Usage: sudo verify-image.sh IMAGE KERNEL_RELEASE' >&2; exit 1; }
+[[ ($# == 2 || $# == 3) && $EUID == 0 ]] || { echo 'Usage: sudo verify-image.sh IMAGE KERNEL_RELEASE [DPKG_STATUS_COPY]' >&2; exit 1; }
 image=$(realpath -e -- "$1")
 kernel=$2
 [[ -f "$image" && "$kernel" =~ ^[a-zA-Z0-9._+-]+$ ]] || exit 1
@@ -40,5 +40,10 @@ grep -q cryptodev "$root/usr/lib/modules/$kernel/modules.dep"
 [[ -x "$root/usr/local/bin/edgeai-demo" ]]
 [[ -s "$root/opt/ti/edgeai/lib/libonnxruntime.so.1.23.0" ]]
 [[ -s "$root/usr/lib/firmware/ti-ipc/am62axx/dsp_edgeai_c7x_1_release_strip.out" ]]
+[[ -s "$root/var/lib/dpkg/status" ]]
+if [[ $# == 3 ]]; then
+  # The SBOM is generated from the package database of this exact image.
+  install -m 0644 "$root/var/lib/dpkg/status" "$3"
+fi
 echo 'PASS: partition layout, boot artifacts, kernel modules, cryptodev and EdgeAI files'
 echo 'Physical-board boot and peripheral validation are not performed by this check.'

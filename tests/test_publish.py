@@ -53,10 +53,12 @@ class PublishTests(unittest.TestCase):
         for lang in ('en', 'zh'):
             (dist/f'CHANGELOG.{lang}.md').write_text('# Test changelog\n')
         (dist/'release-body.md').write_text('Test release notes\n')
+        sbom = 'mo62a-trixie-xfce-V1.1.0.spdx.json'
+        (dist/sbom).write_text('{"spdxVersion": "SPDX-2.3"}\n')
         (dist/'release.json').write_text(json.dumps({
             'version': 'V1.1.0', 'board': 'mo-62a', 'source': {'commit': '1'*40},
-            'image': {'name': image}, 'validation': {'build': True, 'imageStructure': True}}))
-        names = [image, 'CHANGELOG.en.md', 'CHANGELOG.zh.md', 'release.json']
+            'image': {'name': image}, 'sbom': {'name': sbom}, 'validation': {'build': True, 'imageStructure': True}}))
+        names = [image, sbom, 'CHANGELOG.en.md', 'CHANGELOG.zh.md', 'release.json']
         digest = lambda n: hashlib.sha256((dist/n).read_bytes()).hexdigest()
         (dist/'SHA256SUMS').write_text(''.join(f'{digest(n)}  {n}\n' for n in names))
         self.remote = {'draft': True, 'assets': [

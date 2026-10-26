@@ -60,6 +60,8 @@ MO-62A 单板计算机 SDK，基于 TI AM62A7 平台，提供高达 2 TOPS AI �
 
 Mo62A 继续维护 BSP、驱动、镜像构建、烧录与系统集成。网站迁移不要求更改内核、重建镜像或把大镜像下载到前端构建中；developer 消费固定 Release 的 release.json 和 SHA256SUMS。镜像是否实机启动通过，以该 Release 的 validation 字段和实际证据为准。
 
+每个 Release 还附带 SPDX 格式的 SBOM（`mo62a-trixie-xfce-<version>.spdx.json`），列出镜像中的 Debian 软件包和内核。安全漏洞请按 [SECURITY.md](SECURITY.md) 私密报告，不要提交公开 Issue。
+
 以下 BSP 开发说明保持原有用途；工具、模型和完整应用的跨仓引用按各自固定版本衔接。本文框架图为统一架构目标，不表示发布冻结或整站上线已完成。
 
 [![发布组成清单与晋级流程](architecture/release-flow.zh-CN.svg)](architecture/release-flow.zh-CN.svg)

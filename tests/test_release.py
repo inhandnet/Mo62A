@@ -11,7 +11,54 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from commit_policy import check_title, load_yaml, parse_message
 import release
+import sbom
 from validate_release_event import main as validate_event
+
+
+DPKG_STATUS = """Package: zlib1g
+Status: install ok installed
+Architecture: arm64
+Maintainer: Mark Brown <broonie@debian.org>
+Version: 1:1.3.dfsg+really1.3.1-1+b1
+Source: zlib
+Description: compression library
+ runtime
+
+Package: removed-tool
+Status: deinstall ok config-files
+Architecture: arm64
+Version: 1.0
+
+Package: bash
+Status: install ok installed
+Architecture: arm64
+Maintainer: Matthias Klose <doko@debian.org>
+Version: 5.2.37-2
+Homepage: http://tiswww.case.edu/php/chet/bash/bashtop.html
+"""
+
+
+class SbomTests(unittest.TestCase):
+    def test_lists_installed_packages_and_kernel_deterministically(self):
+        doc = sbom.build("V1.1.0", "mo62a-trixie-xfce-V1.1.0.img.xz", "6.12-test", "2026-10-26", DPKG_STATUS)
+        names = [p["name"] for p in doc["packages"]]
+        self.assertEqual(names, ["mo62a-trixie-xfce-V1.1.0.img.xz", "linux", "bash", "zlib1g"])
+        self.assertEqual(doc["spdxVersion"], "SPDX-2.3")
+        self.assertEqual(doc["creationInfo"]["created"], "2026-10-26T00:00:00Z")
+        zlib = doc["packages"][3]
+        self.assertEqual(zlib["externalRefs"][0]["referenceLocator"],
+                         "pkg:deb/debian/zlib1g@1:1.3.dfsg+really1.3.1-1+b1?arch=arm64")
+        self.assertEqual(zlib["supplier"], "Organization: Debian")
+        self.assertEqual(len(doc["relationships"]), 4)
+        again = sbom.build("V1.1.0", "mo62a-trixie-xfce-V1.1.0.img.xz", "6.12-test", "2026-10-26", DPKG_STATUS)
+        self.assertEqual(doc, again)
+
+    def test_rejects_empty_or_invalid_input(self):
+        for args in [("V1.1", "x", "6.12", "2026-10-26", DPKG_STATUS),
+                     ("V1.1.0", "x", "6.12", "26-10-2026", DPKG_STATUS),
+                     ("V1.1.0", "x", "6.12", "2026-10-26", "Package: a\nStatus: deinstall ok config-files\n")]:
+            with self.subTest(args=args):
+                with self.assertRaises(ValueError): sbom.build(*args)
 
 
 def message(kind="fix", en="Fix the image assembly.", zh="修复镜像制作流程。"):
@@ -71,6 +118,12 @@ class ReleaseTests(unittest.TestCase):
     def commit(self, text):
         self.git("commit", "--allow-empty", "-m", text)
 
+    def write_sbom(self, output):
+        file = output / "mo62a-trixie-xfce-V1.1.0.spdx.json"
+        file.write_text(json.dumps(sbom.build("V1.1.0", "mo62a-trixie-xfce-V1.1.0.img.xz", "6.12-test",
+                                              "2026-10-26", DPKG_STATUS)))
+        return file
+
     def test_bootstrap_uses_seed_not_legacy_commits(self):
         rows = release.history("V1.1.0", "HEAD")
         self.assertEqual(len(rows), 1)
@@ -118,21 +171,27 @@ class ReleaseTests(unittest.TestCase):
         output.mkdir()
         image = output / "mo62a-trixie-xfce-V1.1.0.img.xz"
         image.write_bytes(b"small test fixture")
-        release.generate("V1.1.0", "HEAD", output, image, 12*1024**3, "6.12-test")
+        self.sbom = self.write_sbom(output)
+        release.generate("V1.1.0", "HEAD", output, image, 12*1024**3, "6.12-test", self.sbom)
         manifest = json.loads((output / "release.json").read_text())
         self.assertEqual(manifest["image"]["sha256"], release.checksum(image))
         self.assertFalse(manifest["validation"]["hardwareBootTest"])
         self.assertNotIn("hardwareBootTestEvidence", manifest["validation"])
-        self.assertEqual(len((output / "SHA256SUMS").read_text().splitlines()), 4)
+        self.assertEqual(len((output / "SHA256SUMS").read_text().splitlines()), 5)
+        self.assertEqual(manifest["sbom"]["name"], "mo62a-trixie-xfce-V1.1.0.spdx.json")
+        self.assertEqual(manifest["sbom"]["packages"], 4)
+        with self.assertRaises(ValueError):
+            release.generate("V1.1.0", "HEAD", output, image, 12*1024**3, "6.12-test")
         with patch.object(release, "settings", return_value={**release.settings(), "asset_limit_bytes": 2}):
             with self.assertRaises(ValueError):
-                release.generate("V1.1.0", "HEAD", output, image, 12*1024**3, "6.12-test")
+                release.generate("V1.1.0", "HEAD", output, image, 12*1024**3, "6.12-test", self.sbom)
 
     def test_boot_test_evidence_sets_hardware_boot_result(self):
         output = self.root / "dist"
         output.mkdir()
         image = output / "mo62a-trixie-xfce-V1.1.0.img.xz"
         image.write_bytes(b"small test fixture")
+        self.sbom = self.write_sbom(output)
         commit = release.git("rev-parse", "HEAD")
         record = {"version": "V1.1.0", "commit": commit, "kernel": "6.12-test", "board": "Mo62A rev V1.1",
                   "image_name": "mo62a-trixie-xfce-V1.1.0.img.xz", "date": "2026-10-24",
@@ -142,16 +201,16 @@ class ReleaseTests(unittest.TestCase):
         file = folder / "V1.1.0.json"
         with patch.object(release, "BOOT_TESTS", folder):
             file.write_text(json.dumps(record))
-            release.generate("V1.1.0", "HEAD", output, image, 12*1024**3, "6.12-test")
+            release.generate("V1.1.0", "HEAD", output, image, 12*1024**3, "6.12-test", self.sbom)
             manifest = json.loads((output / "release.json").read_text())
             self.assertTrue(manifest["validation"]["hardwareBootTest"])
             self.assertEqual(manifest["validation"]["hardwareBootTestEvidence"]["tester"], "board lab")
             file.write_text(json.dumps({**record, "result": "failed"}))
-            release.generate("V1.1.0", "HEAD", output, image, 12*1024**3, "6.12-test")
+            release.generate("V1.1.0", "HEAD", output, image, 12*1024**3, "6.12-test", self.sbom)
             self.assertFalse(json.loads((output / "release.json").read_text())["validation"]["hardwareBootTest"])
             file.write_text(json.dumps({**record, "commit": "0" * 40}))
             with self.assertRaises(ValueError):
-                release.generate("V1.1.0", "HEAD", output, image, 12*1024**3, "6.12-test")
+                release.generate("V1.1.0", "HEAD", output, image, 12*1024**3, "6.12-test", self.sbom)
 
 
 if __name__ == "__main__":
