@@ -186,32 +186,58 @@ class ReleaseTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 release.generate("V1.1.0", "HEAD", output, image, 12*1024**3, "6.12-test", self.sbom)
 
-    def test_boot_test_evidence_sets_hardware_boot_result(self):
+    def test_tagged_build_is_not_hardware_validated(self):
+        output, manifest = self.build_draft()
+        self.assertFalse(manifest["validation"]["hardwareBootTest"])
+        self.assertNotIn("hardware", manifest["validation"])
+
+    def build_draft(self):
         output = self.root / "dist"
         output.mkdir()
         image = output / "mo62a-trixie-xfce-V1.1.0.img.xz"
         image.write_bytes(b"small test fixture")
         self.sbom = self.write_sbom(output)
-        commit = release.git("rev-parse", "HEAD")
-        record = {"version": "V1.1.0", "commit": commit, "kernel": "6.12-test", "board": "Mo62A rev V1.1",
-                  "image_name": "mo62a-trixie-xfce-V1.1.0.img.xz", "date": "2026-10-24",
-                  "result": "passed", "tester": "board lab", "method": "flashed to microSD, booted to desktop, SSH login"}
-        folder = self.root / "validation" / "boot-tests"
-        folder.mkdir(parents=True)
-        file = folder / "V1.1.0.json"
-        with patch.object(release, "BOOT_TESTS", folder):
-            file.write_text(json.dumps(record))
-            release.generate("V1.1.0", "HEAD", output, image, 12*1024**3, "6.12-test", self.sbom)
-            manifest = json.loads((output / "release.json").read_text())
-            self.assertTrue(manifest["validation"]["hardwareBootTest"])
-            self.assertEqual(manifest["validation"]["hardwareBootTestEvidence"]["tester"], "board lab")
-            file.write_text(json.dumps({**record, "result": "failed"}))
-            release.generate("V1.1.0", "HEAD", output, image, 12*1024**3, "6.12-test", self.sbom)
-            self.assertFalse(json.loads((output / "release.json").read_text())["validation"]["hardwareBootTest"])
-            file.write_text(json.dumps({**record, "commit": "0" * 40}))
-            with self.assertRaises(ValueError):
-                release.generate("V1.1.0", "HEAD", output, image, 12*1024**3, "6.12-test", self.sbom)
+        release.generate("V1.1.0", "HEAD", output, image, 12*1024**3, "6.12-test", self.sbom)
+        return output, json.loads((output / "release.json").read_text())
 
+    def record(self, manifest, **changes):
+        record = {"version": "V1.1.0", "commit": manifest["source"]["commit"],
+                  "image": {"name": manifest["image"]["name"], "sha256": manifest["image"]["sha256"]},
+                  "kernel": "6.12-test", "board": "Mo62A PCB V1.1, 4 GB", "date": "2026-10-27",
+                  "tester": "board lab", "result": "passed",
+                  "companions": {"mo-tools": "V1.0.0", "mo-models": "V1.0.0", "mo-examples": "V1.0.0"},
+                  "tests": [{"id": "boot", "item": "Boots to the desktop", "result": "passed"},
+                            {"id": "wifi", "item": "Wi-Fi connect", "result": "skipped", "evidence": "no access point"}]}
+        record.update(changes)
+        return record
+
+    def test_finalize_adds_validation_to_the_draft(self):
+        output, manifest = self.build_draft()
+        file = self.root / "V1.1.0.json"
+        file.write_text(json.dumps(self.record(manifest)))
+        image_line = next(l for l in (output / "SHA256SUMS").read_text().splitlines() if l.endswith(".img.xz"))
+        result = release.finalize("V1.1.0", output, file)
+        self.assertTrue(result["validation"]["hardwareBootTest"])
+        self.assertEqual(result["validation"]["hardware"]["tests"], {"passed": 1, "failed": 0, "skipped": 1})
+        self.assertEqual(result["validation"]["hardware"]["companions"]["mo-models"], "V1.0.0")
+        sums = (output / "SHA256SUMS").read_text().splitlines()
+        self.assertIn(image_line, sums)
+        self.assertIn(f'{release.checksum(output / "validation.json")}  validation.json', sums)
+        self.assertIn(f'{release.checksum(output / "release.json")}  release.json', sums)
+
+    def test_finalize_rejects_records_for_another_build(self):
+        _, manifest = self.build_draft()
+        bad = [{"commit": "0" * 40}, {"image": {"name": manifest["image"]["name"], "sha256": "0" * 64}},
+               {"kernel": "6.12-other"}, {"companions": {"mo-tools": "V1.0.0"}},
+               {"result": "passed", "tests": [{"id": "boot", "item": "Boot", "result": "failed"}]},
+               {"result": "failed"}]
+        for change in bad:
+            with self.subTest(change=change):
+                output = self.root / "dist"
+                file = self.root / "V1.1.0.json"
+                file.write_text(json.dumps(self.record(manifest, **change)))
+                with self.assertRaises(ValueError):
+                    release.finalize("V1.1.0", output, file)
 
 if __name__ == "__main__":
     unittest.main()
