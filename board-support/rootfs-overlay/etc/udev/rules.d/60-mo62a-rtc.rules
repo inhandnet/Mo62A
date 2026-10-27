@@ -1,0 +1,5 @@
+# Set the system clock from the battery-backed PCF85363 RTC as soon as its
+# driver binds. The kernel does not read the RTC at boot (RTC_HCTOSYS is off
+# and the driver is a module), and systemd's hwclock.service is masked.
+# udev workers may not change the clock, so a systemd service does it.
+ACTION=="add", SUBSYSTEM=="rtc", ATTR{name}=="pcf85363*", TAG+="systemd", ENV{SYSTEMD_WANTS}+="mo-rtc-restore@%k.service"
