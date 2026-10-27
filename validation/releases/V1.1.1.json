@@ -1,0 +1,157 @@
+{
+  "version": "V1.1.1",
+  "commit": "0e8238ce11c853d924d1bbcb7ae8a3002ffe760d",
+  "image": {
+    "name": "mo62a-trixie-xfce-V1.1.1.img.xz",
+    "sha256": "187b5d2c82df750b3fc02a0a6482533e13de48fe4804958c3d1ad60374a5c505"
+  },
+  "kernel": "6.12.35",
+  "board": "Mo62A, 2 GB",
+  "date": "2026-10-27",
+  "tester": "weiyf (flashing); remote validation over SSH by Claude Code",
+  "result": "passed",
+  "companions": {
+    "mo-tools": "V1.0.0",
+    "mo-models": "V1.0.0",
+    "mo-examples": "V1.0.0"
+  },
+  "tests": [
+    {
+      "id": "image",
+      "item": "Draft image SHA-256 matches SHA256SUMS; flashed to microSD with the default sysconfig.txt",
+      "result": "passed",
+      "evidence": "SHA-256 187b5d2c…a5c505 verified after download; card flashed by the tester."
+    },
+    {
+      "id": "boot",
+      "item": "Boots to the XFCE desktop; uname -r and os-release match release.json",
+      "result": "passed",
+      "evidence": "systemctl is-system-running = running, no failed units; kernel 6.12.35 PREEMPT_RT; Debian 13 (trixie); XFCE session on seat0, HDMI 1920x1080."
+    },
+    {
+      "id": "first-boot",
+      "item": "First boot applies sysconfig.txt, resizes the root filesystem and removes the file",
+      "result": "passed",
+      "evidence": "Root grown to 25.5 GB; user debian created; config applied and sysconfig.txt removed; hostname Mo62A."
+    },
+    {
+      "id": "first-boot-order",
+      "item": "Hostname is set before mDNS, discovery and the login screen",
+      "result": "passed",
+      "evidence": "mo-62a-firstboot-install.service is ordered Before avahi-daemon, mo-discover and lightdm; mo62a.local resolved."
+    },
+    {
+      "id": "rootfs-ownership",
+      "item": "System files are owned by root (no UID/GID 1000 outside /home)",
+      "result": "passed",
+      "evidence": "Only /boot/firmware matches, a vfat mount with uid=1000,gid=1000 set in /etc/fstab."
+    },
+    {
+      "id": "ssh-login",
+      "item": "SSH login with the configured user",
+      "result": "passed",
+      "evidence": "debian@mo62a.local with the configured password; passwordless sudo installed."
+    },
+    {
+      "id": "discovery",
+      "item": "Discovery answers with the address on the requester route",
+      "result": "passed",
+      "evidence": "Unicast and broadcast MO62A_DISCOVER probes answered in about 50 ms with ip 10.5.30.132 (not 169.254.x or 172.17.0.1) and version V1.1.1."
+    },
+    {
+      "id": "ethernet",
+      "item": "Gigabit Ethernet link and throughput",
+      "result": "passed",
+      "evidence": "1000 Mb/s full duplex; iperf3 937 Mb/s to the board and 938 Mb/s from the board."
+    },
+    {
+      "id": "wifi-scan",
+      "item": "Wi-Fi scan",
+      "result": "passed",
+      "evidence": "48 networks on 2.4 GHz and 5 GHz (RTL8821CS, 8821cs driver)."
+    },
+    {
+      "id": "wifi-connect",
+      "item": "Wi-Fi connect",
+      "result": "skipped",
+      "evidence": "No access point credentials were provided for the test."
+    },
+    {
+      "id": "bluetooth",
+      "item": "Bluetooth controller up and scanning",
+      "result": "passed",
+      "evidence": "Controller powered (Realtek, H5); LE scan listed nearby devices."
+    },
+    {
+      "id": "hdmi",
+      "item": "HDMI output",
+      "result": "passed",
+      "evidence": "HDMI-A-1 connected at 1920x1080; desktop rendered (screenshot kept)."
+    },
+    {
+      "id": "audio-names",
+      "item": "Analog and HDMI audio have distinct names",
+      "result": "passed",
+      "evidence": "PipeWire devices 'Mo62A Analog Audio' and 'Mo62A HDMI Audio'; sinks 'Mo62A Headset Output' and 'Mo62A HDMI Output'."
+    },
+    {
+      "id": "audio-playback",
+      "item": "Playback to the headset and HDMI outputs",
+      "result": "passed",
+      "evidence": "2-second 880 Hz tone played to both sinks without error; sound was not listened to remotely."
+    },
+    {
+      "id": "camera",
+      "item": "IMX219 detected with the default camera overlay and captures frames",
+      "result": "passed",
+      "evidence": "init-imx219 found imx219 2-0010 at 1920x1080, CAMERA_NAME 'IMX219 camera module (CSI0)'; mo-examples jpeg-capture saved 1920x1080 JPEG frames."
+    },
+    {
+      "id": "h264",
+      "item": "H.264 hardware encode and decode start without timeout",
+      "result": "passed",
+      "evidence": "wave5 VDEC in polling mode; 300 frames 1280x720 encoded, then decoded with capture-io-mode=4 in 2.25 s, 0 dropped (run as root)."
+    },
+    {
+      "id": "edgeai-demo-status",
+      "item": "edgeai-demo status",
+      "result": "passed",
+      "evidence": "Exit 0 before camera init and after; lists the UGREEN USB camera and the IMX219 config."
+    },
+    {
+      "id": "npu-demo",
+      "item": "NPU demo on the C7x",
+      "result": "passed",
+      "evidence": "edgeai-demo run 2 (YOLOX-nano) with the CSI camera, Python and C++ backends, 40 s each: 329 of 329 nodes offloaded to TIDL."
+    },
+    {
+      "id": "mo-models",
+      "item": "mo-models V1.0.0 benchmark on this image",
+      "result": "passed",
+      "evidence": "benchmark-inference.py, 100 runs after 5 warm-up: YOLOX-nano mean 10.90 ms (V1.1.0 record 10.90), YOLOX-s mean 40.43 ms (40.40); model SHA-256 identical."
+    },
+    {
+      "id": "mo-examples",
+      "item": "mo-examples V1.0.0 examples on this image",
+      "result": "passed",
+      "evidence": "python-smoke ran; hello_inference built on the board with CMake and ran (needs -m; the README omits it); jpeg-capture saved frames."
+    },
+    {
+      "id": "mo-tools",
+      "item": "mo-tools V1.0.0 board-test automatic items",
+      "result": "passed",
+      "evidence": "27 items run over SSH: RTC tick and write passed, system, storage (2 GB DDR, SD 89.6/21.7 MB/s), network, HDMI and IMX219 readings returned. tn_usb_enum reported no peripherals although lsusb lists a hub, keyboard, mouse and camera (tool false negative); tn_usb_read had no USB storage; tn_imx219_capture needs a person to watch."
+    },
+    {
+      "id": "security",
+      "item": "SBOM attached; OP-TEE and crypto devices present",
+      "result": "passed",
+      "evidence": "Draft has mo62a-trixie-xfce-V1.1.1.spdx.json (SPDX-2.3, 1814 packages); /dev/tee0 present; SA2UL provides AES-CBC/ECB and SHA-256/512; cryptodev loads on demand and creates /dev/crypto."
+    }
+  ],
+  "notes": [
+    "The default user is only in the sudo group, so over SSH the video codec, camera and sound devices need sudo; a local desktop session gets them through seat ACLs. Unchanged since V1.1.0.",
+    "The clock started at 2026-04-13 before network time sync; the RTC was written during the test.",
+    "tee-supplicant is not installed; cryptodev is not loaded at boot."
+  ]
+}
