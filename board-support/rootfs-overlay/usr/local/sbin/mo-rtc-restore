@@ -1,0 +1,21 @@
+#!/bin/sh
+# Set the system clock from an RTC (default /dev/rtc0) when the RTC holds a
+# plausible time and the system clock is behind it. A battery-less or never
+# set RTC reads an old date, which is ignored; NTP corrects the clock later.
+dev=${1:-/dev/rtc0}
+rtc=$(/usr/sbin/hwclock --get --utc -f "$dev" 2>/dev/null) || { logger -t mo-rtc-restore "cannot read $dev"; exit 0; }
+rtc_s=$(date -u -d "$rtc" +%s 2>/dev/null) || exit 0
+min_s=$(date -u -d 2025-01-01 +%s)
+now_s=$(date -u +%s)
+if [ "$rtc_s" -lt "$min_s" ]; then
+    logger -t mo-rtc-restore "$dev holds $rtc, before 2025; system clock not changed"
+elif [ "$rtc_s" -gt "$now_s" ]; then
+    if /usr/sbin/hwclock --hctosys --utc -f "$dev"; then
+        logger -t mo-rtc-restore "system clock set from $dev ($rtc)"
+    else
+        logger -t mo-rtc-restore "failed to set the system clock from $dev ($rtc)"
+    fi
+else
+    logger -t mo-rtc-restore "system clock already at or after $dev ($rtc); not changed"
+fi
+exit 0

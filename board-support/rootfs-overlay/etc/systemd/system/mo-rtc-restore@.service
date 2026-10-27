@@ -1,0 +1,12 @@
+[Unit]
+Description=Set the system clock from the battery-backed RTC %I
+Documentation=file:///usr/local/sbin/mo-rtc-restore
+DefaultDependencies=no
+BindsTo=dev-%i.device
+After=dev-%i.device
+Before=time-sync.target
+Wants=time-sync.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/mo-rtc-restore /dev/%I

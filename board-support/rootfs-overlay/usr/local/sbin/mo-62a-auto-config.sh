@@ -18,6 +18,7 @@ HOSTS_FILE=/etc/hosts
 log() { echo "[mo-62a-config] $*"; }
 
 # Recognized keys (also used to wipe the file afterwards).
+DEVICE_GROUPS="audio video render input plugdev netdev bluetooth dialout gpio i2c"
 KNOWN_KEYS="user_name user_password user_realname user_shell root_password \
 hostname user_ssh_key root_ssh_key locale timezone \
 wifi_ssid wifi_password wifi_country \
@@ -107,6 +108,17 @@ apply_user() {
         useradd -m -s "/bin/$shell" -G sudo -c "$realname" "$user" || {
             log "  ERROR: useradd failed for $user"; return 1
         }
+    fi
+    # Hardware access without sudo, also over SSH: camera and video codecs,
+    # GPU, sound, input, serial, GPIO/I2C, Wi-Fi and Bluetooth. docker is
+    # left out on purpose because it is equivalent to root.
+    local groups="" group
+    for group in $DEVICE_GROUPS; do
+        getent group "$group" >/dev/null 2>&1 && groups="${groups:+$groups,}$group"
+    done
+    if [ -n "$groups" ]; then
+        log "Adding $user to device groups: $groups"
+        usermod -aG "$groups" "$user" || log "  WARNING: could not add $user to $groups"
     fi
     [ -n "$pw" ] && printf '%s:%s\n' "$user" "$pw" | chpasswd
 
