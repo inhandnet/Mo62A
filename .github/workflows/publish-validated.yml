@@ -1,0 +1,39 @@
+name: Publish validated release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Draft release to publish after hardware validation'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ inputs.version }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'inhandnet/Mo62A' && github.actor_id == '49704703' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          lfs: false
+          persist-credentials: false
+          sparse-checkout: |
+            .github
+            scripts
+            validation
+      - run: sudo apt-get update -q && sudo apt-get install -y python3-yaml
+      - name: Add the hardware validation record, then publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ inputs.version }}
+        run: bash scripts/publish-validated.sh "$VERSION"

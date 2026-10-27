@@ -11,7 +11,9 @@ import sys
 
 from commit_policy import ROOT, check_range, git, load_yaml, parse_message
 
-BOOT_TESTS = ROOT / "validation" / "boot-tests"
+VALIDATION = ROOT / "validation" / "releases"
+COMPANIONS = ("mo-tools", "mo-models", "mo-examples")
+TEST_RESULTS = ("passed", "failed", "skipped")
 VERSION = re.compile(r"^V(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
 GROUPS = {
     "feat": ("Added", "新增"), "fix": ("Fixed", "修复"),
@@ -95,29 +97,6 @@ def checksum(path):
     return digest.hexdigest()
 
 
-def boot_test(version, commit, kernel):
-    """Read the recorded board boot test for this exact release source, if any.
-
-    Evidence lives in validation/boot-tests/<version>.json and is written by the
-    person who booted the built image on hardware. The release only reports a
-    passed test when the record names the same version, source commit and
-    kernel; anything else is reported as not recorded.
-    """
-    file = BOOT_TESTS / f"{version}.json"
-    if not file.exists():
-        return False, None
-    record = json.loads(file.read_text())
-    required = {"version", "commit", "kernel", "board", "image_name", "date", "result", "tester", "method"}
-    missing = required - set(record)
-    if missing:
-        raise ValueError(f"Boot test record is missing {sorted(missing)}")
-    if record["version"] != version or record["commit"] != commit or record["kernel"] != kernel:
-        raise ValueError("Boot test record does not describe this release source")
-    if record["result"] not in ("passed", "failed"):
-        raise ValueError("Boot test result must be passed or failed")
-    return record["result"] == "passed", record
-
-
 def generate(version, ref, output, image=None, raw_size=None, kernel=None, sbom=None):
     config = settings()
     entries = history(version, ref)
@@ -149,7 +128,6 @@ def generate(version, ref, output, image=None, raw_size=None, kernel=None, sbom=
         document = json.loads(sbom.read_text())
         if document.get("spdxVersion") != "SPDX-2.3" or not document.get("packages"):
             raise ValueError("SBOM is not a non-empty SPDX 2.3 document")
-        booted, evidence = boot_test(version, entries[0]["commit"], kernel)
         manifest = {
             "schemaVersion": 1, "board": "mo-62a", "version": version,
             "source": {"repository": config["repository"], "commit": entries[0]["commit"], "tag": version},
@@ -163,10 +141,10 @@ def generate(version, ref, output, image=None, raw_size=None, kernel=None, sbom=
                      "sha256": checksum(sbom), "packages": len(document["packages"])},
             "changelog": {lang: f"{base}/CHANGELOG.{lang}.md" for lang in ("en", "zh")},
             "history": entries,
-            "validation": {"build": True, "imageStructure": True, "hardwareBootTest": booted},
+            # The tagged build is a draft. Hardware results are added by finalize()
+            # after the draft image itself has been flashed and tested.
+            "validation": {"build": True, "imageStructure": True, "hardwareBootTest": False},
         }
-        if evidence is not None:
-            manifest["validation"]["hardwareBootTestEvidence"] = evidence
         (output / "release.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
         assets = [image, sbom, output / "CHANGELOG.en.md", output / "CHANGELOG.zh.md", output / "release.json"]
         for asset in assets:
@@ -174,6 +152,69 @@ def generate(version, ref, output, image=None, raw_size=None, kernel=None, sbom=
                 raise ValueError(f"Asset too large: {asset.name}")
         (output / "SHA256SUMS").write_text("".join(f"{checksum(asset)}  {asset.name}\n" for asset in assets))
     return entries
+
+
+def load_record(version, file=None):
+    """Read and check the hardware validation record for one draft release."""
+    file = Path(file) if file else VALIDATION / f"{version}.json"
+    record = json.loads(file.read_text())
+    required = {"version", "commit", "image", "kernel", "board", "date", "tester", "result", "tests", "companions"}
+    missing = required - set(record)
+    if missing:
+        raise ValueError(f"Validation record is missing {sorted(missing)}")
+    if record["version"] != version:
+        raise ValueError("Validation record names a different version")
+    if not re.fullmatch(r"[0-9a-f]{40}", record["commit"]):
+        raise ValueError("Validation record commit must be a full SHA-1")
+    if set(record["image"]) != {"name", "sha256"} or not re.fullmatch(r"[0-9a-f]{64}", record["image"]["sha256"]):
+        raise ValueError("Validation record must name the tested image and its SHA-256")
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", record["date"]):
+        raise ValueError("Validation date must be YYYY-MM-DD")
+    if set(record["companions"]) != set(COMPANIONS) or not all(
+            VERSION.fullmatch(v) for v in record["companions"].values()):
+        raise ValueError("Validation record must list the mo-tools, mo-models and mo-examples versions used")
+    tests = record["tests"]
+    if not tests or not all({"id", "item", "result"} <= set(t) and t["result"] in TEST_RESULTS for t in tests):
+        raise ValueError("Each validation test needs id, item and a passed, failed or skipped result")
+    if len({t["id"] for t in tests}) != len(tests):
+        raise ValueError("Validation test ids must be unique")
+    failed = any(t["result"] == "failed" for t in tests)
+    if record["result"] not in ("passed", "failed") or (record["result"] == "passed") == failed:
+        raise ValueError("Overall result must be failed exactly when a test failed")
+    return record
+
+
+def finalize(version, output, record_file=None):
+    """Add hardware validation of the draft image to release.json and SHA256SUMS."""
+    config = settings()
+    manifest = json.loads((output / "release.json").read_text())
+    record = load_record(version, record_file)
+    if manifest["version"] != version or manifest["source"]["commit"] != record["commit"]:
+        raise ValueError("Validation record does not describe this draft release source")
+    if record["image"] != {"name": manifest["image"]["name"], "sha256": manifest["image"]["sha256"]}:
+        raise ValueError("Validation record does not describe the draft image")
+    if record["kernel"] != manifest["os"]["kernel"]:
+        raise ValueError("Validation record kernel differs from the draft image")
+    sums = {}
+    for line in (output / "SHA256SUMS").read_text().splitlines():
+        digest, name = line.split("  ", 1)
+        sums[name] = digest
+    if sums.get(manifest["image"]["name"]) != manifest["image"]["sha256"]:
+        raise ValueError("Draft SHA256SUMS does not match the draft image")
+    base = f'https://github.com/{config["repository"]}/releases/download/{version}'
+    (output / "validation.json").write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n")
+    counts = {r: sum(t["result"] == r for t in record["tests"]) for r in TEST_RESULTS}
+    manifest["validation"].update({
+        "hardwareBootTest": record["result"] == "passed",
+        "hardware": {"result": record["result"], "date": record["date"], "board": record["board"],
+                     "tester": record["tester"], "tests": counts, "companions": record["companions"],
+                     "report": f"{base}/validation.json", "sha256": checksum(output / "validation.json")},
+    })
+    (output / "release.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+    for name in ("release.json", "validation.json"):
+        sums[name] = checksum(output / name)
+    (output / "SHA256SUMS").write_text("".join(f"{d}  {n}\n" for n, d in sums.items()))
+    return manifest
 
 
 def main():
@@ -185,7 +226,13 @@ def main():
     parser.add_argument("--raw-size", type=int)
     parser.add_argument("--kernel")
     parser.add_argument("--sbom", type=Path)
+    parser.add_argument("--finalize", action="store_true",
+                        help="Add the validation record to the draft release.json in --output")
+    parser.add_argument("--record", type=Path)
     args = parser.parse_args()
+    if args.finalize:
+        finalize(args.version, args.output, args.record)
+        return
     if args.ref.startswith("-"):
         raise ValueError("Invalid source ref")
     generate(args.version, args.ref, args.output, args.image, args.raw_size, args.kernel, args.sbom)

@@ -49,5 +49,6 @@ for name in [m['image']['name'], m['sbom']['name'], 'SHA256SUMS', 'CHANGELOG.en.
     assert a.get('digest')=='sha256:'+h.hexdigest(), f'Remote checksum mismatch: {name}'
 print('All uploaded assets match their local SHA-256 checksums.')
 PY
-gh release edit "$version" --draft=false --latest --notes-file release-body.md
-gh release view "$version" --json url --jq .url
+# The tag build stops at a verified draft. The draft image is flashed and
+# tested; scripts/publish-validated.sh adds that record and publishes.
+echo "Draft $version is ready for hardware validation; it is not public yet."
