@@ -39,6 +39,10 @@ jobs:
             tests
             bin
             release-notes
+            board-support/rootfs-overlay/etc/systemd/system
+            board-support/rootfs-overlay/usr/local/sbin/mo-62a-auto-config.sh
+            board-support/rootfs-overlay/usr/local/bin/mo-discover
+            board-support/rootfs-overlay/usr/local/bin/edgeai-demo
       - run: sudo apt-get update -q && sudo apt-get install -y python3-yaml
       - name: Validate version, source branch and release notes
         env:

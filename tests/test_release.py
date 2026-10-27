@@ -75,6 +75,13 @@ class CommitPolicyTests(unittest.TestCase):
             if name != 'publish':
                 self.assertEqual(checkout['with']['fetch-depth'], 0)
 
+    def test_release_validation_checks_out_what_the_tests_read(self):
+        def paths(workflow, job):
+            data = yaml.safe_load((release.ROOT / '.github/workflows' / workflow).read_text())
+            step = next(s for s in data['jobs'][job]['steps'] if s.get('uses', '').startswith('actions/checkout@'))
+            return set(step['with']['sparse-checkout'].split())
+        self.assertLessEqual(paths('ci.yml', 'validate-release'), paths('release.yml', 'validate'))
+
     def test_valid_bilingual_and_breaking(self):
         self.assertEqual(parse_message(message())["messages"]["zh"], "修复镜像制作流程。")
         self.assertTrue(parse_message(message().replace("): ", ")!: "))["breaking"])
