@@ -1,0 +1,54 @@
+name: Bug report
+description: Report something in the Mo62A BSP, build scripts or OS image that does not work as documented.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for defects in this repository or in the OS image it
+        builds. For questions about using the board, ask in the
+        [community forum](https://community.inhand.com). Do not report
+        security vulnerabilities here; follow SECURITY.md instead.
+  - type: input
+    id: image-version
+    attributes:
+      label: Image version
+      description: The Mo OS image version on your board (the release you flashed), or the commit you built from.
+      placeholder: V1.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Boot (U-Boot, device tree, overlays)
+        - Kernel or drivers
+        - OS image contents or first boot
+        - Build or flash scripts
+        - Edge AI runtime or demos
+        - Documentation
+        - Other (describe below)
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened
+      description: Describe the problem and how it differs from what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Commands or actions that reproduce the problem, with the exact output or error.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Additional environment details
+      description: Optional. Host OS, attached hardware (camera, HAT, display), boot configuration label, and anything else relevant.

@@ -119,7 +119,7 @@ Type  Name                 Len  Value
 ## 整机测试单元（逐一补充接口）
 
 下列为需做成工厂命令的整机测试单元，来源为现有 GUI 自动化测试框架
-`tools/mo62a-auto-test/`（PySide6 + SSH，9 类 36 用例）。产测命令按工厂固定接口
+[mo-tools 的 `products/mo62a/board-test/`](https://github.com/inhandnet/mo-tools/tree/master/products/mo62a/board-test)（PySide6 + SSH，9 类 36 用例）。产测命令按工厂固定接口
 **逐项补充**：每项确定「命令名 / 调用方式 / 逻辑与判定」后，落到 `tools/mo62a-factory/`
 的 deb 里。
 
@@ -153,7 +153,7 @@ Type  Name                 Len  Value
 | 19 | HDMI 音频测试 | Mo62A 播随机频率正弦 -> 采集卡 -> PC FFT 测频 -> 回填比对 | 验证 | `audio test hdmi` | ✅ | 新写 |
 
 > 说明：**Debug 调试串口**已实现为 `com test debug`（真机验证 OK）；其余 15 项可复用
-> `tools/mo62a-auto-test/` 现有测试逻辑，转成设备端工厂命令即可。下方按 auto-test 现有实现
+> mo-tools 的 `products/mo62a/board-test/` 现有测试逻辑，转成设备端工厂命令即可。下方按 auto-test 现有实现
 > 列出明细，供实现参考。EEPROM 读写已由「设备定型 `factory-model`」覆盖，不单列。
 >
 > **#2 Debug 串口 SOP（回环头上电时序坑）**：工厂是**先装 ttyS2 TX↔RX 短接头再上电**。

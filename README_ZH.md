@@ -76,6 +76,7 @@ Mo62A 继续维护 BSP、驱动、镜像构建、烧录与系统集成。网站�
   - [2.2 克隆仓库](#22-克隆仓库)
   - [2.3 使用 setup.sh 初始化环境](#23-使用-setupsh-初始化环境)
   - [2.4 工具链](#24-工具链)
+  - [2.5 从源码构建完整镜像](#25-从源码构建完整镜像)
 - [3. U-Boot](#3-u-boot)
   - [3.1 相关文件](#31-相关文件)
   - [3.2 编译 U-Boot](#32-编译-u-boot)
@@ -335,6 +336,26 @@ Copyright (C) 2023 Free Software Foundation, Inc.
 > **注意：** 工具链二进制文件中硬编码了 ELF 解释器路径 `/opt/ti-processor-sdk-linux-rt-edgeai-am62a-evm-11.01.07.05/`。`setup.sh` 创建的符号链接可满足此要求，无论仓库克隆到何处。工具链通过 `Rules.make` 自动调用，无需手动导出 PATH。
 
 ---
+
+### 2.5 从源码构建完整镜像
+
+本节给出外部用户仅凭本仓库生成可启动镜像的端到端顺序。每一步的细节都在所指向的章节中，本节不替代那些章节。
+
+1. **克隆并拉取大文件。** 基础根文件系统 `filesystem/debian-13.5-edgeai-base-arm64.tar.xz`（约 1.3 GB）及其他二进制文件通过 Git LFS 存储（见 `.gitattributes`）。普通克隆只会得到指针文件，因此需要：
+
+   ```bash
+   git clone https://github.com/inhandnet/Mo62A.git
+   cd Mo62A
+   git lfs install
+   git lfs pull
+   ```
+
+2. **准备主机。** 安装主机软件包并运行 `setup.sh`（第 2.3 节），再配置工具链（第 2.4 节）。烧录工具还需要 `qemu-user-static` 及可用的 AArch64 binfmt 支持，因为 EdgeAI C++ SDK 在 arm64 chroot 中编译（第 5.4.1 节）。
+3. **编译 U-Boot**（第 3.2–3.3 节）和**内核、模块与设备树**（第 4.2–4.4 节），并按说明归档产物。内核构建依赖 U-Boot 构建，因为需要组装 FIT 镜像。
+4. **组装镜像。** 交互式运行烧录工具（第 5.2 节）直接写入 SD 卡（第 5.3 节）或生成离线镜像（第 5.4 节），无人值守构建使用非交互形式（第 5.4.1 节）。组装过程中工具会解压基础 rootfs、复制 `board-support/rootfs-overlay/`，并编译安装 `board-support/extra-applications/*/Makefile` 与 `board-support/extra-drivers/` 下的所有项目。
+5. **自定义 rootfs**：需要不同 apt 软件包或库时，按第 5.5 节重新打包基础压缩包，再让烧录工具使用新的归档。
+
+结果是一张 SD 卡或带 `.sha256` 校验文件的 `.img.xz`。对外发布的镜像使用同样的步骤生成；正式发布另附发布工作流生成的版本对照表与更新日志（见 [RELEASES.md](RELEASES.md)）。
 
 ## 3. U-Boot
 
@@ -2256,98 +2277,6 @@ printf "\x01" | sudo dd of=/sys/bus/i2c/devices/1-0050/eeprom \
 
 ## 11. MO-62A 自动化测试工具
 
-`tools/mo62a-tester/` 是一套基于 Python 的 GUI 自动化测试工具，通过 SSH 对 MO-62A 板卡进行硬件验收测试。
+整机验收测试工具（基于 PySide6 的图形界面，通过 SSH 驱动板卡并导出 HTML 报告）已于 2026-10-22 迁出本仓库，由 [inhandnet/mo-tools](https://github.com/inhandnet/mo-tools/tree/master/products/mo62a/board-test) 的 `products/mo62a/board-test/` 目录维护和发布；依赖、测试覆盖与用法见该目录的 README。
 
-### 功能特性
-
-- 通过局域网 SSH 连接设备（支持手动输入 IP 或通过 `mo-discover` 守护进程 UDP 自动发现）
-- 首次上电密码修改流程（检测到默认密码 `temppwd` 时自动引导修改）
-- 测试项选择界面，支持分类三态复选框和中英文切换
-- 并发测试执行，实时显示通过 / 失败 / 信息状态
-- HTML 报告导出
-
-### 依赖要求
-
-```
-Python 3.8+
-paramiko
-```
-
-安装依赖：
-
-```bash
-pip install -r tools/mo62a-tester/requirements.txt
-```
-
-### 使用方法
-
-```bash
-python3 tools/mo62a-tester/main.py
-```
-
-在**连接**页面连接设备，在**选择**页面勾选测试项，在**运行**页面执行测试。
-
-### 测试分类
-
-<table width="100%">
-  <thead>
-    <tr>
-      <th width="284" align="left">分类</th>
-      <th width="664" align="left">测试内容</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td align="left">系统基础信息</td>
-      <td align="left">固件版本、内核版本、DTB/overlay、OS 版本、主机名、运行时长、文件系统用量、内存、CPU 核心数、CPU 主频（从 OPP 表读取）、CPU 温度、以太网 MAC 地址</td>
-    </tr>
-    <tr>
-      <td align="left">LED</td>
-      <td align="left">电源 LED 和状态 LED GPIO 控制</td>
-    </tr>
-    <tr>
-      <td align="left">风扇</td>
-      <td align="left">PWM 风扇转速控制与转速计反馈</td>
-    </tr>
-    <tr>
-      <td align="left">RTC</td>
-      <td align="left">PCF85263A 时间读写</td>
-    </tr>
-    <tr>
-      <td align="left">I2C</td>
-      <td align="left">总线枚举、设备在线检测</td>
-    </tr>
-    <tr>
-      <td align="left">HDMI</td>
-      <td align="left">显示模式与连接器状态</td>
-    </tr>
-    <tr>
-      <td align="left">音频</td>
-      <td align="left">编解码器检测、播放/录音</td>
-    </tr>
-    <tr>
-      <td align="left">摄像头</td>
-      <td align="left">CSI 通道、设备节点在线</td>
-    </tr>
-    <tr>
-      <td align="left">网络</td>
-      <td align="left">以太网链路、IP 分配、连通性</td>
-    </tr>
-    <tr>
-      <td align="left">USB</td>
-      <td align="left">Hub 枚举、端口检测</td>
-    </tr>
-    <tr>
-      <td align="left">GPIO</td>
-      <td align="left">40 Pin 扩展接口 GPIO 拨控</td>
-    </tr>
-    <tr>
-      <td align="left">系统服务</td>
-      <td align="left">systemd 服务状态检测</td>
-    </tr>
-  </tbody>
-</table>
-
-### 设备端守护进程
-
-`mo-discover` UDP 守护进程（安装路径 `/usr/local/bin/mo-discover`，由 `mo-discover.service` 管理）监听 UDP 47622 端口，响应来自测试工具的广播发现报文，无需预先知道设备 IP 即可在局域网内定位设备。
+本仓库保留该工具依赖的设备端部分：
