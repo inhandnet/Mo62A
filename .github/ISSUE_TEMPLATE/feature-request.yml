@@ -1,0 +1,38 @@
+name: Feature request
+description: Suggest an improvement to the Mo62A BSP, build scripts or OS image.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to propose changes to the board support package, the
+        image build or the preinstalled software. For questions about using
+        the board, ask in the [community forum](https://community.inhand.com).
+  - type: input
+    id: image-version
+    attributes:
+      label: Image version
+      description: The Mo OS image version you are using.
+      placeholder: V1.1.0
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What are you trying to do, and what is missing or difficult today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe what you would like to see added or changed.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional. Other approaches you tried or considered.

@@ -1,0 +1,11 @@
+# Issues in this repository are for bugs and feature requests in the Mo62A
+# board support package and image build. Questions about using the board
+# belong in the community forum.
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question about using the board
+    url: https://community.inhand.com
+    about: Ask usage questions in the community forum, where answers stay searchable for everyone.
+  - name: Report a security vulnerability
+    url: https://github.com/inhandnet/Mo62A/blob/master/SECURITY.md
+    about: Do not open a public issue. Follow the steps in SECURITY.md.
