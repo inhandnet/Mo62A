@@ -137,7 +137,11 @@ require_root() { :; }
 pick_flash_mode() { echo image; }
 pick_rootfs_tarball_interactive() { echo "$TEST_ROOTFS"; }
 prompt_with_default() {
-  if [[ "$1" == 'Output directory' ]]; then echo "$TEST_OUT"; else echo "$2"; fi
+  case "$1" in
+    'Output directory') echo "$TEST_OUT" ;;
+    Version*) echo V1.1.0 ;;
+    *) echo "$2" ;;
+  esac
 }
 confirm_or_die() { echo STEP:confirm; }
 mock_step() {
@@ -147,7 +151,7 @@ mock_step() {
 for step in build_factory_deb create_sparse_image partition_image_mbr copy_boot_files \
   img_extract_rootfs_tarball install_kernel_modules_into_rootfs \
   install_external_apps_into_rootfs install_external_drivers_into_rootfs \
-  install_rootfs_overlay compress_outputs write_checksums; do
+  install_rootfs_overlay write_release_file compress_outputs write_checksums; do
   eval "$step() { mock_step $step; }"
 done
 attach_loop() { LOOPDEV=/dev/mock-loop; }
@@ -175,7 +179,7 @@ main "$@"
             "build_factory_deb", "create_sparse_image", "partition_image_mbr", "copy_boot_files",
             "img_extract_rootfs_tarball", "install_kernel_modules_into_rootfs",
             "install_external_apps_into_rootfs", "install_external_drivers_into_rootfs",
-            "install_rootfs_overlay", "compress_outputs", "write_checksums",
+            "install_rootfs_overlay", "write_release_file", "compress_outputs", "write_checksums",
         ]])
         self.assertEqual(list(self.output.iterdir()), [])  # lock released
 
@@ -183,6 +187,13 @@ main "$@"
         result = self.mock_flow(fail_step="install_external_drivers_into_rootfs")
         self.assertEqual(result.returncode, 17, result.stderr)
         self.assertNotIn("STEP:compress_outputs", result.stdout)
+        self.assertEqual(list(self.output.iterdir()), [])
+
+    def test_failed_identity_stops_before_compression_and_checksums(self):
+        result = self.mock_flow(fail_step="write_release_file")
+        self.assertEqual(result.returncode, 17, result.stderr)
+        self.assertNotIn("STEP:compress_outputs", result.stdout)
+        self.assertNotIn("STEP:write_checksums", result.stdout)
         self.assertEqual(list(self.output.iterdir()), [])
 
     def test_existing_lock_is_preserved(self):
