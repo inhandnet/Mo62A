@@ -1069,6 +1069,20 @@ Non-destructive CLI regression tests (Python 3; privileged and build operations 
 python3 -B -m unittest discover -s tests -p 'test_flash_cli.py' -v
 ```
 
+#### 5.4.2 Image identity
+
+The flash tool writes `/etc/mo-62a-release` for full/RootFS SD installation and
+offline images. Read it with `cat /etc/mo-62a-release` to see the board, image
+name/version, build date, built kernel, rootfs archive basename, source commit
+and source modification state (`MO_SOURCE_DIRTY`: `0`, `1`, or `unknown`).
+These describe the image at build time, not subsequent package or kernel updates.
+
+Interactive builds suggest a version only when the source is clean and HEAD has
+an exact stable `Vx.y.z` tag. Otherwise enter a version explicitly; unattended
+builds always require `--version`. A selected version does not publish a release.
+Unpacked source without Git metadata remains usable and records source identity
+as `unknown`. Automated release-image verification requires a clean known commit.
+
 ### 5.5 Customising the Rootfs Tarball (Adding apt Packages)
 
 The flash tool extracts the rootfs tarball as-is.  Additional Debian packages (e.g. `frei0r-plugins` required by `imx219-preview.sh`) must be pre-installed into the tarball **before** flashing so that they are available both after online and offline flashing without requiring network access on the target.

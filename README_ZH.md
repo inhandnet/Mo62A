@@ -942,6 +942,18 @@ bash bin/mo-62a-flash.sh --image \
 python3 -B -m unittest discover -s tests -p 'test_flash_cli.py' -v
 ```
 
+#### 5.4.2 镜像身份
+
+烧录工具在完整/RootFS SD 安装和离线镜像中写入 `/etc/mo-62a-release`。
+用 `cat /etc/mo-62a-release` 可查看板卡、镜像名称/版本、构建日期、编译内核、
+rootfs 归档文件名、源码提交及修改状态（`MO_SOURCE_DIRTY` 为 `0`、`1` 或 `unknown`）。
+这些字段记录镜像构建时的身份，不随之后的软件包或内核更新自动改变。
+
+交互构建仅在源码干净且 HEAD 恰好对应正式 `Vx.y.z` 标签时建议默认版本；其他
+情况须显式填写，无人值守构建始终要求 `--version`。指定版本不会自动发布。
+无 Git 元数据的源码解压目录仍可使用，源码身份记为 `unknown`；自动镜像发布
+校验要求源码提交已知且无修改。
+
 ### 5.5 自定义 Rootfs 压缩包（添加 apt 软件包）
 
 烧录工具直接解压 rootfs 压缩包。额外的 Debian 软件包（如 `imx219-preview.sh` 所需的 `frei0r-plugins`）必须**在烧录前**预先安装到压缩包中，确保在线和离线烧录后均可立即使用，无需目标机网络访问。

@@ -40,7 +40,11 @@ SD_MODE="full"
 # Image name format: mo62a-trixie-xfce-<version>   (e.g. mo62a-trixie-xfce-V1.0.0)
 # Only VERSION varies between releases; the rest is fixed. DATE is still used to
 # stamp built external apps (BUILD_DATE) but is no longer part of the image name.
-IMAGE_VERSION="V1.0.0"
+# An exact stable tag on a clean checkout is the only interactive default.
+# Other builds require an explicit version; --image always requires --version.
+IMAGE_VERSION=""
+SOURCE_COMMIT="unknown"
+SOURCE_DIRTY="unknown"
 IMAGE_DATE="$(date +%Y-%m-%d)"
 IMAGE_PREFIX="mo62a-trixie-xfce"
 OUT_DIR=""
@@ -66,6 +70,40 @@ cleanup() {
 
 die()  { echo "ERROR: $*" >&2; exit 1; }
 have() { command -v "$1" >/dev/null 2>&1; }
+
+load_source_identity() {
+  local repo_root status tags tag
+  IMAGE_VERSION=""
+  SOURCE_COMMIT="unknown"
+  SOURCE_DIRTY="unknown"
+  have git || return 0
+  repo_root="$(git -C "$SDK_ROOT" rev-parse --show-toplevel 2>/dev/null)" || return 0
+  # Do not attribute an unpacked SDK to an unrelated enclosing repository.
+  [[ "$repo_root" == "$SDK_ROOT" ]] || return 0
+  SOURCE_COMMIT="$(git -C "$SDK_ROOT" rev-parse --verify HEAD 2>/dev/null)" || {
+    SOURCE_COMMIT="unknown"; return 0;
+  }
+  status="$(git -C "$SDK_ROOT" status --porcelain --untracked-files=normal 2>/dev/null)" || return 0
+  SOURCE_DIRTY=0
+  if [[ -n "$status" ]]; then SOURCE_DIRTY=1; return 0; fi
+  tags="$(git -C "$SDK_ROOT" tag --points-at HEAD --list 'V*' 2>/dev/null)" || return 0
+  while IFS= read -r tag; do
+    if [[ "$tag" =~ ^V(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+      IMAGE_VERSION="$tag"
+    fi
+  done < <(printf '%s\n' "$tags" | sort -V)
+}
+
+normalize_image_identity() {
+  [[ "$IMAGE_VERSION" =~ ^[Vv](0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] \
+    || die "Version must be Vx.y.z (for example V1.1.0); enter it explicitly for an untagged build"
+  IMAGE_VERSION="V${IMAGE_VERSION:1}"
+  NAME="${IMAGE_PREFIX}-${IMAGE_VERSION}"
+  [[ "$IMAGE_DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || die "Date must be YYYY-MM-DD"
+  local checked_date
+  checked_date="$(date -d "$IMAGE_DATE" +%F 2>/dev/null)" || die "Invalid date: $IMAGE_DATE"
+  [[ "$checked_date" == "$IMAGE_DATE" ]] || die "Invalid date: $IMAGE_DATE"
+}
 
 usage() {
   cat >&2 <<'USAGE'
@@ -147,17 +185,10 @@ check_image_outputs() {
 }
 
 validate_image_args() {
-  [[ "$IMAGE_VERSION" =~ ^[Vv](0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] \
-    || die "Version must be Vx.y.z (for example V1.1.0)"
-  IMAGE_VERSION="V${IMAGE_VERSION:1}"
-  NAME="${IMAGE_PREFIX}-${IMAGE_VERSION}"
+  normalize_image_identity
   [[ "$IMG_SIZE_GIB" =~ ^[1-9][0-9]{0,3}$ ]] || die "Image size must be an integer GiB in 5..2047"
   (( IMG_SIZE_GIB >= 5 && IMG_SIZE_GIB <= 2047 )) || die "Image size must be in 5..2047 GiB (MBR layout)"
   case "$COMPRESS" in xz|zip|none) ;; *) die "Invalid compression: $COMPRESS (expected zip|xz|none)" ;; esac
-  [[ "$IMAGE_DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || die "Date must be YYYY-MM-DD"
-  local checked_date
-  checked_date="$(date -d "$IMAGE_DATE" +%F 2>/dev/null)" || die "Invalid date: $IMAGE_DATE"
-  [[ "$checked_date" == "$IMAGE_DATE" ]] || die "Invalid date: $IMAGE_DATE"
   [[ -f "$ROOTFS_TARBALL" && -r "$ROOTFS_TARBALL" && -s "$ROOTFS_TARBALL" ]] \
     || die "Rootfs must be a non-empty readable regular file: $ROOTFS_TARBALL"
   ROOTFS_TARBALL="$(realpath -e -- "$ROOTFS_TARBALL")"
@@ -176,6 +207,7 @@ print_image_plan() {
   echo "  rootfs:      $ROOTFS_TARBALL"
   echo "  version:     $IMAGE_VERSION"
   echo "  build date:  $IMAGE_DATE"
+  echo "  source:      $SOURCE_COMMIT (dirty=$SOURCE_DIRTY)"
   echo "  size (GiB):  $IMG_SIZE_GIB"
   echo "  compression: $COMPRESS"
   echo "  raw image:   $OUT_DIR/$NAME.img"
@@ -253,6 +285,48 @@ install_rootfs_overlay() {
   fi
   echo "Rootfs overlay installed."
   normalize_rootfs_ownership
+}
+
+release_value() {
+  # Quote os-release values without executing shell metacharacters on readback.
+  local value="$2"
+  [[ "$value" != *$'\n'* && "$value" != *$'\r'* ]] || return 1
+  value="${value//\\/\\\\}"
+  value="${value//\"/\\\"}"
+  value="${value//\$/\\\$}"
+  value="${value//\`/\\\`}"
+  printf '%s="%s"\n' "$1" "$value"
+}
+
+write_release_file() {
+  # Device-side identity of the image, os-release style: cat /etc/mo-62a-release
+  local kernel_dir kernel_release target temporary
+  normalize_image_identity
+  [[ -d "${ROOTFS_MNT:-}" ]] || die "Rootfs directory missing; cannot write release file"
+  kernel_dir="$(find_kernel_dir)"
+  [[ -s "$kernel_dir/include/config/kernel.release" ]] || die "Built kernel release is missing"
+  read -r kernel_release < "$kernel_dir/include/config/kernel.release"
+  [[ "$kernel_release" =~ ^[a-zA-Z0-9._+-]+$ && -d "$ROOTFS_MNT/usr/lib/modules/$kernel_release" ]] \
+    || die "Built kernel modules are missing from rootfs"
+  target="$ROOTFS_MNT/etc/mo-62a-release"
+  install -d -m 0755 "$ROOTFS_MNT/etc"
+  temporary="$(mktemp "$ROOTFS_MNT/etc/.mo-62a-release.XXXXXX")"
+  if ! {
+    release_value MO_BOARD 'Mo 62A' &&
+    release_value MO_IMAGE_NAME "$NAME" &&
+    release_value MO_IMAGE_VERSION "$IMAGE_VERSION" &&
+    release_value MO_BUILD_DATE "$IMAGE_DATE" &&
+    release_value MO_KERNEL "$kernel_release" &&
+    release_value MO_ROOTFS_TARBALL "$(basename -- "${ROOTFS_TARBALL:-unknown}")" &&
+    release_value MO_SOURCE_COMMIT "$SOURCE_COMMIT" &&
+    release_value MO_SOURCE_DIRTY "$SOURCE_DIRTY"
+  } > "$temporary"; then
+    rm -f -- "$temporary"
+    die "Unable to encode image identity"
+  fi
+  chmod 0644 "$temporary"
+  mv -fT -- "$temporary" "$target"
+  echo "Wrote $target ($IMAGE_VERSION, built $IMAGE_DATE)"
 }
 
 # The base rootfs archive and earlier overlays can carry the build host's
@@ -721,6 +795,7 @@ sd_extract_rootfs() {
   install_external_apps_into_rootfs
   install_external_drivers_into_rootfs
   install_rootfs_overlay
+  write_release_file
   sync
 }
 
@@ -744,6 +819,7 @@ run_sd_flow() {
   if [[ "$SD_MODE" == "full" || "$SD_MODE" == "rootfs" ]]; then
     IMAGE_VERSION="$(prompt_with_default "Version (e.g. V1.0.0)" "$IMAGE_VERSION")"
     IMAGE_DATE="$(prompt_with_default "Build date (YYYY-MM-DD)" "$IMAGE_DATE")"
+    normalize_image_identity
   fi
 
   case "$SD_MODE" in
@@ -919,7 +995,7 @@ run_image_flow() {
     OUT_DIR="$(prompt_with_default "Output directory" "$SCRIPT_DIR/out")"
     IMAGE_VERSION="$(prompt_with_default "Version (e.g. V1.0.0)" "$IMAGE_VERSION")"
     IMAGE_DATE="$(prompt_with_default "Date (YYYY-MM-DD)" "$IMAGE_DATE")"
-    NAME="${IMAGE_PREFIX}-${IMAGE_VERSION}"
+    normalize_image_identity
     IMG_SIZE_GIB="$(prompt_with_default "Image size (GiB, integer)" "$IMG_SIZE_GIB")"
     COMPRESS="$(prompt_with_default "Compression (zip|xz|none)" "$COMPRESS")"
   fi
@@ -961,6 +1037,7 @@ run_image_flow() {
   install_external_apps_into_rootfs
   install_external_drivers_into_rootfs
   install_rootfs_overlay
+  write_release_file
 
   sync
   umount "$BOOT_MNT";   rmdir "$BOOT_MNT"   || true; BOOT_MNT=""
@@ -1003,6 +1080,8 @@ pick_flash_mode() {
 
 main() {
   if [[ $# == 1 && ( "$1" == -h || "$1" == --help ) ]]; then usage; return 0; fi
+  # Snapshot before build steps can create generated files in the checkout.
+  load_source_identity
   if [[ $# -gt 0 ]]; then
     parse_image_args "$@"
     validate_image_args

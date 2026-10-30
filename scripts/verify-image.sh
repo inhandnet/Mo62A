@@ -41,6 +41,32 @@ grep -q cryptodev "$root/usr/lib/modules/$kernel/modules.dep"
 [[ -s "$root/opt/ti/edgeai/lib/libonnxruntime.so.1.23.0" ]]
 [[ -s "$root/usr/lib/firmware/ti-ipc/am62axx/dsp_edgeai_c7x_1_release_strip.out" ]]
 [[ -s "$root/var/lib/dpkg/status" ]]
+expected_commit=$(git -C "$(dirname "$0")/.." rev-parse HEAD)
+python3 - "$root/etc/mo-62a-release" "$kernel" "$(basename "$image" .img)" "$expected_commit" <<'PY'
+from datetime import date
+from pathlib import Path
+import re
+import shlex
+import sys
+
+identity = {}
+for line in Path(sys.argv[1]).read_text().splitlines():
+    key, value = line.split('=', 1)
+    assert key not in identity, f'Duplicate image identity field: {key}'
+    parsed = shlex.split(value)
+    assert len(parsed) == 1, f'Invalid image identity value: {key}'
+    identity[key] = parsed[0]
+assert identity['MO_BOARD'] == 'Mo 62A'
+assert identity['MO_KERNEL'] == sys.argv[2]
+assert identity['MO_IMAGE_NAME'] == sys.argv[3]
+assert re.fullmatch(r'V(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)', identity['MO_IMAGE_VERSION'])
+assert identity['MO_IMAGE_NAME'] == 'mo62a-trixie-xfce-' + identity['MO_IMAGE_VERSION']
+assert str(date.fromisoformat(identity['MO_BUILD_DATE'])) == identity['MO_BUILD_DATE']
+assert identity['MO_SOURCE_COMMIT'] == sys.argv[4]
+assert identity['MO_SOURCE_DIRTY'] == '0', 'Release verification requires a clean source snapshot'
+assert identity['MO_ROOTFS_TARBALL'] and '/' not in identity['MO_ROOTFS_TARBALL']
+print('PASS: image identity matches filename, kernel and clean source commit')
+PY
 if [[ $# == 3 ]]; then
   # The SBOM is generated from the package database of this exact image.
   install -m 0644 "$root/var/lib/dpkg/status" "$3"
